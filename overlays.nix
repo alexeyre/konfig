@@ -20,7 +20,7 @@ in
 				config = config.nixos.config;
 			};
 			home-manager-unstable = import homeManagerTarball {};
-			personal = pkgs.callPackage ./pkgs/overlay.nix {};
+			personal = import ./pkgs/overlay.nix {};
 		};
 	};
 	nixpkgs.overlays = [
