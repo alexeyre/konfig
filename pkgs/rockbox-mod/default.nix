@@ -5,7 +5,7 @@
 let inherit (lib) getDev; in
 
 mkDerivation rec {
-  pname = "rockbox-utility";
+  pname = "rockbox-mod";
   version = "1.4.0";
 
   src = fetchurl {

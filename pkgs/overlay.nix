@@ -1,3 +1,3 @@
 self: super: {
-	rockbox-mod = super.callPackage ./rockbox-mod { };
+	rockbox-mod = super.callPackage (import ./rockbox-mod) {};
 }

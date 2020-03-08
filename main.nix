@@ -28,7 +28,7 @@ SUBSYSTEM=="usb", ATTR{idVendor}=="05ac", MODE="0666", GROUP="wheel"
 		xorg.xf86videointel
 		gnupg
 		wireguard-tools
-		personal.rockbox-mod
+		rockbox-mod
 		p7zip
 	];
 	virtualisation.virtualbox.host.enable = true;

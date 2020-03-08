@@ -20,7 +20,6 @@ in
 				config = config.nixos.config;
 			};
 			home-manager-unstable = import homeManagerTarball {};
-			personal = import ./pkgs/overlay.nix {};
 		};
 	};
 	nixpkgs.overlays = [
@@ -32,5 +31,4 @@ in
 		 }))
 	(import ./pkgs/overlay.nix)
 	];
-	nixpkgs.config.allowUnfree = true;
 }
