@@ -5,6 +5,7 @@
 { config, pkgs, lib, ... }:
 
 {
+	imports = [ ../main.nix ];
 	hardware.bluetooth.enable = true;
 	hardware.pulseaudio.enable = true;
 	nixpkgs.config.pulseaudio = true;

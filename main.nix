@@ -4,7 +4,6 @@
 	nixpkgs.config.allowUnfree = true;
 	imports = [
 		./overlays.nix
-		./devices/p50.nix
 	];
 	fonts.fonts = with pkgs; [
 		nerdfonts
