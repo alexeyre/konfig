@@ -5,6 +5,7 @@
 { config, pkgs, lib, ... }:
 
 {
+	imports = [ ../main.nix ];
 	hardware.bluetooth.enable = true;
 	boot.loader.systemd-boot.enable = true;
 	boot.loader.efi.canTouchEfiVariables = true;
