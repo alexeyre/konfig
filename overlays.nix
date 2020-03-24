@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, mkDerivation, qtbase, qttools, ... }:
 let 
 unstableNixosTarball = 
 	fetchTarball
@@ -31,4 +31,5 @@ in
 		 }))
 	# (import ./pkgs/overlay.nix)
 	];
+	nixpkgs.config.allowUnfree = true;
 }

@@ -36,9 +36,15 @@
 	time.timeZone = "Europe/London";
 	programs.dconf.enable = true;
 	programs.adb.enable = true;
+	services.udisks2.enable = true;
 	services.udev.extraRules = ''
 SUBSYSTEM=="usb", ATTR{idVendor}=="05ac", MODE="0666", GROUP="wheel"
 	'';
+	programs.xss-lock = {
+		enable = true;
+		lockerCommand = "${pkgs.slock}/bin/slock";
+	};
+	programs.slock.enable = true;
 	environment.systemPackages = with pkgs; [ 
 		home-manager-unstable.home-manager 
 		git
@@ -48,8 +54,8 @@ SUBSYSTEM=="usb", ATTR{idVendor}=="05ac", MODE="0666", GROUP="wheel"
 		gnupg
 		p7zip
 		wireguard-tools
+		slock
 	];
-	virtualisation.virtualbox.host.enable = true;
 	environment.pathsToLink = ["${pkgs.xorg.libxcb}/lib/" "/share/zsh"];
 	networking.firewall.enable = true;
 	networking.firewall.checkReversePath = "loose";
@@ -69,10 +75,12 @@ SUBSYSTEM=="usb", ATTR{idVendor}=="05ac", MODE="0666", GROUP="wheel"
                 };
                 windowManager.bspwm.enable = true;
         };
-	programs.zsh.enable = true;
+	programs.zsh = {
+		enable = true;
+	};
         users.users.alex = {
                 isNormalUser = true;
-                extraGroups = [ "wheel" "audio" "adbusers" ];
+                extraGroups = [ "wheel" "audio" "adbusers" "video" ];
 		shell = pkgs.zsh;
         };
 	system.stateVersion = "19.09";

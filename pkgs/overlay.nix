@@ -1,3 +1,3 @@
 self: super: {
-	rockbox-mod = super.callPackage (import ./rockbox-mod) {};
+	rockbox-mod = super.libsForQt5.callPackage (import ./rockbox-mod) { };
 }

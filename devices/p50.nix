@@ -7,15 +7,18 @@
 {
 	imports = [ ../main.nix ];
 	hardware.bluetooth.enable = true;
-	hardware.pulseaudio.enable = true;
-	nixpkgs.config.pulseaudio = true;
-	environment.systemPackages = with pkgs; [ pavucontrol ];
+	hardware.pulseaudio.enable = false;
+	sound.enable = true;
+	nixpkgs.config.pulseaudio = false;
+	environment.systemPackages = with pkgs; [ bluez-alsa ];
 	networking.hostName = "memepad";
+	boot.kernelPackages = pkgs.linuxPackages_latest;
+	programs.light.enable = true;
 	hardware.bumblebee = {
 		enable = true;
 		connectDisplay = true;
 		pmMethod = "bbswitch";
-		driver = "nouveau";
+		driver = "nvidia";
 	};
 
 
