@@ -9,6 +9,7 @@
 		proggyfonts
 		nerdfonts
 		vistafonts
+		allTheIcons
 	];
 	fonts.fontconfig = {
 		penultimate.enable = true;
