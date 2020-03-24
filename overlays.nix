@@ -29,7 +29,7 @@ in
 	(import (builtins.fetchTarball {
 		 url = https://github.com/colemickens/nixpkgs-wayland/archive/master.tar.gz;
 		 }))
-	# (import ./pkgs/overlay.nix)
+	(import ./pkgs/overlay.nix)
 	];
 	nixpkgs.config.allowUnfree = true;
 }

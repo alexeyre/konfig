@@ -82,6 +82,30 @@
 		variant = "dvp";
 		options = ["ctrl:nocaps"];
 	};
+	programs.mpv = {
+		enable = true;
+		profiles = {
+			pip = {
+				ontop = true;
+				autofit = "384x216";
+				geometry = "99%:2%";
+			};
+		};
+		bindings = {
+			"Ctrl+p" = "run bspc -t floating ; run bspc -g sticky=on ; apply-profile pip";
+		};
+	};
+
+	programs.newsboat = {
+		enable = true;
+		extraConfig = ''
+			macro y set browser "mpv --profile=pip %u"; open-in-browser ; set browser "elinks %u"
+			'';
+		urls = [
+		{ tags = ["youtube"]; url = "https://www.youtube.com/feeds/videos.xml?channel_id=UC2eYFnH61tmytImy1mTYvhA"; } # lukesmithxyz
+		{ tags = ["youtube"]; url = "https://www.youtube.com/feeds/videos.xml?channel_id=UCwgKmJM4ZJQRJ-U5NjvR2dg"; } # commaai archive
+		];
+	};
 	xsession.enable = true;
 	xsession.windowManager.bspwm = {
 		enable = true;
@@ -95,6 +119,8 @@
 				desktop = "msg";
 				follow = true;
 			};
+			"Emacs".state = "tiled";
+			"mpv".state = "floating";
 		};
 		settings = {
 			top_padding = 22;
@@ -233,6 +259,8 @@
 			"super + shift + q" = "pkill -9 Xorg";
 			
 			"super + shift + f" = ''${bspc} node -t "\~fullscreen"'';
+			
+			"super + s" = "${bspc} node -g sticky -g locked";
 		};
 	};
 

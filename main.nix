@@ -10,24 +10,15 @@
 		nerdfonts
 		vistafonts
 		allTheIcons
+		etBook
 	];
 	fonts.fontconfig = {
-		penultimate.enable = true;
+		penultimate.enable = false;
 		defaultFonts = {
-			serif = [ "Cambria" ];
-			sansSerif = [ "Calibri" ];
+			serif = [ "ETBembo" ];
+			# sansSerif = [ "Calibri" ];
 			monospace = [ "FiraCode Nerd Font" ];
 		};
-		localConf = ''
-			<match target="font" >
-			<test name="family" compare="eq" ignore-blanks="true">
-			<string>ProggyTinyTT</string>
-			</test>
-			<edit name="antialias" mode="assign">
-			<bool>false</bool>
-			</edit>
-			</match>
-		'';
 	};
 	console = {
 		font = "Lat2-Terminus16";
