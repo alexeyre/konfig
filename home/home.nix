@@ -1,9 +1,10 @@
 { config, lib, pkgs, ... }:
 {
 	imports = [
-		./overlays.nix
+		../overlays.nix
 		./qute.nix
 		./emacs.nix
+		./term/term.nix
 	];
 	
 	programs.git = {
@@ -11,6 +12,7 @@
 		userName = "Alex Eyre";
 		userEmail = "alex@turm.pw";
 	};
+	services.udiskie.enable = true;
 	gtk = {
 		enable = true;
 		theme.package = pkgs.arc-theme;
@@ -24,23 +26,26 @@
 	};
 	services.compton = {
 		enable = true;
-		fade = true;
+		fade = false;
 		fadeDelta = 2;
-		inactiveDim = "0.2";
 	};
 	services.syncthing.enable = true;
 	programs.zsh = {
 		enable = true;
 		enableAutosuggestions = true;
 		defaultKeymap = "viins";
-		
+		dotDir = ".config/zsh";
+		sessionVariables = { ZSH_TMUX_AUTOSTART="true"; };
+		oh-my-zsh = {
+			enable = true;
+			theme = "agnoster";
+			plugins = [ "git" "tmux" ];
+		};
 	};
-
-
 	home.packages = with pkgs; [
+		discord-canary
 		kotatogram-desktop
 		gopass
-		kitty
 		rofi
 		qutebrowser
 		vim
@@ -49,12 +54,15 @@
 		tor-browser-bundle-bin
 		kotatogram-desktop
 		hexchat
+		anki
 
 		# rust userutils
 		cargo
 		rustc
 		bat
 		exa
+
+		toggldesktop
 
 		neovim
 
@@ -77,12 +85,29 @@
 	xsession.enable = true;
 	xsession.windowManager.bspwm = {
 		enable = true;
-		monitors = { eDP1 = [ "I" "II" "III" "IV" "V" ]; };
+		monitors = { eDP1 = [ "I" "II" "III" "IV" "V" "msg" ]; };
+		rules = {
+			"kotatogram-desktop" = {
+				desktop = "msg";
+				follow = true;
+			};
+			"hexchat" = {
+				desktop = "msg";
+				follow = true;
+			};
+		};
 		settings = {
 			top_padding = 22;
 			focus_follows_pointer = true;
 		};
-		startupPrograms = [ "systemctl --user restart polybar" ];
+		startupPrograms = let 
+			hexchat = "${pkgs.hexchat}/bin/hexchat";
+			tgram = "${pkgs.kotatogram-desktop}/bin/kotatogram-desktop";
+		in [ 
+			"systemctl --user restart polybar" 
+			"${hexchat}"
+			"${tgram}"
+		];
 	};
 	services.polybar = {
 		enable = true;
@@ -173,28 +198,41 @@
 		'';
 		script = "polybar main &";
 	};
+	programs.tmux = {
+		enable = true;
+		keyMode = "vi";
+		shortcut = "a";
+		plugins = with pkgs; [ tmuxPlugins.sensible tmuxPlugins.yank ];
+	};
 	services.sxhkd = {
 		enable = true;
 		keybindings = let
 			bspc = "${pkgs.bspwm}/bin/bspc";
 			launcher = "${pkgs.rofi}/bin/rofi -show run";
+			term = "${pkgs.st}/bin/st";
 		in
 		{
-			"super + Return" = "kitty";
+			"super + Return" = "${term}";
 			"super + ampersand" = "${bspc} desktop -f I";
 			"super + bracketleft" = "${bspc} desktop -f II";
 			"super + braceleft" = "${bspc} desktop -f III";
 			"super + braceright" = "${bspc} desktop -f IV";
 			"super + parenleft" = "${bspc} desktop -f V";
+			"super + bracketright" = "${bspc} desktop -f msg";
 			"super + p" = "${launcher}";
 			"super + shift + c" = "${bspc} node -c";
+
+			"super + shift + Return" = "${bspc} node -s next\.local";
 
 			"super + shift + ampersand" = "${bspc} node -d I";
 			"super + shift + bracketleft" = "${bspc} node -d II";
 			"super + shift + braceleft" = "${bspc} node -d III";
 			"super + shift + braceright" = "${bspc} node -d IV";
 			"super + shift + parenleft" = "${bspc} node -d V";
+			"super + shift + bracketright" = "${bspc} node -d msg";
 			"super + shift + q" = "pkill -9 Xorg";
+			
+			"super + shift + f" = ''${bspc} node -t "\~fullscreen"'';
 		};
 	};
 

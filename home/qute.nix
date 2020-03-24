@@ -28,4 +28,13 @@ in
 		source = "${oneechan}";
 		target = ".local/share/qutebrowser/greasemonkey/OneeChan.user.js";
 	};
+	home.file.hooktube = let
+		hooktube =
+			builtins.fetchurl
+				https://raw.githubusercontent.com/Tazeki/YouTube-HookTube/master/Reghook.js;
+	in
+	{
+		source = "${hooktube}";
+		target = ".local/share/qutebrowser/greasemonkey/Reghook.js";
+	};
 }
