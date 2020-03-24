@@ -9,11 +9,11 @@ in
 		source = "${dotfilesGit}/qutebrowser/config.py";
 		target = ".config/qutebrowser/config.py";
 	};
-	home.file.emacs = {
-		source = "${dotfilesGit}/emacs/";
-		target = ".config/emacs/";
-		recursive = true;
-	};
+	#home.file.emacs = {
+		#source = "${dotfilesGit}/emacs/";
+		#target = ".config/emacs/";
+		#recursive = true;
+	#};
 	home.file.fourchanX = let
 		fourchanX =
 		builtins.fetchurl

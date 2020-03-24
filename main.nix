@@ -6,8 +6,28 @@
 		./overlays.nix
 	];
 	fonts.fonts = with pkgs; [
+		proggyfonts
 		nerdfonts
+		vistafonts
 	];
+	fonts.fontconfig = {
+		penultimate.enable = true;
+		defaultFonts = {
+			serif = [ "Cambria" ];
+			sansSerif = [ "Calibri" ];
+			monospace = [ "FiraCode Nerd Font" ];
+		};
+		localConf = ''
+			<match target="font" >
+			<test name="family" compare="eq" ignore-blanks="true">
+			<string>ProggyTinyTT</string>
+			</test>
+			<edit name="antialias" mode="assign">
+			<bool>false</bool>
+			</edit>
+			</match>
+		'';
+	};
 	console = {
 		font = "Lat2-Terminus16";
 		keyMap = "dvorak-programmer";
@@ -26,18 +46,11 @@ SUBSYSTEM=="usb", ATTR{idVendor}=="05ac", MODE="0666", GROUP="wheel"
 		xorg.xorgserver
 		xorg.xf86videointel
 		gnupg
-		rockbox-mod
 		p7zip
 		wireguard-tools
 	];
 	virtualisation.virtualbox.host.enable = true;
 	environment.pathsToLink = ["${pkgs.xorg.libxcb}/lib/" "/share/zsh"];
-	services.emacs = {
-		enable = true;
-		package = pkgs.emacsGit;
-		install = true;
-		defaultEditor = true;
-	};
 	networking.firewall.enable = true;
 	networking.firewall.checkReversePath = "loose";
 	networking.firewall.allowedUDPPorts = [ 51820 ];
@@ -64,5 +77,8 @@ SUBSYSTEM=="usb", ATTR{idVendor}=="05ac", MODE="0666", GROUP="wheel"
         };
 	system.stateVersion = "19.09";
 	services.connman.enable = true;
-	networking.wireless.networks = { TANHETOADETHOADETHAOD = {}; };
+	networking.wireless = {
+		userControlled.enable = true;
+		networks = { TANHETOADETHOADETHAOD = {}; };
+	};
 }

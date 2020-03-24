@@ -14,6 +14,22 @@
 		fadeDelta = 2;
 		inactiveDim = "0.2";
 	};
+
+	programs.mpv = {
+		enable = true;
+		profiles = {
+			pip = {
+				ontop = true;
+				autofit = "384x216";
+				geometry = "99%:2%";
+			};
+		};
+		bindings = {
+			"Ctrl+p" = "run bspc -t floating ; run bspc -g sticky=on ; apply-profile pip";
+		};
+	};
+	programs.emacs.enable = true;
+
 	home.packages = with pkgs; [
 		kotatogram-desktop
 		gopass
@@ -27,9 +43,12 @@
 		rustc
 		bat
 		exa
-
-		st
 	];
+	programs.urxvt = {
+		enable = false;
+		fonts = [ "xft:ProggyTinyTT:size=11:antialias=false:autohint=true" ];
+		scroll.bar.enable = false;
+	};
 	services.random-background = {
 		enable = true;
 		imageDirectory = "%h/images/wallpapers";
@@ -40,6 +59,16 @@
 		variant = "dvp";
 		options = ["ctrl:nocaps"];
 	};
+	programs.newsboat = {
+		enable = true;
+		extraConfig = ''
+macro y set browser "mpv %u"; open-in-browser ; set browser "elinks %u"
+		'';
+		urls = [
+			{ tags = ["youtube"]; url = "https://www.youtube.com/feeds/videos.xml?channel_id=UC2eYFnH61tmytImy1mTYvhA"; } # lukesmithxyz
+			{ tags = ["youtube"]; url = "https://www.youtube.com/feeds/videos.xml?channel_id=UCwgKmJM4ZJQRJ-U5NjvR2dg"; } # commaai archive
+		];
+	};
 	xsession.enable = true;
 	xsession.windowManager.bspwm = {
 		enable = true;
@@ -47,6 +76,9 @@
 		settings = {
 			top_padding = 22;
 			focus_follows_pointer = true;
+		};
+		rules = {
+			"Emacs".state = "tiled";
 		};
 		startupPrograms = [ "systemctl --user restart polybar" ];
 	};
@@ -117,9 +149,10 @@
 		keybindings = let
 			bspc = "${pkgs.bspwm}/bin/bspc";
 			launcher = "${pkgs.rofi}/bin/rofi -show run";
+			term = "${pkgs.gnome3.gnome-terminal}/bin/gnome-terminal";
 		in
 		{
-			"super + Return" = "kitty";
+			"super + Return" = "${term}";
 			"super + ampersand" = "${bspc} desktop -f I";
 			"super + bracketleft" = "${bspc} desktop -f II";
 			"super + braceleft" = "${bspc} desktop -f III";
@@ -127,6 +160,12 @@
 			"super + parenleft" = "${bspc} desktop -f V";
 			"super + p" = "${launcher}";
 			"super + shift + c" = "${bspc} node -c";
+
+			"super + shift + ampersand" = "${bspc} node -d I";
+			"super + shift + bracketleft" = "${bspc} node -d II";
+			"super + shift + braceleft" = "${bspc} node -d III";
+			"super + shift + braceright" = "${bspc} node -d IV";
+			"super + shift + parenleft" = "${bspc} node -d V";
 		};
 	};
 
