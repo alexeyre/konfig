@@ -4,7 +4,7 @@
 		enable = true;
 		package = pkgs.emacsGit;
 	};
-	# services.emacs.enable = true;
+	services.emacs.enable = true;
  	# home.file.emacs = {
 		# source = "${dotfilesGit}/emacs/";
 		# target = ".emacs.d/";
