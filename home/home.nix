@@ -24,7 +24,7 @@
 		enable = true;
 		mapExpression = { Control_L = "Escape"; };
 	};
-	services.compton = {
+	services.picom = {
 		enable = true;
 		fade = false;
 		fadeDelta = 2;
@@ -34,27 +34,39 @@
 		enable = true;
 		enableAutosuggestions = true;
 		defaultKeymap = "viins";
+		initExtra = ''
+			source <(antibody init)
+			MODE_CURSOR_VICMD="#fc20bb block"
+			MODE_CURSOR_VIINS="#fc20bb blinking bar"
+			MODE_CURSOR_SEARCH="#fc20bb steady underline"
+			antibody bundle softmoth/zsh-vim-mode
+		'';
 		dotDir = ".config/zsh";
 		sessionVariables = { ZSH_TMUX_AUTOSTART="true"; };
 		oh-my-zsh = {
 			enable = true;
 			theme = "agnoster";
-			plugins = [ "git" "tmux" ];
+			plugins = [ "git" "tmux" "vi-mode" ];
 		};
 	};
 	home.packages = with pkgs; [
+		light
 		discord-canary
 		kotatogram-desktop
+		antibody
 		gopass
 		rofi
 		qutebrowser
 		vim
 		spotify
+		nodejs
 
 		tor-browser-bundle-bin
 		kotatogram-desktop
 		hexchat
 		anki
+
+		calibre
 
 		# rust userutils
 		cargo
@@ -73,7 +85,7 @@
 	];
 	services.random-background = {
 		enable = true;
-		imageDirectory = "%h/images/wallpapers";
+		imageDirectory = "%h/images/4chan/wg";
 	};
 	home.stateVersion = "19.09";
 	services.keybase.enable = true;
@@ -109,7 +121,9 @@
 	xsession.enable = true;
 	xsession.windowManager.bspwm = {
 		enable = true;
-		monitors = { eDP1 = [ "I" "II" "III" "IV" "V" "msg" ]; };
+		monitors = { 
+			eDP1 = [ "I" "II" "III" "IV" "V" "msg" ];
+			LVDS1 = [ "I" "II" "III" "IV" "V" "msg" ]; };
 		rules = {
 			"kotatogram-desktop" = {
 				desktop = "msg";
@@ -129,11 +143,7 @@
 		startupPrograms = let 
 			hexchat = "${pkgs.hexchat}/bin/hexchat";
 			tgram = "${pkgs.kotatogram-desktop}/bin/kotatogram-desktop";
-		in [ 
-			"systemctl --user restart polybar" 
-			"${hexchat}"
-			"${tgram}"
-		];
+		in [ ];
 	};
 	services.polybar = {
 		enable = true;
@@ -144,13 +154,21 @@
 				modules-left = "bspwm";
 				height = "22";
 				radius = 0;
-				font-0 = "FiraCode Nerd Font:size=12";
+				font-0 = "FiraCode Nerd Font:size=12;1";
+				font-1 = "Noto Color Emoji:scale=10:style=Regular;2";
+				module-margin-left = 0;
+				module-margin-right = 1;
+				overline-size = 1;
+				overline-color = "\${colors.iopink}";
+				line-size = 1;
+				line-color = "\${colors.red}";
 			};
 			"module/time" = {
 				type = "internal/date";
 				interval = 60;
 				time = "%H:%M";
 				label = "%time%";
+				label-foreground = "\${colors.green}";
 			};
 			"module/bspwm" = {
 				type = "internal/bspwm";
@@ -167,12 +185,24 @@
 
 				full-at = 99;
 				label-charging-foreground = "\${colors.iolime}";
-				label-charging-disforeground = "\${colors.red}";
+				label-discharging-foreground = "\${colors.red}";
 
 				label-charging = "%percentage%%";
 				label-discharging = "%percentage%%";
-				format-charging = "<label-charging> <ramp-capacity>+";
-				format-discharging = "<label-discharging> <ramp-capacity>-";
+				format-charging = "<label-charging> <animation-charging>";
+				format-discharging = "<label-discharging> <ramp-capacity>";
+
+				animation-charging-0 = "";
+				animation-charging-1 = "";
+				animation-charging-2 = "";
+				animation-charging-3 = "";
+				animation-charging-4 = "";
+				animation-charging-5 = "";
+				animation-charging-6 = "";
+				animation-charging-7 = "";
+				animation-charging-8 = "";
+				animation-charging-9 = "";
+				animation-charging-framerate = 250;
 
 				ramp-capacity-0 = "";
 				ramp-capacity-1 = "";

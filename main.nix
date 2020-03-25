@@ -6,17 +6,19 @@
 		./overlays.nix
 	];
 	fonts.fonts = with pkgs; [
-		proggyfonts
 		nerdfonts
-		vistafonts
 		allTheIcons
 		etBook
+		noto-fonts
+		noto-fonts-cjk
+		noto-fonts-extra
+		noto-fonts-emoji
 	];
 	fonts.fontconfig = {
-		penultimate.enable = false;
+		penultimate.enable = true;
 		defaultFonts = {
 			serif = [ "ETBembo" ];
-			# sansSerif = [ "Calibri" ];
+			sansSerif = [ "Noto Sans" ];
 			monospace = [ "FiraCode Nerd Font" ];
 		};
 	};
@@ -36,6 +38,7 @@ SUBSYSTEM=="usb", ATTR{idVendor}=="05ac", MODE="0666", GROUP="wheel"
 		enable = true;
 		lockerCommand = "${pkgs.slock}/bin/slock";
 	};
+	services.tlp.enable = true;
 	programs.slock.enable = true;
 	environment.systemPackages = with pkgs; [ 
 		home-manager-unstable.home-manager 
