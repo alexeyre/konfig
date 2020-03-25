@@ -52,6 +52,7 @@
 	xresources.properties = {
 		"*.font" = "FiraCode Nerd Font:pixelsize=18:antialias=true:autohint=true;";
 	};
+	programs.obs-studio.enable = true;
 	home.packages = with pkgs; [
 		light
 		discord-canary
@@ -59,7 +60,6 @@
 		antibody
 		gopass
 		qutebrowser
-		obs-studio
 		zoom-us
 		dmenu
 		vim
@@ -90,7 +90,7 @@
 	];
 	services.random-background = {
 		enable = true;
-		imageDirectory = "%h/images/4chan/wg";
+		imageDirectory = "%h/images/wallpapers";
 	};
 	home.stateVersion = "19.09";
 	services.keybase.enable = true;
@@ -127,17 +127,11 @@
 	xsession.windowManager.bspwm = {
 		enable = true;
 		monitors = { 
-			eDP1 = [ "I" "II" "III" "IV" "V" "msg" ];
-			LVDS1 = [ "I" "II" "III" "IV" "V" "msg" ]; };
+			eDP1 = [ "I" "II" "III" "IV" "V" "msg" ]; };
 		rules = {
-			"kotatogram-desktop" = {
-				desktop = "msg";
-				follow = true;
-			};
-			"hexchat" = {
-				desktop = "msg";
-				follow = true;
-			};
+			"KotatogramDesktop".desktop = "msg";
+			"Hexchat".desktop = "msg";
+			"Microsoft Teams - Preview".desktop = "msg";
 			"Emacs".state = "tiled";
 			"mpv".state = "floating";
 		};
@@ -148,7 +142,13 @@
 		startupPrograms = let 
 			hexchat = "${pkgs.hexchat}/bin/hexchat";
 			tgram = "${pkgs.kotatogram-desktop}/bin/kotatogram-desktop";
-		in [ ];
+			teams = "${pkgs.teams}/bin/teams";
+			in [ 
+				"systemctl --user restart polybar.service"
+				"${tgram}"
+				"${hexchat}"
+				"${teams}"
+			];
 	};
 	services.polybar = {
 		enable = true;
@@ -273,6 +273,8 @@
 			term = "${config.home.sessionVariables.TERMINAL}";
 		in
 		{
+			"super + shift + d" = "systemctl --user restart random-background.service";
+			"super + shift + r" = "systemctl --user restart sxhkd.service";
 			"super + Return" = "${term}";
 			"super + ampersand" = "${bspc} desktop -f I";
 			"super + bracketleft" = "${bspc} desktop -f II";
@@ -282,6 +284,7 @@
 			"super + bracketright" = "${bspc} desktop -f msg";
 			"super + p" = "${launcher}";
 			"super + shift + c" = "${bspc} node -c";
+			"super + space" = "${bspc} node -t \\~floating";
 
 			"super + shift + Return" = "${bspc} node -s next\.local";
 
@@ -293,7 +296,7 @@
 			"super + shift + bracketright" = "${bspc} node -d msg";
 			"super + shift + q" = "pkill -9 Xorg";
 			
-			"super + shift + f" = ''${bspc} node -t "\~fullscreen"'';
+			"super + shift + f" = "${bspc} node -t \\~fullscreen";
 			
 			"super + s" = "${bspc} node -g sticky -g locked";
 		};
