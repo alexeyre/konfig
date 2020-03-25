@@ -24,7 +24,7 @@
 		enable = true;
 		mapExpression = { Control_L = "Escape"; };
 	};
-	services.compton = {
+	services.picom = {
 		enable = true;
 		fade = false;
 		fadeDelta = 2;
@@ -42,14 +42,20 @@
 			plugins = [ "git" "tmux" ];
 		};
 	};
+	xresources.properties = {
+		"*.font" = "FiraCode Nerd Font:pixelsize=18:antialias=true:autohint=true;";
+	};
 	home.packages = with pkgs; [
 		discord-canary
 		kotatogram-desktop
 		gopass
-		rofi
 		qutebrowser
+		obs-studio
+		zoom-us
+		dmenu
 		vim
 		spotify
+		teams
 
 		tor-browser-bundle-bin
 		kotatogram-desktop
@@ -234,8 +240,8 @@
 		enable = true;
 		keybindings = let
 			bspc = "${pkgs.bspwm}/bin/bspc";
-			launcher = "${pkgs.rofi}/bin/rofi -show run";
-			term = "${pkgs.st}/bin/st";
+			launcher = "${pkgs.dmenu}/bin/dmenu_run";
+			term = "${config.home.sessionVariables.TERMINAL}";
 		in
 		{
 			"super + Return" = "${term}";

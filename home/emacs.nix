@@ -2,7 +2,7 @@
 {	
 	programs.emacs = {
 		enable = true;
-		#package = pkgs.emacsGit;
+		package = pkgs.emacsGit;
 	};
 	# services.emacs.enable = true;
  	# home.file.emacs = {

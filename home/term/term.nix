@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, fetchurl, ... }:
 
 {
 	imports = [ ./st.nix ];
@@ -10,5 +10,5 @@
 			font_size = "14.0";
 		};
 	};
-	programs.st.enable = true;
+  programs.st.enable = true;
 }
