@@ -3,29 +3,40 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, lib, ... }:
-
+let
+  nvidia-offload = pkgs.writeShellScriptBin "nvidia-offload" ''
+    export __NV_PRIME_RENDER_OFFLOAD=1
+    export __NV_PRIME_RENDER_OFFLOAD_PROVIDER=NVIDIA-G0
+    export __GLX_VENDOR_LIBRARY_NAME=nvidia
+    export __VK_LAYER_NV_optimus=NVIDIA_only
+    exec -a "$0" "$@"
+  '';
+in
 {
 	imports = [ ../main.nix ];
 	hardware.bluetooth.enable = true;
-	hardware.pulseaudio.enable = false;
+	hardware.pulseaudio.enable = true;
+	hardware.pulseaudio.package = pkgs.pulseaudioFull;
 	sound.enable = true;
-	nixpkgs.config.pulseaudio = false;
-	environment.systemPackages = with pkgs; [ bluez-alsa ];
+	nixpkgs.config.pulseaudio = true;
+	services.blueman.enable = true;
 	networking.hostName = "memepad";
 	boot.kernelPackages = pkgs.linuxPackages_latest;
 	programs.light.enable = true;
-	hardware.bumblebee = {
-		enable = true;
-		connectDisplay = true;
-		pmMethod = "bbswitch";
-		driver = "nvidia";
-	};
-
-
 	boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
 	boot.initrd.kernelModules = [ "dm-snapshot" ];
 	boot.kernelModules = [ "kvm-intel" ];
 	boot.extraModulePackages = [ ];
+	services.xserver.dpi = 96;
+	services.xserver.videoDrivers = [ "nvidia" ];
+	environment.systemPackages = [ nvidia-offload ];
+	hardware.nvidia.modesetting.enable = true;
+	hardware.nvidia.prime = {
+		# offload.enable = true;
+		sync.enable = true;
+		intelBusId = "PCI:0:02:0";
+		nvidiaBusId = "PCI:1:00:0";
+	};
 
 	fileSystems."/" =
 	{ device = "/dev/disk/by-uuid/1cc49fed-355d-4190-9cb3-cc63564050b6";

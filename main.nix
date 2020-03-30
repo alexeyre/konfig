@@ -40,16 +40,17 @@ SUBSYSTEM=="usb", ATTR{idVendor}=="05ac", MODE="0666", GROUP="wheel"
 	};
 	services.tlp.enable = true;
 	programs.slock.enable = true;
+	networking.extraHosts = let x = builtins.fetchurl "https://easylist.to/easylist/easylist.txt"; in ''
+	'';
 	environment.systemPackages = with pkgs; [ 
 		home-manager-unstable.home-manager 
+		fwupd
+		aircrack-ng
 		git
 		unzip
-		xorg.xorgserver
-		xorg.xf86videointel
 		gnupg
 		p7zip
 		wireguard-tools
-		slock
 	];
 	environment.pathsToLink = ["${pkgs.xorg.libxcb}/lib/" "/share/zsh"];
 	networking.firewall.enable = true;
@@ -64,7 +65,6 @@ SUBSYSTEM=="usb", ATTR{idVendor}=="05ac", MODE="0666", GROUP="wheel"
                 xkbOptions = "ctrl:nocaps";
                 libinput.enable = true;
 		libinput.tapping = false;
-                videoDrivers = [ "intel" ];
                 desktopManager = {
                         xterm.enable = false;
                 };
