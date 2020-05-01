@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, fetchgit, ... }:
 let
   cfg = config.programs.st;
 in {
