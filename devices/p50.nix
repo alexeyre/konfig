@@ -21,7 +21,6 @@ in
 	nixpkgs.config.pulseaudio = true;
 	services.blueman.enable = true;
 	networking.hostName = "memepad";
-	boot.kernelPackages = pkgs.linuxPackages_latest;
 	programs.light.enable = true;
 	boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
 	boot.initrd.kernelModules = [ "dm-snapshot" ];
@@ -30,7 +29,6 @@ in
 	services.xserver.dpi = 96;
 	services.xserver.videoDrivers = [ "nvidia" ];
 	environment.systemPackages = [ nvidia-offload ];
-	hardware.nvidia.modesetting.enable = true;
 	hardware.nvidia.prime = {
 		# offload.enable = true;
 		sync.enable = true;

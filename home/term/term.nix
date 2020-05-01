@@ -7,7 +7,7 @@
 		font.package = pkgs.nerdfonts;
 		font.name = "FiraCode Nerd Font";
 		settings = {
-			font_size = "14.0";
+			font_size = "11.0";
 		};
 	};
   programs.st.enable = true;
