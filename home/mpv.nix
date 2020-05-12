@@ -1,5 +1,4 @@
 {
-
   programs.mpv = {
     enable = true;
     profiles = {
@@ -11,14 +10,15 @@
     };
     config = {
       profile = "gpu-hq,pip";
-      scale= "ewa_lanczossharp";
+      scale = "ewa_lanczossharp";
       cscale = "ewa_lanczossharp";
       video-sync = "display-resample";
       ytdl-format = "bestvideo+bestaudio";
       tscale = "oversample";
     };
     bindings = {
-      "Ctrl+p" = "run bspc -t floating ; run bspc -g sticky=on ; apply-profile pip";
+      "Ctrl+p" =
+        "run bspc -t floating ; run bspc -g sticky=on ; apply-profile pip";
     };
   };
 }

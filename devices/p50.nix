@@ -11,79 +11,105 @@ let
     export __VK_LAYER_NV_optimus=NVIDIA_only
     exec -a "$0" "$@"
   '';
-in
-{
-	imports = [ ../main.nix ];
-	hardware.bluetooth.enable = true;
-	hardware.pulseaudio.enable = true;
-	hardware.pulseaudio.package = pkgs.pulseaudioFull;
-	sound.enable = true;
-	nixpkgs.config.pulseaudio = true;
-	services.blueman.enable = true;
-	networking.hostName = "memepad";
-	programs.light.enable = true;
-	boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
-	boot.initrd.kernelModules = [ "dm-snapshot" ];
-	boot.kernelModules = [ "kvm-intel" ];
-	boot.extraModulePackages = [ ];
-	services.xserver.dpi = 96;
-	services.xserver.videoDrivers = [ "nvidia" ];
-	environment.systemPackages = [ nvidia-offload ];
-	hardware.nvidia.prime = {
-		# offload.enable = true;
-		sync.enable = true;
-		intelBusId = "PCI:0:02:0";
-		nvidiaBusId = "PCI:1:00:0";
-	};
+in {
+  imports = [ ../main.nix ];
+  hardware.bluetooth.enable = true;
+  hardware.pulseaudio.enable = true;
+  hardware.pulseaudio.package = pkgs.pulseaudioFull;
+  sound.enable = true;
+  nixpkgs.config.pulseaudio = true;
+  virtualisation.virtualbox.host = {
+    enable = true;
+    enableExtensionPack = true;
+  };
+  services.fprintd = {
+    enable = true;
+    package = pkgs.fprintd-thinkpad;
+  };
+  security.pam.services.login.fprintAuth = true;
+  security.pam.services.sddm.fprintAuth = true;
+  xdg.portal = {
+    enable = true;
+    gtkUsePortal = true;
+  };
+  qt5 = {
+    enable = true;
+    style = "gtk2";
+    platformTheme = "gtk2";
+  };
+  networking.hostName = "memepad";
+  programs.light.enable = true;
+  boot.initrd.availableKernelModules =
+    [ "xhci_pci" "ahci" "nvme" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
+  boot.initrd.kernelModules = [ "dm-snapshot" ];
+  boot.kernelParams = [ "usbcore.autosuspend=-1" ];
+  boot.kernelModules = [ "kvm-intel" ];
+  boot.extraModulePackages = [ ];
+  hardware.acpilight.enable = true;
+  services.colord.enable = true;
+  services.xserver.dpi = 96;
+  services.xserver.videoDrivers = [ "nvidia" ];
+  environment.systemPackages = [ nvidia-offload ];
+  services.printing = {
+    enable = true;
+    drivers = [ pkgs.samsung-unified-linux-driver ];
+  };
+  hardware.nvidia.prime = {
+    #offload.enable = true;
+    sync.enable = true;
+    intelBusId = "PCI:0:02:0";
+    nvidiaBusId = "PCI:1:00:0";
+  };
+  hardware.nvidia.modesetting.enable = true;
 
-	fileSystems."/" =
-	{ device = "/dev/disk/by-uuid/1cc49fed-355d-4190-9cb3-cc63564050b6";
-		fsType = "btrfs";
-	};
+  fileSystems."/" = {
+    device = "/dev/disk/by-uuid/1cc49fed-355d-4190-9cb3-cc63564050b6";
+    fsType = "btrfs";
+  };
 
-	fileSystems."/boot/efi" =
-	{ device = "/dev/disk/by-uuid/3040-B4CD";
-		fsType = "vfat";
-	};
-	hardware.enableRedistributableFirmware = true;
+  fileSystems."/boot/efi" = {
+    device = "/dev/disk/by-uuid/3040-B4CD";
+    fsType = "vfat";
+  };
+  hardware.enableRedistributableFirmware = true;
 
-	swapDevices =
-		[ { device = "/dev/disk/by-uuid/e71b529b-84fb-416e-b832-093ae522750f"; }
-		];
+  swapDevices =
+    [{ device = "/dev/disk/by-uuid/e71b529b-84fb-416e-b832-093ae522750f"; }];
 
-		nix.maxJobs = lib.mkDefault 8;
-		powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
+  nix.maxJobs = lib.mkDefault 8;
+  powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
+  powerManagement.enable = true;
+  powerManagement.powertop.enable = true;
 
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.efi.efiSysMountPoint = "/boot/efi";
+  boot.loader.grub = {
+    enable = true;
+    device = "nodev";
+    version = 2;
+    efiSupport = true;
+    enableCryptodisk = true;
+    extraInitrd = /boot/initrd.keys.gz;
+  };
 
-		boot.loader.systemd-boot.enable = true;
-		boot.loader.efi.canTouchEfiVariables = true;
-		boot.loader.efi.efiSysMountPoint = "/boot/efi";
-		boot.loader.grub = {
-			enable = true;
-			device = "nodev";
-			version = 2;
-			efiSupport = true;
-			enableCryptodisk = true;
-			extraInitrd = /boot/initrd.keys.gz;
-		};
+  boot.initrd.luks.devices = {
+    "root" = {
+      device = "/dev/disk/by-uuid/fee1574b-e92f-4115-9932-9a49a07359ed";
+      preLVM = true;
+      keyFile = "/keyfile0.bin";
+      allowDiscards = true;
+    };
+  };
 
-		boot.initrd.luks.devices = {
-		"root" = {
-			device = "/dev/disk/by-uuid/fee1574b-e92f-4115-9932-9a49a07359ed";
-			preLVM = true;
-			keyFile = "/keyfile0.bin";
-			allowDiscards = true;
-		};
-		};
-
-# Data mount
-		fileSystems."/data" = {
-			device = "/dev/disk/by-uuid/f00b20fd-daaa-424a-af83-2722da19d773";
-			encrypted = {
-				enable = true;
-				label = "crypted-data";
-				blkDev = "/dev/disk/by-uuid/833196d8-c5a1-4ddc-82f1-d0493936e3f9";
-				keyFile = "/keyfile1.bin";
-			};
-		};
+  # Data mount
+  fileSystems."/data" = {
+    device = "/dev/disk/by-uuid/f00b20fd-daaa-424a-af83-2722da19d773";
+    encrypted = {
+      enable = true;
+      label = "crypted-data";
+      blkDev = "/dev/disk/by-uuid/833196d8-c5a1-4ddc-82f1-d0493936e3f9";
+      keyFile = "/keyfile1.bin";
+    };
+  };
 }
