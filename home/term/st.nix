@@ -1,6 +1,5 @@
 { config, pkgs, lib, fetchgit, ... }:
-let
-  cfg = config.programs.st;
+let cfg = config.programs.st;
 in {
   options = {
     programs.st = {

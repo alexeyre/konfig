@@ -1,11 +1,8 @@
-{pkgs, ...}:
-{
+{ pkgs, ... }: {
   services.polybar = {
-    enable = true;
+    enable = false;
     config = {
-      "global/wm" = {
-        margin_top = 22;
-      };
+      "global/wm" = { margin_top = 22; };
       "bar/main" = {
         width = "100%";
         modules-right = "eth wlan battery time";
@@ -39,7 +36,7 @@
         enable-click = true;
         fuzzy-match = true;
         label-separator = " |";
-        label-focused-foreground = "\${colors.iopink}"; 
+        label-focused-foreground = "\${colors.iopink}";
         label-empty-foreground = "\${colors.grey}";
         format = "<label-monitor> :: <label-state> ";
       };
@@ -84,13 +81,13 @@
       "module/wlan" = {
         type = "internal/network";
         interface = "wlp4s0";
-        label-connected = "\%essid\%";
+        label-connected = "%essid%";
         label-disconnected = "";
       };
       "module/eth" = {
         type = "internal/network";
         interface = "enp0s31f6";
-        label-connected = "\%local_ip\%";
+        label-connected = "%local_ip%";
         label-disconnected = "";
       };
     };
@@ -129,6 +126,7 @@
       iopink    = #fc20bb
       ioteal    = #20fcbb
     '';
-    script = let awk = "${pkgs.gawk}/bin/awk"; in "for i in \$(polybar -m | ${awk} -F: '{print \$1}'); do MONITOR=\$i polybar main & done";
+    script = let awk = "${pkgs.gawk}/bin/awk";
+    in "for i in $(polybar -m | ${awk} -F: '{print $1}'); do MONITOR=$i polybar main & done";
   };
 }

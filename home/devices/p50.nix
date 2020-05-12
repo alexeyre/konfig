@@ -1,4 +1,1 @@
-{ lib, pkgs, ... }:
-{
-	imports = [ ../home.nix ];
-}
+{ lib, pkgs, ... }: { imports = [ ../home.nix ]; }

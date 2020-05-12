@@ -1,4 +1,3 @@
-
 { fetchFromGitHub }:
 
 let
@@ -17,7 +16,5 @@ in fetchFromGitHub {
     cp ${name}-${version}/fonts/*.ttf $out/share/fonts/truetype
   '';
 
-  meta = {
-    description = "fonts for allTheIcons";
-  };
+  meta = { description = "fonts for allTheIcons"; };
 }

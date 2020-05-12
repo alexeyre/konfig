@@ -1,6 +1,8 @@
 self: super: {
-	# rockbox-mod = super.libsForQt5.callPackage (import ./rockbox-mod) { };
-	allTheIcons = super.callPackage (import ./allTheIcons) { };
-	etBook = super.callPackage (import ./etBook) { };
-        nativefier = super.callPackage (import ./nativefier) { };
+  # rockbox-mod = super.libsForQt5.callPackage (import ./rockbox-mod) { };
+  allTheIcons = super.callPackage (import ./allTheIcons) { };
+  etBook = super.callPackage (import ./etBook) { };
+  croscore = super.callPackage (import ./croscore) { };
+  apple-color-emoji = super.callPackage (import ./apple-color-emoji) { };
+  alex-npm-packages = super.callPackage (import ./npm-stuff) { };
 }
