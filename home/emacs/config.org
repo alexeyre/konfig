@@ -1,0 +1,491 @@
+#+startup: overview
+* Defuns
+**** Restart Emacs
+#+BEGIN_SRC emacs-lisp
+(use-package restart-emacs
+:commands(restart-emacs))
+#+END_SRC
+**** Reload
+Reloads the configuration
+#+BEGIN_SRC emacs-lisp
+(defun alex/reload ()
+"Reloads the config.org file, totally."
+(interactive)
+(delete-file (expand-file-name "config.el" user-emacs-directory))
+(restart-emacs))
+(provide 'alex/reload)
+#+END_SRC
+**** Config
+#+BEGIN_SRC emacs-lisp
+(defun alex/config ()
+(interactive)
+(find-file (expand-file-name "config.org" user-emacs-directory)))
+(provide 'alex/config)
+#+END_SRC
+
+**** Notes
+#+BEGIN_SRC emacs-lisp
+(defun alex/note ()
+(interactive)
+(projectile-find-file-in-directory "~/notes"))
+(provide 'alex/note)
+#+END_SRC
+* Workflow
+**** Magit
+#+BEGIN_SRC emacs-lisp
+(use-package magit
+  :commands(magit))
+#+END_SRC
+**** Projectile
+#+BEGIN_SRC emacs-lisp
+(use-package projectile
+  :straight ripgrep
+  :straight projectile
+  :config(setq projectile-completion-system 'ivy
+		projectile-project-search-path '("~/projects")
+		projectile-indexing-method 'alien))
+#+END_SRC
+Counsel-projectile replaces a bunch of the projectile functions to use ivy.
+#+BEGIN_SRC emacs-lisp
+(use-package counsel-projectile
+  :after projectile
+  :commands(counsel-projectile
+	    counsel-projectile-switch-project
+	    counsel-projectile-find-file))
+#+END_SRC
+**** Company
+#+BEGIN_SRC emacs-lisp
+(use-package company
+  :hook(prog-mode . company-mode))
+#+END_SRC
+#+BEGIN_SRC emacs-lisp
+(use-package company-jedi
+  :after company
+  :hook(python-mode . (lambda () (add-to-list 'company-backends 'company-jedi))))
+#+END_SRC
+
+**** Yasnippet
+#+BEGIN_SRC emacs-lisp
+(use-package yasnippet
+  :after yasnippet-snippets
+  :after evil-leader
+  :config(evil-leader/set-key "i" 'yas-insert-snippet)
+  :hook(after-init . yas-global-mode))
+#+END_SRC
+#+BEGIN_SRC emacs-lisp
+(use-package yasnippet-snippets)
+#+END_SRC
+#+BEGIN_SRC emacs-lisp
+(use-package doom-snippets
+  :disabled t
+  :straight(doom-snippets :type git :host github :repo "hlissner/doom-snippets")
+  :after yasnippet)
+#+END_SRC
+**** Aggressive Indent
+#+BEGIN_SRC emacs-lisp
+(use-package aggressive-indent
+  :disabled t
+  :hook(prog-mode . aggressive-indent-mode))
+#+END_SRC
+
+**** Ace
+#+BEGIN_SRC emacs-lisp
+(use-package ace-window
+  :config(setq aw-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s))
+  :bind("C-x o" . ace-window))
+#+END_SRC
+**** Multiterm
+#+BEGIN_SRC emacs-lisp
+(use-package multi-term
+  :commands(multi-term
+            multi-term-next
+            multi-term-prev
+            multi-term-dedicated-open
+            multi-term-dedicated-close
+            multi-term-dedicated-toggle
+            multi-term-dedicated-select)
+  :config(setq multi-term-program "/run/current-system/sw/bin/bash"))
+#+END_SRC
+
+**** Flycheck
+#+BEGIN_SRC emacs-lisp
+(use-package flycheck
+  :hook(prog-mode . flycheck-mode))
+#+END_SRC
+
+* Keyboard
+**** Evil
+I don't like RSI, so I use evil. Don't @ me.
+#+BEGIN_SRC emacs-lisp
+(setq evil-want-keybinding nil)
+(use-package evil
+  :hook(after-init . evil-mode))
+#+END_SRC
+Evil works better if you force modes to cooperate.
+#+BEGIN_SRC emacs-lisp
+(use-package evil-collection
+  :init(evil-collection-init))
+#+END_SRC
+#+BEGIN_SRC emacs-lisp
+(use-package evil-magit
+  :after evil
+  :after magit
+  :config(setq evil-magit-state 'normal))
+#+END_SRC
+take me to your leader lmao
+#+BEGIN_SRC emacs-lisp
+(defun alex/goto-dashboard ()
+  "switch to dashboard"
+  (interactive)
+  (switch-to-buffer "*dashboard*")
+  (dashboard-refresh-buffer))
+(provide 'alex/goto-dashboard)
+(use-package evil-leader
+  :hook(evil-mode . (lambda () (global-evil-leader-mode)))
+  :config
+  ;; globals
+    (evil-leader/set-key
+    "p" 'counsel-projectile-switch-project
+    "o" 'counsel-projectile-find-file
+    "e" 'find-file
+    "b" 'switch-to-buffer
+    "k" 'kill-buffer
+    "d" 'alex/goto-dashboard
+    "r" 'restart-emacs)
+    ;; org-only
+    (evil-leader/set-key-for-mode 'org-mode
+    "a" 'org-insert-heading-after-current))
+#+END_SRC
+**** I'm too used to tmux
+#+BEGIN_SRC emacs-lisp
+(defun setup-input-decode-map ()
+  (define-key input-decode-map (kbd "C-a") (kbd "C-x"))
+  (define-key input-decode-map (kbd "C-'") (kbd "M-x"))
+  (define-key input-decode-map (kbd "M-a") (kbd "M-x")))
+(setup-input-decode-map)
+(global-set-key (kbd "C-x |") (lambda () (interactive)(split-window-horizontally) (other-window 1)))
+(global-set-key (kbd "C-x _") (lambda () (interactive)(split-window-vertically) (other-window 1)))
+(global-set-key (kbd "C-x \\") (lambda () (interactive)(split-window-horizontally) (other-window 1)))
+(global-set-key (kbd "C-x -") (lambda () (interactive)(split-window-vertically) (other-window 1)))
+#+END_SRC
+**** Miscellaneous Binds
+FUTURE ALEX
+DOES THIS BIND REALLY BELONG HERE
+OR ARE YOU BEING LAZY?
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-x t t") 'multi-term)
+#+END_SRC
+
+* User Interface
+**** Battery
+#+BEGIN_SRC emacs-lisp
+(add-hook #'after-init-hook 'display-battery-mode)
+#+END_SRC
+**** Font Size
+#+BEGIN_SRC emacs-lisp
+(set-face-attribute 'default nil :height 110)
+#+END_SRC
+**** Font
+#+BEGIN_SRC emacs-lisp
+(set-frame-font "FiraCode Nerd Font 12" nil t)
+#+END_SRC
+
+** Libraries
+**** All The Icons
+This is required for pretty icons etc.
+#+BEGIN_SRC emacs-lisp
+(use-package all-the-icons
+    :demand t)
+#+END_SRC
+** Meta UI
+**** Dashboard
+#+BEGIN_SRC emacs-lisp
+(use-package dashboard
+    :config
+    (setq dashboard-items '((recents  . 5)
+                            (bookmarks . 5)
+                            (projects . 5)
+                            (agenda . 5)
+                            (registers . 5))
+                            dashboard-startup-banner 3)
+    (dashboard-setup-startup-hook))
+#+END_SRC
+**** Counsel/Ivy
+  Better M-x and cool stuff
+  #+BEGIN_SRC emacs-lisp
+  (use-package ivy
+:straight ivy
+:straight counsel
+:init(counsel-mode))
+  #+END_SRC
+**** Modeline
+#+BEGIN_SRC emacs-lisp
+(use-package doom-modeline
+  :config(setq doom-modeline-height 1)
+  :custom-face
+  (mode-line ((t (:height 100))))
+  (mode-line-inactive ((t (:height 100))))
+  :hook(after-init . doom-modeline-mode))
+#+END_SRC
+**** Dimmer
+#+BEGIN_SRC emacs-lisp
+(use-package dimmer
+  :config
+  (dimmer-configure-magit)
+  (dimmer-configure-org)
+  :hook(after-init . dimmer-mode))
+#+END_SRC
+**** Modern Fringes
+#+BEGIN_SRC emacs-lisp
+(use-package modern-fringes
+  :straight(modern-fringes :type git :host github :repo "SpecialBomb/emacs-modern-fringes")
+  :hook(after-init . modern-fringes-mode))
+#+END_SRC
+
+**** Indent Guide
+#+BEGIN_SRC emacs-lisp
+(use-package highlight-indent-guides
+  :config(setq highlight-indent-guides-method 'character)
+  :hook(prog-mode . highlight-indent-guides-mode))
+#+END_SRC
+
+**** Line Numbers
+#+BEGIN_SRC emacs-lisp
+(defun display-line-numbers/relative ()
+  "Relative"
+  (interactive)
+  (when (not (eq major-mode 'org-mode))
+    (menu-bar--display-line-numbers-mode-relative)))
+
+(defun display-line-numbers/absolute ()
+  "Absolute"
+  (interactive)
+  (when (not (eq major-mode 'org-mode))
+    (menu-bar--display-line-numbers-mode-absolute)))
+(use-package display-line-numbers
+  :hook
+  (evil-insert-state-exit . (lambda () (display-line-numbers/relative)))
+  (evil-insert-state-entry . (lambda () (display-line-numbers/absolute)))
+  (prog-mode . display-line-numbers-mode)
+  (org-mode . (lambda () (display-line-numbers-mode -1))))
+#+END_SRC
+
+** Colours
+#+BEGIN_SRC emacs-lisp
+(defun alex/day ()
+  "Day mode"
+  (interactive)
+  (load-theme 'doom-acario-light t)
+  (doom-themes-org-config))
+(defun alex/night ()
+  "Night mode"
+  (interactive)
+  (load-theme 'doom-Iosvkem t)
+  (doom-themes-org-config))
+(provide 'alex/day)
+(provide 'alex/night)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package doom-themes
+  ;; :if(display-graphic-p)
+  :after org
+  :config
+  (load-theme 'doom-acario-light t)
+  (doom-themes-org-config))
+#+END_SRC
+* Org
+Oh baby, there's some shit here boys.
+#+BEGIN_SRC emacs-lisp
+(setq load-path (cl-remove-if (lambda (x) (string-match-p "org$" x)) load-path))
+  (use-package org
+    :straight org-plus-contrib
+    :mode("\\.org$" . org-mode)
+    :commands(org-mode
+	      org-capture
+	      org-reload)
+    :init
+    (setq org-directory "~/notes"
+	  org-default-notes-file (expand-file-name "inbox.org" org-directory)
+	  org-agenda-files (list (expand-file-name org-directory)))
+    (org-reload)
+    :config(setq org-startup-indented t
+	org-bullets-bullet-list '(" ") ;; no bullets, needs org-bullets package
+	org-ellipsis "  " ;; folding symbol
+	org-pretty-entities t
+	org-hide-emphasis-markers t
+	;; show actually italicized text instead of /italicized text/
+	org-agenda-block-separator ""
+	org-fontify-whole-heading-line t
+	org-fontify-done-headline t
+	org-fontify-quote-and-verse-blocks t
+       fill-column 140)
+    :hook
+    (org-mode . (lambda () (progn
+	(set-window-buffer nil (current-buffer))
+	(setq left-margin-width 2
+	    right-margin-width 2
+	    header-line-format " "
+	    line-spacing 0.1))))
+    (org-mode . auto-fill-mode)
+    :custom-face
+    (org-document-title ((t (:height 1.75))))
+    (org-level-1 ((t (:inherit outline-1 :height 1.5))))
+    (org-level-2 ((t (:inherit outline-2 :height 1.4))))
+    (org-level-3 ((t (:inherit outline-3 :height 1.3))))
+    (org-level-4 ((t (:inherit outline-4 :height 1.2))))
+    (org-level-5 ((t (:inherit outline-5 :height 1.1))))
+    (org-level-6 ((t (:inherit outline-6 :height 1.0))))
+    (org-level-7 ((t (:inherit outline-7 :height 1.0))))
+    (org-level-8 ((t (:inherit outline-8 :height 1.0)))))
+#+END_SRC
+**** Mixed Pitch Mode
+     #+BEGIN_SRC emacs-lisp
+     (use-package mixed-pitch
+     :after org
+     :custom-face(variable-pitch ((t (:family "ETBembo" :height 160))))
+     :hook(org-mode . mixed-pitch-mode))
+#+END_SRC
+**** Bullets
+#+BEGIN_SRC emacs-lisp
+(use-package org-bullets
+  :after org
+  :hook(org-mode . org-bullets-mode)
+  :config(setq org-bullets-bullet-list '(" ")))
+#+END_SRC
+**** Writeroom
+#+BEGIN_SRC emacs-lisp
+(use-package writeroom-mode
+  :commands(writeroom-mode))
+#+END_SRC
+**** Spacing
+#+BEGIN_SRC emacs-lisp
+ (use-package org-spacer
+    :straight (org-spacer :type git :host github :repo "dustinlacewell/org-spacer.el")
+    :config(setq org-spacer-element-blanks '((3 headline)
+					    (1 paragraph src-block table property-drawer))))
+#+END_SRC
+**** Pretty Tables
+#+BEGIN_SRC emacs-lisp
+(use-package org-pretty-table
+  :straight(org-pretty-table :type git :host github :repo "Fuco1/org-pretty-table")
+  :hook
+  (orgtbl-mode . org-pretty-table-mode)
+  (org-mode . org-pretty-table-mode))
+#+END_SRC
+**** Grip
+#+BEGIN_SRC emacs-lisp
+(use-package grip-mode
+  :commands(grip-mode))
+#+END_SRC
+
+**** Sublimity
+#+BEGIN_SRC emacs-lisp
+(use-package sublimity
+  :straight(sublimity :type git :host github :repo "zk-phi/sublimity")
+  :commands(sublimity-mode)
+  :init
+(require 'sublimity-scroll)
+(require 'sublimity-attractive))
+(use-package hide-mode-line
+  :hook(sublimity-mode . hide-mode-line-mode))
+#+END_SRC
+
+**** Hunspell
+#+BEGIN_SRC emacs-lisp
+(use-package flyspell
+  :config(setq ispell-program-name "hunspell")
+  :hook(org-mode . flyspell-mode))
+#+END_SRC
+
+* Languages
+**** Rust
+#+BEGIN_SRC emacs-lisp
+(use-package rust-mode
+    :mode("\\.rs\\'" . rust-mode))
+#+END_SRC
+**** Nix
+#+BEGIN_SRC emacs-lisp
+(use-package nix-mode
+  :mode("\\.nix\\'" . nix-mode))
+#+END_SRC
+
+**** Python
+#+BEGIN_SRC emacs-lisp
+(use-package python-black
+  :hook(python-mode . python-black-on-save-mode))
+#+END_SRC
+#+BEGIN_SRC emacs-lisp
+(use-package python-mode
+  :config(setq python-environment-virtualenv '("nix" "run" "nixpkgs.python38Packages.virtualenv" "nixpkgs.python38" "nixpkgs.coreutils" "-c" "virtualenv")))
+#+END_SRC
+
+**** GLSL
+#+BEGIN_SRC emacs-lisp
+(use-package glsl-mode
+:mode("\\.compute\\'" . glsl-mode))
+#+END_SRC
+
+* Emacs as a Platform
+**** YonChan
+#+BEGIN_SRC emacs-lisp
+(use-package q4
+    :disabled t
+    :straight(q4 :type git :host github :repo "rosbo018/q4")
+    :demand t)
+#+END_SRC
+**** M4UE
+#+BEGIN_SRC emacs-lisp
+(use-package mu4e-alert
+  :hook(after-init . mu4e-alert-enable-mode-line-display)
+  :config(setq mu4e-alert-set-default-style 'libnotify))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package mu4e
+    :config (setq mu4e-contexts (list
+                                 (make-mu4e-context
+                                  :name "edinburgh"
+                                  :vars '((mu4e-maildir . "~/.local/share/maildir/edinburgh")
+                                          (mu4e-sent-folder . "/Sent Items")
+                                          (mu4e-drafts-folder . "/Drafts") 
+                                          (mu4e-trash-folder . "/Deleted Items")
+                                          (mu4e-refile-folder . "/Archive")
+                                          (user-mail-address . "A.Eyre@sms.ed.ac.uk")
+                                          (smtpmail-local-domain . "ed.ac.uk")
+                                          (smtpmail-smtp-user . "s2031787@ed.ac.uk")
+                                          (smtpmail-smtp-server . "smtp.office365.com")
+                                          (smtpmail-default-smtp-server . "smtp.office365.com")
+                                          ))
+                                 (make-mu4e-context
+                                  :name "alexeeyre"
+                                  :vars '((mu4e-maildir . "~/Maildir/alexeeyre")
+                                          (mu4e-drafts-folder . "/[Gmail]/Drafts")
+                                          (mu4e-sent-folder . "/[Gmail]/Sent Mail")
+                                          (mu4e-trash-folder . "/[Gmail]/Trash")
+                                          (mu4e-sent-messages-behavior . 'delete)
+                                          (smtpmail-starttls-credentials . '(("smtp.gmail.com" 587 nil nil)))
+                                          (smtpmail-auth-credentials . '(("smtp.gmail.com" 587 "alexeeyre@gmail.com" nil)))
+                                          (smtpmail-default-smtp-server . "smtp.gmail.com")
+                                          (smtpmail-smtp-server . "smtp.gmail.com")
+                                          (smtpmail-smtp-service . 587)))
+                                 )
+                  mu4e-get-mail-command "mbsync -aC"
+                  mu4e-update-interval 300
+                  mu4e-show-images t
+                  mu4e-show-addresses t
+                  mail-user-agent 'mu4e-user-agent
+                  message-send-mail-function 'smtpmail-send-it
+                  smtpmail-stream-type 'starttls
+                  smtpmail-smtp-service 587
+                  mu4e-sent-messages-behavior 'delete
+                  mu4e-confirm-quit nil
+                  starttls-use-gnutls t
+                  mu4e-bookmarks (list (make-mu4e-bookmark
+:name "Inbox"
+:query "NOT flag:trashed AND maildir:/Inbox"
+:key ?u))
+))
+
+#+END_SRC
+

@@ -1,0 +1,12 @@
+diff --git a/qt/aqt/main.py b/qt/aqt/main.py
+index d98f812e..39f0599b 100644
+--- a/qt/aqt/main.py
++++ b/qt/aqt/main.py
+@@ -1155,6 +1155,7 @@ title="%s" %s>%s</button>""" % (
+     ##########################################################################
+ 
+     def setupAutoUpdate(self) -> None:
++        return
+         import aqt.update
+ 
+         self.autoUpdate = aqt.update.LatestVersionFinder(self)

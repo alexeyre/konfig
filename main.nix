@@ -1,8 +1,7 @@
-{ config, pkgs, lib, mkDerivation, qtbase, qttools, qmake, ... }:
+{ config, pkgs, lib, ... }:
 
 {
-  nixpkgs.config.allowUnfree = true;
-  imports = [ ./overlays.nix ];
+  imports = [ ./overlays.nix <home-manager/nixos> ];
   fonts.fonts = with pkgs; [
     (nerdfonts.override { fonts = [ "FiraCode" ]; })
     allTheIcons
@@ -10,7 +9,6 @@
     noto-fonts-emoji
   ];
   fonts.fontconfig = {
-    penultimate.enable = false;
     defaultFonts = {
       serif = [ "Tinos" ];
       sansSerif = [ "Arimo" ];
@@ -30,15 +28,6 @@
   services.udev.extraRules = ''
     SUBSYSTEM=="usb", ATTR{idVendor}=="05ac", MODE="0666", GROUP="wheel"
       '';
-  programs.xss-lock = {
-    enable = true;
-    lockerCommand = "${pkgs.slock}/bin/slock";
-  };
-
-  environment.variables.KDEWM = "${pkgs.bspwm}/bin/bspwm";
-  virtualisation.docker.enable = true;
-  services.tlp.enable = true;
-  programs.slock.enable = true;
   networking.extraHosts = let
     list = builtins.readFile (builtins.fetchurl
       "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts");
@@ -48,27 +37,17 @@
     0.0.0.0 twitter.com
       '';
   environment.systemPackages = with pkgs; [
-    home-manager-unstable.home-manager
-    fwupd
-    aircrack-ng
-    git
-    unzip
-    gnupg
-    p7zip
+    gitMinimal
     wireguard-tools
     plasma5.kde-gtk-config
   ];
   environment.pathsToLink = [ "${pkgs.xorg.libxcb}/lib/" "/share/zsh" ];
-  networking.firewall.enable = true;
-  networking.firewall.checkReversePath = "loose";
-  networking.firewall.allowedUDPPorts = [ 51820 ];
-  networking.wireguard.enable = true;
 
   services.xserver = {
     enable = true;
     layout = "us";
     xkbVariant = "dvp";
-    xkbOptions = "ctrl:nocaps, compose:menu";
+    xkbOptions = "ctrl:nocaps, compose:altgr";
     libinput.enable = true;
     libinput.tapping = false;
     displayManager.xserverArgs = [ "-ardelay 300" "-arinterval 25" ];
@@ -83,19 +62,12 @@
     extraGroups = [ "wheel" "audio" "adbusers" "video" "networkmanager" ];
     shell = pkgs.zsh;
   };
-  networking.networkmanager.enable = true;
-  services.connman.enable = false;
-  services.connman.extraConfig = ''
-    [General]
-    SingleConnectedTechnology=true
-      '';
-  networking.wireless = {
-    userControlled.enable = true;
-    networks = { TANHETOADETHOADETHAOD = { }; };
-  };
+  home-manager.useUserPackages = true;
+  home-manager.useGlobalPkgs = true;
+  home-manager.users.alex = (import ./home);
   system.autoUpgrade = {
-    enable = true;
-    allowReboot = true;
+    enable = false;
+    allowReboot = false;
     channel = "https://nixos.org/channels/nixos-unstable";
   };
 }
