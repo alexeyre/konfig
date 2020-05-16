@@ -14,20 +14,15 @@ let
 in {
   imports = [ ../main.nix ];
   hardware.bluetooth.enable = true;
-  hardware.pulseaudio.enable = true;
-  hardware.pulseaudio.package = pkgs.pulseaudioFull;
+
+  # sound
+  hardware.pulseaudio = {
+    enable = true;
+    package = pkgs.pulseaudioFull;
+  }; # for bluetooth support
   sound.enable = true;
-  nixpkgs.config.pulseaudio = true;
-  virtualisation.virtualbox.host = {
-    enable = true;
-    enableExtensionPack = true;
-  };
-  services.fprintd = {
-    enable = true;
-    package = pkgs.fprintd-thinkpad;
-  };
-  security.pam.services.login.fprintAuth = true;
-  security.pam.services.sddm.fprintAuth = true;
+
+  # make everything use the same file dialogue
   xdg.portal = {
     enable = true;
     gtkUsePortal = true;
@@ -37,26 +32,40 @@ in {
     style = "gtk2";
     platformTheme = "gtk2";
   };
+
+  # networking
   networking.hostName = "memepad";
+  networking.wireguard.enable = true;
+  networking.firewall = {
+    enable = true;
+    allowedUDPPorts = [ 51820 ];
+  };
+  networking.networkmanager.enable = true;
+  networking.wireless.userControlled.enable = true;
+
+  # control backlight
   programs.light.enable = true;
+
+  # dedicated card controls
   boot.initrd.availableKernelModules =
     [ "xhci_pci" "ahci" "nvme" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
   boot.initrd.kernelModules = [ "dm-snapshot" ];
   boot.kernelParams = [ "usbcore.autosuspend=-1" ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
-  hardware.acpilight.enable = true;
-  services.colord.enable = true;
   services.xserver.dpi = 96;
   services.xserver.videoDrivers = [ "nvidia" ];
   environment.systemPackages = [ nvidia-offload ];
+
+  # printing
   services.printing = {
-    enable = true;
+    enable = false;
     drivers = [ pkgs.samsung-unified-linux-driver ];
   };
+
   hardware.nvidia.prime = {
-    #offload.enable = true;
-    sync.enable = true;
+    offload.enable = true;
+    #sync.enable = true;
     intelBusId = "PCI:0:02:0";
     nvidiaBusId = "PCI:1:00:0";
   };
@@ -77,9 +86,18 @@ in {
     [{ device = "/dev/disk/by-uuid/e71b529b-84fb-416e-b832-093ae522750f"; }];
 
   nix.maxJobs = lib.mkDefault 8;
-  powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
+
+  # power management
+  services.tlp.enable = true;
+  services.tlp.extraConfig = ''
+    # Operation mode when no power supply can be detected: AC, BAT.
+    TLP_DEFAULT_MODE=BAT
+    # Operation mode select: 0=depend on power source, 1=always use TLP_DEFAULT_MODE
+    TLP_PERSISTENT_DEFAULT=1
+    SATA_LINKPWR_ON_BAT=max_performance
+    RUNTIME_PM_DRIVER_BLACKLIST="nvidia"
+      '';
   powerManagement.enable = true;
-  powerManagement.powertop.enable = true;
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;

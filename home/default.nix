@@ -1,16 +1,7 @@
-{ config, lib, pkgs, ... }:
-let
-  fetchurl = _:
-    pkgs.fetchurl {
-      url = "https://public-cdn.cloud.unity3d.com/hub/prod/UnityHub.AppImage";
-      sha256 = "09nrgjlknl3hgrrl7rc79bmbrq6r6sl49dw0cmvs37vjqnvlr8ny";
-    };
-  unityhub-fixed = pkgs.unityhub.override (_: { inherit fetchurl; });
-in {
+{ config, lib, pkgs, ... }: {
   imports = [
-    ../overlays.nix
     ./qute.nix
-    ./emacs.nix
+    ./emacs
     ./term/term.nix
     ./bspwm
     ./email.nix
@@ -73,6 +64,7 @@ in {
     sha256 = "08msc3mgf1qzz6j82gi10fin12iwl2zh5annfgbp6nkig63j6fcx";
   } + "/xresources/base16-macintosh-256.Xresources");
   home.packages = with pkgs; [
+    nixfmt
     ffmpeg-full
     discord
     kotatogram-desktop
@@ -80,18 +72,12 @@ in {
     gopass
     qutebrowser
     dmenu
-    vim
     spotify
     teams
     nodejs
     kotatogram-desktop
     hexchat
-    anki
     mu
-    hunspell
-    hunspellDicts.en-gb-large
-    texlive.combined.scheme-full
-
     calibre
 
     # rust userutils
@@ -99,17 +85,12 @@ in {
     rustc
     bat
     exa
-
     toggldesktop
-
     neovim
-
-    acpi
     sxiv
     deluge
-    unityhub-fixed
     kdenlive
-    alex-npm-packages.nativefier
+    transmission-gtk
   ];
   programs.zathura.enable = true;
 

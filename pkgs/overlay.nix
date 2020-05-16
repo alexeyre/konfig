@@ -4,5 +4,4 @@ self: super: {
   etBook = super.callPackage (import ./etBook) { };
   croscore = super.callPackage (import ./croscore) { };
   apple-color-emoji = super.callPackage (import ./apple-color-emoji) { };
-  alex-npm-packages = super.callPackage (import ./npm-stuff) { };
 }
