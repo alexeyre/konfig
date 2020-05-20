@@ -343,7 +343,7 @@ Oh baby, there's some shit here boys.
      #+BEGIN_SRC emacs-lisp
      (use-package mixed-pitch
      :after org
-     :custom-face(variable-pitch ((t (:family "ETBembo" :height 160))))
+     :custom-face(variable-pitch ((t (:family "Tinos" :height 160))))
      :hook(org-mode . mixed-pitch-mode))
 #+END_SRC
 **** Bullets
@@ -368,6 +368,7 @@ Oh baby, there's some shit here boys.
 **** Pretty Tables
 #+BEGIN_SRC emacs-lisp
 (use-package org-pretty-table
+  :disabled t
   :straight(org-pretty-table :type git :host github :repo "Fuco1/org-pretty-table")
   :hook
   (orgtbl-mode . org-pretty-table-mode)
@@ -459,7 +460,7 @@ Oh baby, there's some shit here boys.
                                           ))
                                  (make-mu4e-context
                                   :name "alexeeyre"
-                                  :vars '((mu4e-maildir . "~/Maildir/alexeeyre")
+                                  :vars '((mu4e-maildir . "~/.local/share/maildir/alexeeyre")
                                           (mu4e-drafts-folder . "/[Gmail]/Drafts")
                                           (mu4e-sent-folder . "/[Gmail]/Sent Mail")
                                           (mu4e-trash-folder . "/[Gmail]/Trash")

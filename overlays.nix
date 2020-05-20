@@ -1,4 +1,4 @@
-{ config, pkgs, lib, fetchFromGitHub, ... }: {
+{ config, pkgs, lib, ... }: {
   nixpkgs.config.packageOverrides = pkgs: {
     st = pkgs.st.overrideDerivation (attrs: {
       src = builtins.fetchurl {
@@ -7,7 +7,6 @@
     });
   };
   nixpkgs.overlays = [
-    (import ./home/anki)
     (import ./pkgs/overlay.nix)
     (import (builtins.fetchTarball {
       url =

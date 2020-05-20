@@ -24,7 +24,7 @@ in {
 
   # make everything use the same file dialogue
   xdg.portal = {
-    enable = true;
+    enable = false;
     gtkUsePortal = true;
   };
   qt5 = {
@@ -40,8 +40,10 @@ in {
     enable = true;
     allowedUDPPorts = [ 51820 ];
   };
-  networking.networkmanager.enable = true;
+  networking.networkmanager.enable = false;
   networking.wireless.userControlled.enable = true;
+  networking.wireless.networks = { AEORAOHECOA = { }; };
+  services.connman.enable = true;
 
   # control backlight
   programs.light.enable = true;
@@ -50,12 +52,9 @@ in {
   boot.initrd.availableKernelModules =
     [ "xhci_pci" "ahci" "nvme" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
   boot.initrd.kernelModules = [ "dm-snapshot" ];
-  boot.kernelParams = [ "usbcore.autosuspend=-1" ];
+  boot.kernelParams = [ ]; # "usbcore.autosuspend=-1" ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
-  services.xserver.dpi = 96;
-  services.xserver.videoDrivers = [ "nvidia" ];
-  environment.systemPackages = [ nvidia-offload ];
 
   # printing
   services.printing = {
@@ -63,13 +62,20 @@ in {
     drivers = [ pkgs.samsung-unified-linux-driver ];
   };
 
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+  hardware.nvidiaOptimus.disable = true;
   hardware.nvidia.prime = {
-    offload.enable = true;
+    #offload.enable = true;
     #sync.enable = true;
     intelBusId = "PCI:0:02:0";
     nvidiaBusId = "PCI:1:00:0";
   };
-  hardware.nvidia.modesetting.enable = true;
+  hardware.opengl.enable = true;
+  hardware.nvidia.powerManagement.enable = false;
+  hardware.nvidia.modesetting.enable = false;
+  services.xserver.dpi = 96;
+  services.xserver.videoDrivers = [ "intel" ];
+  environment.systemPackages = [ nvidia-offload ];
 
   fileSystems."/" = {
     device = "/dev/disk/by-uuid/1cc49fed-355d-4190-9cb3-cc63564050b6";
@@ -93,9 +99,9 @@ in {
     # Operation mode when no power supply can be detected: AC, BAT.
     TLP_DEFAULT_MODE=BAT
     # Operation mode select: 0=depend on power source, 1=always use TLP_DEFAULT_MODE
-    TLP_PERSISTENT_DEFAULT=1
+    TLP_PERSISTENT_DEFAULT=0
     SATA_LINKPWR_ON_BAT=max_performance
-    RUNTIME_PM_DRIVER_BLACKLIST="nvidia"
+    RUNTIME_PM_DRIVER_BLACKLIST="nouveau nvidia"
       '';
   powerManagement.enable = true;
 
