@@ -1,5 +1,5 @@
 { pkgs, ... }: {
-  accounts.email.maildirBasePath = "$HOME/.local/share/maildir";
+  accounts.email.maildirBasePath = ".local/share/maildir";
   accounts.email.accounts.edinburgh = {
     address = "A.Eyre@ed.ac.uk";
     mbsync.enable = true;

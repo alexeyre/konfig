@@ -12,22 +12,39 @@
     ./sxhkd.nix
     ./zsh.nix
     ./audacity.nix
+    ./rofi
   ];
   gtk = {
     enable = true;
-    theme.package = pkgs.plasma5.breeze-gtk;
-    theme.name = "Breeze-Dark";
-    iconTheme.package = pkgs.paper-icon-theme;
-    iconTheme.name = "Paper";
+    theme.package = pkgs.arc-theme;
+    theme.name = "Arc-Dark";
+    iconTheme.package = pkgs.arc-icon-theme;
+    iconTheme.name = "Arc";
+  };
+  xdg.enable = true;
+  xdg.mimeApps = {
+    associations.added = {
+      "image/image" = "sxiv.desktop";
+      "application/octet-stream" = "sxiv.desktop";
+    };
+    enable = true;
+  };
+  xdg.userDirs = {
+    enable = true;
+    desktop = "$HOME";
+    documents = "$HOME/notes";
+    download = "$HOME/downloads";
+    music = "$HOME/music";
+    pictures = "$HOME/images";
+    publicShare = "$HOME";
+    templates = "$HOME";
+    videos = "$HOME/images/videos";
+
   };
   qt.platformTheme = "gtk";
   services.xcape = {
     enable = true;
     mapExpression = { Control_L = "Escape"; };
-  };
-  services.kdeconnect = {
-    enable = true;
-    indicator = true;
   };
   services.picom = {
     enable = true;
@@ -52,7 +69,7 @@
     #activeOpacity = "0.92";
     #inactiveOpacity = "0.92";
   };
-  services.syncthing.enable = true;
+  services.syncthing.enable = false;
   xresources.properties = {
     "*.font" = "FiraCode Nerd Font:pixelsize=18:antialias=true:autohint=true;";
     "*.alpha" = "100.0";
@@ -62,16 +79,17 @@
     repo = "base16-xresources";
     rev = "d762461de45e00c73a514408988345691f727632";
     sha256 = "08msc3mgf1qzz6j82gi10fin12iwl2zh5annfgbp6nkig63j6fcx";
-  } + "/xresources/base16-macintosh-256.Xresources");
+  } + "/xresources/base16-spacemacs-256.Xresources");
   home.packages = with pkgs; [
+    nativefier
+    python38Packages.youtube-dl-light
     nixfmt
     ffmpeg-full
     discord
-    kotatogram-desktop
     antibody
     gopass
     qutebrowser
-    dmenu
+    todoist-electron
     spotify
     teams
     nodejs
@@ -79,8 +97,7 @@
     hexchat
     mu
     calibre
-
-    # rust userutils
+    tdesktop
     cargo
     rustc
     bat
@@ -95,24 +112,17 @@
   programs.zathura.enable = true;
 
   services.random-background = {
-    enable = true;
+    enable = false;
     imageDirectory = "%h/images/wallpapers";
   };
   home.keyboard = {
     layout = "us";
     variant = "dvp";
-    options = [ "ctrl:nocaps" ];
+    options = [ "ctrl:nocaps" "compose:altgr" ];
   };
   programs.beets = {
-    enable = true;
+    enable = false;
     settings = { "directory" = "/data/music"; };
-  };
-  home.file.setaswallpaper = let
-    x = builtins.fetchurl
-      "https://store.kde.org/p/1169583/startdownload?file_id=1578608483";
-  in {
-    source = "${x}";
-    target = ".local/share/kservices5/ServiceMenus/SetAsWallpaper.desktop";
   };
   xsession.enable = true;
   services.redshift = {
@@ -124,7 +134,7 @@
     enable = true;
     keyMode = "vi";
     shortcut = "a";
-    plugins = with pkgs; [ tmuxPlugins.sensible tmuxPlugins.yank ];
+    plugins = with pkgs.tmuxPlugins; [ sensible yank ];
   };
 
 }

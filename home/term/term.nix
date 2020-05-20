@@ -8,6 +8,6 @@
     font.name = "FiraCode Nerd Font";
     settings = { font_size = "11.0"; };
   };
-  programs.st.enable = false;
-  programs.konsole.enable = true;
+  programs.st.enable = true;
+  programs.konsole.enable = false;
 }

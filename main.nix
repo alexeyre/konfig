@@ -25,6 +25,7 @@
   programs.dconf.enable = true;
   programs.adb.enable = true;
   services.udisks2.enable = true;
+  virtualisation.docker.enable = true;
   services.udev.extraRules = ''
     SUBSYSTEM=="usb", ATTR{idVendor}=="05ac", MODE="0666", GROUP="wheel"
       '';
@@ -33,14 +34,11 @@
       "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts");
   in ''
     ${list}
-    0.0.0.0 youtube.com
-    0.0.0.0 twitter.com
+    0.0.0.0 *.ignore.me
+    0.0.0.0 www.ignore.me
+    0.0.0.0 ignore.me
       '';
-  environment.systemPackages = with pkgs; [
-    gitMinimal
-    wireguard-tools
-    plasma5.kde-gtk-config
-  ];
+  environment.systemPackages = with pkgs; [ gitMinimal wireguard-tools ];
   environment.pathsToLink = [ "${pkgs.xorg.libxcb}/lib/" "/share/zsh" ];
 
   services.xserver = {
@@ -52,14 +50,27 @@
     libinput.tapping = false;
     displayManager.xserverArgs = [ "-ardelay 300" "-arinterval 25" ];
     desktopManager = { xterm.enable = false; };
-    displayManager.sddm.enable = true;
+    desktopManager.xfce = {
+      enable = true;
+      noDesktop = true;
+      enableXfwm = false;
+    };
     windowManager.bspwm.enable = true;
-    desktopManager.plasma5.enable = true;
+    displayManager.lightdm.background = builtins.fetchurl
+      "https://raw.githubusercontent.com/alex-eyre/-/master/media/0ttvn2u117g41.png";
+    xautolock.enable = true;
+    xautolock.locker =
+      "${pkgs.i3lock}/bin/i3lock -i ${config.services.xserver.displayManager.lightdm.background}";
   };
+  programs.xss-lock.enable = true;
+  programs.xss-lock.lockerCommand =
+    "${pkgs.i3lock}/bin/i3lock -i ${config.services.xserver.displayManager.lightdm.background}";
+
   programs.zsh = { enable = true; };
   users.users.alex = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "audio" "adbusers" "video" "networkmanager" ];
+    extraGroups =
+      [ "wheel" "audio" "adbusers" "video" "networkmanager" "docker" ];
     shell = pkgs.zsh;
   };
   home-manager.useUserPackages = true;

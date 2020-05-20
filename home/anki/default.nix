@@ -1,12 +1,15 @@
-self: super: {
-  anki-latest = (super.pkgs.anki.overrideAttrs (old: rec {
-    version = "2.1.26";
-    src = super.fetchFromGitHub {
-      owner = "ankitects";
-      repo = "anki";
-      rev = "2.1.26";
-      sha256 = "12dvyf3j9df4nrhhnqbzd9b21rpzkh4i6yhhangn2zf7ch0pclss";
+{ pkgs, ... }: {
+  home.packages = [ pkgs.anki ];
+  home.file.anki-night-mode = let
+    night-mode = pkgs.fetchFromGitHub {
+      repo = "Anki-Night-Mode";
+      owner = "krassowski";
+      rev = "2eddb0697f405e451db6993c09281293de7ddf11";
+      sha256 = "08xrcvq8aipxzk062xnazz372zb368grlcx83a1wq1yr09lljldf";
     };
-    patches = [ ./no-version-check.patch ];
-  }));
+  in {
+    source = "${night-mode}/night_mode";
+    target = ".local/share/Anki2/addons21/1496166067";
+    recursive = true;
+  };
 }

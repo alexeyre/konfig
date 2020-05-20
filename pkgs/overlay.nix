@@ -4,4 +4,5 @@ self: super: {
   etBook = super.callPackage (import ./etBook) { };
   croscore = super.callPackage (import ./croscore) { };
   apple-color-emoji = super.callPackage (import ./apple-color-emoji) { };
+  nativefier = (super.callPackage (import ./nativefier) { }).nativefier;
 }

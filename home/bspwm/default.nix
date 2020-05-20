@@ -1,7 +1,9 @@
 { pkgs, ... }: {
+  imports = [ ./module.nix ];
   xsession.windowManager.bspwm = {
     enable = true;
     monitors = {
+      "eDP1" = [ "browser" "emacs" "music" "msg" "terminal" ];
       "eDP-1" = [ "browser" "emacs" "music" "msg" "terminal" ];
       "eDP-1-1" = [ "browser" "emacs" "music" "msg" "terminal" ];
       "eDP-3.2" = [ "browser" "emacs" "music" "msg" "terminal" ];
@@ -63,12 +65,14 @@
     startupPrograms = let
       bspc = "${pkgs.bspwm}/bin/bspc";
       xrandr = "${pkgs.xorg.xrandr}/bin/xrandr";
-      systemctl = "${pkgs.systemd}/bin/systemctl";
-      plasma = "${pkgs.plasma-workspace}/bin/startplasma-x11";
+      lxqt = "${pkgs.lxqt.lxqt-session}/bin/startlxqt";
       feh = "${pkgs.feh}/bin/feh";
+      wallpaper = builtins.fetchurl
+        "https://raw.githubusercontent.com/alex-eyre/-/master/media/0ttvn2u117g41.png";
     in [
-      "${plasma}"
+      "${lxqt}"
       "${xrandr} --output DP-3.2 --mode 1920x1080 --rate 144 --same-as eDP-1-1 && ${xrandr} --output DP-3.1 --mode 1920x1080 --rotate right --left-of DP-3.2"
+      "${feh} --bg-tile ${wallpaper}"
     ];
   };
 

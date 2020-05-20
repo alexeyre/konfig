@@ -3,13 +3,21 @@
     enable = true;
     keybindings = let
       bspc = "${pkgs.bspwm}/bin/bspc";
-      launcher = "${pkgs.dmenu}/bin/dmenu_run";
+      launcher = "${pkgs.rofi}/bin/rofi -show run";
       term = "${config.home.sessionVariables.TERMINAL}";
-      dmenu = "${pkgs.dmenu}/bin/dmenu";
+      dmenu = "${pkgs.rofi}/bin/rofi -dmenu";
       sed = "${pkgs.gnused}/bin/sed";
       pass = "${pkgs.gopass}/bin/gopass";
       tdrop = "${pkgs.tdrop}/bin/tdrop";
+      pactl = "${pkgs.pulseaudio}/bin/pactl";
+      lock = "${pkgs.xautolock}/bin/xautolock -locknow";
     in {
+      "super + shift + l" = "${lock}";
+
+      "XF86Audio{Raise,Lower}Volume" = "${pactl} set-sink-volume 0 {+,-}5%";
+      "XF86AudioMute" = "${pactl} set-sink-mute 0 toggle";
+      "XF86AudioMicMute" = "${pactl} set-source-mute 1 toggle";
+
       "super + c ; a" = "${tdrop} -y 24 --class=discord Discord";
 
       "super + shift + d" =

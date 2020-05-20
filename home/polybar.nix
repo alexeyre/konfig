@@ -1,16 +1,19 @@
 { pkgs, ... }: {
   services.polybar = {
-    enable = false;
+    enable = true;
+    package = pkgs.polybarFull;
     config = {
       "global/wm" = { margin_top = 22; };
-      "bar/main" = {
+      "bar/top" = {
         width = "100%";
-        modules-right = "eth wlan battery time";
-        modules-left = "bspwm";
-        height = "22";
+        modules-right = "pulseaudio eth wlan battery";
+        modules-left = "";
+        modules-center = "time";
+        height = "26";
         radius = 0;
-        font-0 = "FiraCode Nerd Font:size=12;1";
-        font-1 = "Noto Color Emoji:scale=10:style=Regular;2";
+        font-0 = "fixed";
+        font-1 = "FiraCode Nerd Font:pixelsize=10;-1";
+        font-2 = "Noto Color Emoji:scale=10:style=Regular;2";
         module-margin-left = 0;
         module-margin-right = 1;
         overline-size = 1;
@@ -22,10 +25,16 @@
         enable-ipc = true;
         # monitor = "eDP-1";
       };
+      "bar/bottom" = {
+        witdh = "100%";
+        height = "26";
+        modules-left = "bspwm";
+        bottom = true;
+      };
       "module/time" = {
         type = "internal/date";
         interval = 60;
-        time = "%H:%M";
+        time = "%d-%M-%Y %H:%M";
         label = "%time%";
         label-foreground = "\${colors.green}";
       };
@@ -80,7 +89,7 @@
       };
       "module/wlan" = {
         type = "internal/network";
-        interface = "wlp4s0";
+        interface = "wlp2s0";
         label-connected = "%essid%";
         label-disconnected = "";
       };
@@ -89,6 +98,11 @@
         interface = "enp0s31f6";
         label-connected = "%local_ip%";
         label-disconnected = "";
+      };
+      "module/pulseaudio" = {
+        type = "internal/pulseaudio";
+        interval = "5";
+        label-foreground = "\${colors.urlblue}";
       };
     };
     extraConfig = ''
@@ -127,6 +141,6 @@
       ioteal    = #20fcbb
     '';
     script = let awk = "${pkgs.gawk}/bin/awk";
-    in "for i in $(polybar -m | ${awk} -F: '{print $1}'); do MONITOR=$i polybar main & done";
+    in "for i in $(polybar -m | ${awk} -F: '{print $1}'); do MONITOR=$i polybar top & MONITOR=$i polybar bottom & done";
   };
 }
