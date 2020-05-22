@@ -62,19 +62,16 @@ in {
     drivers = [ pkgs.samsung-unified-linux-driver ];
   };
 
-  boot.kernelPackages = pkgs.linuxPackages_latest;
-  hardware.nvidiaOptimus.disable = true;
   hardware.nvidia.prime = {
-    #offload.enable = true;
-    #sync.enable = true;
+    sync.enable = true;
     intelBusId = "PCI:0:02:0";
     nvidiaBusId = "PCI:1:00:0";
   };
   hardware.opengl.enable = true;
-  hardware.nvidia.powerManagement.enable = false;
-  hardware.nvidia.modesetting.enable = false;
+  hardware.nvidia.powerManagement.enable = true;
+  hardware.nvidia.modesetting.enable = true;
   services.xserver.dpi = 96;
-  services.xserver.videoDrivers = [ "intel" ];
+  services.xserver.videoDrivers = [ "nvidia" ];
   environment.systemPackages = [ nvidia-offload ];
 
   fileSystems."/" = {

@@ -1,6 +1,6 @@
-{ config, lib, pkgs, ... }: {
+{ config, lib, pkgs, ... }:
+{
   imports = [
-    ./qute.nix
     ./emacs
     ./term/term.nix
     ./bspwm
@@ -13,6 +13,7 @@
     ./zsh.nix
     ./audacity.nix
     ./rofi
+    ./qute
   ];
   gtk = {
     enable = true;
@@ -81,6 +82,10 @@
     sha256 = "08msc3mgf1qzz6j82gi10fin12iwl2zh5annfgbp6nkig63j6fcx";
   } + "/xresources/base16-spacemacs-256.Xresources");
   home.packages = with pkgs; [
+    unityhub
+    gimp
+    (chromium.override { enableWideVine = true; })
+    scrot
     nativefier
     python38Packages.youtube-dl-light
     nixfmt

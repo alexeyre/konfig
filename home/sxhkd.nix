@@ -23,7 +23,8 @@
       "super + shift + d" =
         "systemctl --user restart random-background.service";
       "super + shift + control + r" = "pkill -9 bspwm";
-      "super + Return" = "${term}";
+      "super + ctrl + Return" = "${term}";
+      "super + Return" = "${bspc} desktop -f terminal && if ${bspc} query -D -d .\!occupied --names | grep -q \"terminal\"; then exec ${term}; fi";
       "super + p" = "${launcher}";
       "super + shift + c" = "${bspc} node -c";
       "super + space" = "${bspc} node -t \\~floating";
@@ -38,6 +39,9 @@
       "super + parenright" = "${bspc} desktop -f ^8.local";
       "super + plus" = "${bspc} desktop -f ^9.local";
       "super + bracketright" = "${bspc} desktop -f ^10.local";
+
+      "super + shift + j" = "${bspc} desktop -f prev.local";
+      "super + shift + k" = "${bspc} desktop -f next.local";
 
       "super + shift + ampersand" = "${bspc} node -d ^1.local";
       "super + shift + bracketleft" = "${bspc} node -d ^2.local";
@@ -58,7 +62,7 @@
       "super + shift + o" =
         "desired=$(${bspc} query -D --names | ${dmenu}) ; ${bspc} node -d $desired || ${bspc} monitor -a $desired && ${bspc} node -d $desired";
       "super + shift + p" =
-        "command=$(dmenu_path | dmenu) ; bspc desktop -f $command || bspc monitor -a $command && bspc desktop -f $command && exec $command &";
+        "command=$(${pkgs.dmenu}/bin/dmenu_path | ${dmenu}) ; ${bspc} desktop -f $command || ${bspc} monitor -a $command && ${bspc} desktop -f $command && exec $command &";
       "super + alt + ctrl + p" = ''
         for x in $(${bspc} query -D -d .\!occupied --names | ${sed} '/browser/d;/terminal/d;/emacs/d;/music/d;/msg/d;'); do ${bspc} desktop "$x" -r; done'';
       "super + Tab" = "${bspc} desktop -f last.local";

@@ -6,7 +6,6 @@
       "eDP1" = [ "browser" "emacs" "music" "msg" "terminal" ];
       "eDP-1" = [ "browser" "emacs" "music" "msg" "terminal" ];
       "eDP-1-1" = [ "browser" "emacs" "music" "msg" "terminal" ];
-      "eDP-3.2" = [ "browser" "emacs" "music" "msg" "terminal" ];
     };
     rules = {
       "KotatogramDesktop" = {
@@ -65,13 +64,14 @@
     startupPrograms = let
       bspc = "${pkgs.bspwm}/bin/bspc";
       xrandr = "${pkgs.xorg.xrandr}/bin/xrandr";
-      lxqt = "${pkgs.lxqt.lxqt-session}/bin/startlxqt";
       feh = "${pkgs.feh}/bin/feh";
       wallpaper = builtins.fetchurl
         "https://raw.githubusercontent.com/alex-eyre/-/master/media/0ttvn2u117g41.png";
     in [
-      "${lxqt}"
-      "${xrandr} --output DP-3.2 --mode 1920x1080 --rate 144 --same-as eDP-1-1 && ${xrandr} --output DP-3.1 --mode 1920x1080 --rotate right --left-of DP-3.2"
+      "${xrandr} --output eDP-1-1 --primary"
+      "${xrandr} --output DP-3.2 --mode 1920x1080 --rate 144 --same-as eDP-1-1"
+      "${xrandr} --output DP-3.1 --mode 1920x1080 --left-of DP-3.2"
+      "${bspc} desktop %DP-3.2 -r"
       "${feh} --bg-tile ${wallpaper}"
     ];
   };

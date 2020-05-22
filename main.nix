@@ -24,6 +24,7 @@
   time.timeZone = "Europe/London";
   programs.dconf.enable = true;
   programs.adb.enable = true;
+  programs.ssh.askPassword = "";
   services.udisks2.enable = true;
   virtualisation.docker.enable = true;
   services.udev.extraRules = ''

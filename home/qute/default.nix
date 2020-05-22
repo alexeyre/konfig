@@ -1,15 +1,9 @@
 { config, pkgs, lib, ... }:
-let dotfilesGit = fetchGit "https://github.com/alex-eyre/dotfiles.git";
-in {
+{
   home.file.qutebrowser = {
-    source = "${dotfilesGit}/qutebrowser/config.py";
+    source = ./config.py;
     target = ".config/qutebrowser/config.py";
   };
-  #home.file.emacs = {
-  #source = "${dotfilesGit}/emacs/";
-  #target = ".config/emacs/";
-  #recursive = true;
-  #};
   home.file.fourchanX = let
     fourchanX =
       builtins.fetchurl "https://www.4chan-x.net/builds/4chan-X-beta.user.js";
@@ -23,5 +17,9 @@ in {
   in {
     source = "${oneechan}";
     target = ".local/share/qutebrowser/greasemonkey/OneeChan.js";
+  };
+  home.file.notion = {
+    source = ./notion.so.css;
+    target = ".config/qutebrowser/notion.so.css";
   };
 }
