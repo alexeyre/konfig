@@ -62,8 +62,11 @@ in {
     drivers = [ pkgs.samsung-unified-linux-driver ];
   };
 
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+  hardware.nvidiaOptimus.disable = true;
   hardware.nvidia.prime = {
-    sync.enable = true;
+    #offload.enable = true;
+    #sync.enable = true;
     intelBusId = "PCI:0:02:0";
     nvidiaBusId = "PCI:1:00:0";
   };

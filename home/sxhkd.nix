@@ -43,7 +43,6 @@
 
       "super + shift + j" = "${bspc} desktop -f prev.local";
       "super + shift + k" = "${bspc} desktop -f next.local";
-
       "super + shift + ampersand" = "${bspc} node -d ^1.local";
       "super + shift + bracketleft" = "${bspc} node -d ^2.local";
       "super + shift + braceleft" = "${bspc} node -d ^3.local";
