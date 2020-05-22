@@ -1,5 +1,4 @@
-{ config, pkgs, lib, ... }:
-{
+{ config, pkgs, lib, ... }: {
   home.file.qutebrowser = {
     source = ./config.py;
     target = ".config/qutebrowser/config.py";

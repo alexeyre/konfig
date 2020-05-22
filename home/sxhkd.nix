@@ -24,7 +24,8 @@
         "systemctl --user restart random-background.service";
       "super + shift + control + r" = "pkill -9 bspwm";
       "super + ctrl + Return" = "${term}";
-      "super + Return" = "${bspc} desktop -f terminal && if ${bspc} query -D -d .\!occupied --names | grep -q \"terminal\"; then exec ${term}; fi";
+      "super + Return" = ''
+        ${bspc} desktop -f terminal && if ${bspc} query -D -d .!occupied --names | grep -q "terminal"; then exec ${term}; fi'';
       "super + p" = "${launcher}";
       "super + shift + c" = "${bspc} node -c";
       "super + space" = "${bspc} node -t \\~floating";
