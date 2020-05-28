@@ -119,7 +119,7 @@ I don't like RSI, so I use evil. Don't @ me.
 #+BEGIN_SRC emacs-lisp
 (setq evil-want-keybinding nil)
 (use-package evil
-  :hook(after-init . evil-mode))
+  :init(evil-mode 1))
 #+END_SRC
 Evil works better if you force modes to cooperate.
 #+BEGIN_SRC emacs-lisp
@@ -155,6 +155,13 @@ take me to your leader lmao
     ;; org-only
     (evil-leader/set-key-for-mode 'org-mode
     "a" 'org-insert-heading-after-current))
+#+END_SRC
+#+BEGIN_SRC emacs-lisp
+(use-package evil-numbers
+  :after evil
+  :init
+  (define-key evil-normal-state-map (kbd "C-c a") 'evil-numbers/inc-at-pt)
+  (define-key evil-normal-state-map (kbd "C-c x") 'evil-numbers/dec-at-pt))
 #+END_SRC
 **** I'm too used to tmux
 #+BEGIN_SRC emacs-lisp
@@ -429,6 +436,18 @@ Oh baby, there's some shit here boys.
 :mode("\\.compute\\'" . glsl-mode))
 #+END_SRC
 
+**** C# mode
+#+BEGIN_SRC emacs-lisp
+(use-package csharp-mode
+  :mode("\\.cs\\'" . csharp-mode))
+#+END_SRC
+#+BEGIN_SRC emacs-lisp
+
+(use-package omnisharp
+  :after company
+  :config(add-to-list 'company-backends 'company-omnisharp)
+  :hook(csharp-mode . omnisharp-mode))
+#+END_SRC
 * Emacs as a Platform
 **** YonChan
 #+BEGIN_SRC emacs-lisp
@@ -445,6 +464,7 @@ Oh baby, there's some shit here boys.
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu/mu4e")
   (use-package mu4e
     :config (setq mu4e-contexts (list
                                  (make-mu4e-context

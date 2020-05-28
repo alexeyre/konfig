@@ -1,4 +1,6 @@
 ;; -*- lexical-binding: t; -*-
+(if (version< emacs-version "27.0")
+  (load-file (expand-file-name "early-init.el" user-emacs-directory)))
 (setq gc-cons-threshold 16777216
       gc-cons-percentage 0.1)
 (setq package-user-dir (expand-file-name "packages" user-emacs-directory))
