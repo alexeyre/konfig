@@ -3,7 +3,10 @@
     enable = true;
     package = pkgs.polybarFull;
     config = {
-      "global/wm" = { margin_top = 22; };
+      "global/wm" = {
+        margin_top = 26;
+        margin_bottom = 26;
+      };
       "bar/top" = {
         width = "100%";
         modules-right = "pulseaudio eth wlan battery";
@@ -12,7 +15,7 @@
         height = "26";
         radius = 0;
         font-0 = "fixed";
-        font-1 = "FiraCode Nerd Font:pixelsize=10;-1";
+        font-1 = "FiraCode Nerd Font:pixelsize=12;-1";
         font-2 = "Noto Color Emoji:scale=10:style=Regular;2";
         module-margin-left = 0;
         module-margin-right = 1;
@@ -23,13 +26,25 @@
         wm-restack = "bspwm";
         override-redirect = true;
         enable-ipc = true;
-        # monitor = "eDP-1";
       };
       "bar/bottom" = {
         witdh = "100%";
         height = "26";
         modules-left = "bspwm";
         bottom = true;
+        radius = 0;
+        font-0 = "fixed";
+        font-1 = "FiraCode Nerd Font:pixelsize=10;0";
+        font-2 = "Noto Color Emoji:scale=10:style=Regular;2";
+        module-margin-left = 0;
+        module-margin-right = 1;
+        overline-size = 1;
+        overline-color = "\${colors.iopink}";
+        line-size = 1;
+        line-color = "\${colors.red}";
+        wm-restack = "bspwm";
+        override-redirect = true;
+        enable-ipc = true;
       };
       "module/time" = {
         type = "internal/date";
@@ -40,14 +55,20 @@
       };
       "module/bspwm" = {
         type = "internal/bspwm";
-        pin-workspaces = false;
+        pin-workspaces = true;
         inline-mode = true;
         enable-click = true;
         fuzzy-match = true;
         label-separator = " |";
         label-focused-foreground = "\${colors.iopink}";
         label-empty-foreground = "\${colors.grey}";
-        format = "<label-monitor> :: <label-state> ";
+        format = "   <label-monitor> :: <label-state> ";
+        ws-icon-0 = "browser; ";
+        ws-icon-1 = "music; ";
+        ws-icon-2 = "msg; ";
+        ws-icon-3 = "terminal; ";
+        ws-icon-4 = "filemanager; ";
+        ws-icon-5 = "gitkraken; ";
       };
       "module/battery" = {
         type = "internal/battery";

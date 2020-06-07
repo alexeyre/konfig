@@ -14,15 +14,13 @@ c.tabs.last_close = "default-page"
 
 c.content.user_stylesheets = "notion.so.css"
 
-c.qt.args = ['force-webrtc-ip-handling-policy=disable_non_proxied_udp']
+c.qt.args = ["force-webrtc-ip-handling-policy=disable_non_proxied_udp"]
 c.content.webrtc_ip_handling_policy = "disable-non-proxied-udp"
 
 config.bind("zl", "spawn --userscript qute-pass --password-only --mode gopass")
 
 config.bind(",m", "hint links spawn umpv {hint-url}")
-config.bind(",M", "hint links spawn umpv-bluetooth {hint-url}")
-config.bind(";m", "hint --rapid links spawn umpv {hint-url}")
-config.bind(";M", "hint --rapid links spawn umpv-bluetooth {hint-url}")
+config.bind(";m", "hint --rapid links pawn umpv {hint-url}")
 
 c.downloads.location.directory = "~/downloads"
 
@@ -30,28 +28,32 @@ c.downloads.location.directory = "~/downloads"
 c.content.host_blocking.whitelist.append("*.4chan.org")
 c.content.host_blocking.whitelist.append("*.4cdn.org")
 
+c.input.insert_mode.leave_on_load = False
+
 c.hints.chars = "aoeuidhtns"
 config.bind("a", "hint all normal")
 config.bind("A", "hint all tab-fg")
 config.bind("E", "hint all tab-bg")
 
-c.url.searchengines = {"DEFAULT": "https://duckduckgo.com/?q={}",
-                       "gg": "https://google.co.uk/search?query={}",
-                       "yt": "https://youtube.com/results?search_query={}",
-                       "scholar": "https://scholar.google.com/scholar?q={}",
-                       "wiki": "https://en.wikipedia.org/w/index.php?search={}",
-                       "amaz": "https://amazon.co.uk/s?k={}",
-                       "note": "file:///home/alex/notes/{}.html",
-                       "ccwiki": "https://wiki.uk.cambridgeconsultants.com/index.php?search={}",
-                       "dict": "https://en.wiktionary.org/w/index.php?search={}",
-                       "apkmirror": "https://www.apkmirror.com/?s={}",
-                       "gl": "https://gitlab.uk.cambridgeconsultants.com/search?search={}",
-                       "leet": "https://1337x.to/search/{}/1"
-                       }
+config.bind("<z><l>", "spawn --userscript qute-pass --mode gopass")
+config.bind("<z><u><l>", "spawn --userscript qute-pass --mode gopass --username-only")
+config.bind("<z><p><l>", "spawn --userscript qute-pass --mode gopass --password-only")
+config.bind("<z><o><l>", "spawn --userscript qute-pass --mode gopass --otp-only")
 
-c.content.headers.user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36"
-c.content.headers.accept_language = "en-US,en;q=0.5"
-# c.content.headers.custom = {"accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"} # this breaks so much shit you have no idea
+c.url.searchengines = {
+    "DEFAULT": "https://google.co.uk/search?query={}",
+    "lk": "https://duckduckgo.com/?q=%5C{}",
+    "d": "https://duckduckgo.com/?q={}",
+    "yt": "https://youtube.com/results?search_query={}",
+    "scholar": "https://scholar.google.com/scholar?q={}",
+    "wiki": "https://en.wikipedia.org/w/index.php?search={}",
+    "amaz": "https://amazon.co.uk/s?k={}",
+    "dict": "https://en.wiktionary.org/w/index.php?search={}",
+    "gitlab": "https://gitlab.com/search?search={}",
+    "gitlabcc": "https://gitlab.uk.cambridgeconsultants.com/search?search={}",
+    "ccwiki": "https://wiki.uk.cambridgeconsultants.com/index.php?search={}",
+    "github": "https://github.com/search?q={}",
+}
 
 config.bind("xt", "config-cycle tabs.show never multiple")
 config.bind("xn", "config-cycle statusbar.hide false true")

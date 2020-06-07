@@ -113,6 +113,10 @@ Counsel-projectile replaces a bunch of the projectile functions to use ivy.
   :hook(prog-mode . flycheck-mode))
 #+END_SRC
 
+**** iPython
+#+BEGIN_SRC emacs-lisp
+(use-package ein)
+#+END_SRC
 * Keyboard
 **** Evil
 I don't like RSI, so I use evil. Don't @ me.
@@ -141,8 +145,8 @@ take me to your leader lmao
   (dashboard-refresh-buffer))
 (provide 'alex/goto-dashboard)
 (use-package evil-leader
-  :hook(evil-mode . (lambda () (global-evil-leader-mode)))
-  :config
+  :init(global-evil-leader-mode)
+  :hook(after-make-frame-functions . (lambda () (progn
   ;; globals
     (evil-leader/set-key
     "p" 'counsel-projectile-switch-project
@@ -154,7 +158,7 @@ take me to your leader lmao
     "r" 'restart-emacs)
     ;; org-only
     (evil-leader/set-key-for-mode 'org-mode
-    "a" 'org-insert-heading-after-current))
+    "a" 'org-insert-heading-after-current)))))
 #+END_SRC
 #+BEGIN_SRC emacs-lisp
 (use-package evil-numbers
@@ -166,12 +170,12 @@ take me to your leader lmao
 **** I'm too used to tmux
 #+BEGIN_SRC emacs-lisp
 (defun setup-input-decode-map ()
+  (interactive)
   (define-key input-decode-map (kbd "C-a") (kbd "C-x"))
   (define-key input-decode-map (kbd "C-'") (kbd "M-x"))
   (define-key input-decode-map (kbd "M-a") (kbd "M-x")))
-(if (daemonp)
+(provide 'setup-input-decode-map)
 (add-hook 'after-make-frame-functions 'setup-input-decode-map)
-  (add-hook 'window-setup-hook 'setup-input-decode-map))
 (global-set-key (kbd "C-x |") (lambda () (interactive)(split-window-horizontally) (other-window 1)))
 (global-set-key (kbd "C-x _") (lambda () (interactive)(split-window-vertically) (other-window 1)))
 (global-set-key (kbd "C-x \\") (lambda () (interactive)(split-window-horizontally) (other-window 1)))
@@ -186,6 +190,10 @@ OR ARE YOU BEING LAZY?
 #+END_SRC
 
 * User Interface
+**** Dialogue Boxes
+#+BEGIN_SRC emacs-lisp
+(setq use-dialog-box nil)
+#+END_SRC
 **** Battery
 #+BEGIN_SRC emacs-lisp
 (add-hook #'after-init-hook 'display-battery-mode)
@@ -279,6 +287,13 @@ This is required for pretty icons etc.
   (org-mode . (lambda () (display-line-numbers-mode -1))))
 #+END_SRC
 
+**** Neotree
+#+BEGIN_SRC emacs-lisp
+(use-package neotree
+  :config(setq neo-theme 'icons)
+  :commands(neotree-show
+            neotree-toggle))
+#+END_SRC
 ** Colours
 #+BEGIN_SRC emacs-lisp
 (defun alex/day ()

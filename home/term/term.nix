@@ -3,11 +3,11 @@
 {
   imports = [ ./st.nix ./konsole.nix ];
   programs.kitty = {
-    enable = false;
-    font.package = pkgs.nerdfonts;
+    enable = true;
     font.name = "FiraCode Nerd Font";
-    settings = { font_size = "11.0"; };
+    settings = { font_size = "12.0"; };
   };
-  programs.st.enable = true;
+  home.sessionVariables.TERMINAL = "${pkgs.kitty}/bin/kitty";
+  programs.st.enable = false;
   programs.konsole.enable = false;
 }

@@ -47,13 +47,14 @@
     mapExpression = { Control_L = "Escape"; };
   };
   services.picom = {
-    enable = true;
+    enable = false;
     fade = true;
     fadeDelta = 3;
     vSync = true;
     extraOptions = ''
       corner-radius = 12.0;
       detect-rounded-corners = true;
+      unredir-if-possible = false;
       rounded-corners-exclude = [
         "window_type = 'menu'",
         "window_type = 'dropdown_menu'",
@@ -64,54 +65,43 @@
         "class_g = 'Dunst'"
       ];
     '';
+    opacityRule = [ "100:class_g = 'Mpv'" "100:class_g = 'mpv'" ];
     blur = true;
     experimentalBackends = true;
-    #activeOpacity = "0.92";
-    #inactiveOpacity = "0.92";
+    activeOpacity = "0.92";
+    inactiveOpacity = "0.92";
   };
   services.syncthing.enable = false;
   xresources.properties = {
     "*.font" = "FiraCode Nerd Font:pixelsize=18:antialias=true:autohint=true;";
-    "*.alpha" = "100.0";
   };
   xresources.extraConfig = builtins.readFile (pkgs.fetchFromGitHub {
     owner = "base16-templates";
     repo = "base16-xresources";
     rev = "d762461de45e00c73a514408988345691f727632";
     sha256 = "08msc3mgf1qzz6j82gi10fin12iwl2zh5annfgbp6nkig63j6fcx";
-  } + "/xresources/base16-spacemacs-256.Xresources");
+  } + "/xresources/base16-isotope-256.Xresources");
   home.packages = with pkgs; [
-    unityhub
+    acpi
+    (pkgs.chromium.override { enableWideVine = true; })
+    gitkraken
     gimp
-    (chromium.override { enableWideVine = true; })
     scrot
-    nativefier
-    python38Packages.youtube-dl-light
     nixfmt
-    ffmpeg-full
     discord
     antibody
     gopass
     qutebrowser
     todoist-electron
     spotify
-    teams
-    nodejs
-    kotatogram-desktop
-    hexchat
     mu
     calibre
     tdesktop
-    cargo
-    rustc
-    bat
-    exa
-    toggldesktop
     neovim
     sxiv
-    deluge
-    kdenlive
-    transmission-gtk
+    gnome3.nautilus
+    winePackages.staging
+    winePackages.fonts
   ];
   programs.zathura.enable = true;
 
@@ -122,7 +112,7 @@
   home.keyboard = {
     layout = "us";
     variant = "dvp";
-    options = [ "ctrl:nocaps" "compose:altgr" ];
+    options = [ "ctrl:nocaps" "compose:ralt" ];
   };
   programs.beets = {
     enable = false;
@@ -136,9 +126,16 @@
   };
   programs.tmux = {
     enable = true;
-    keyMode = "vi";
     shortcut = "a";
-    plugins = with pkgs.tmuxPlugins; [ sensible yank ];
+    keyMode = "vi";
+    newSession = true;
+    terminal = "tmux-256color";
+    escapeTime = 0;
+    customPaneNavigationAndResize = true;
+    clock24 = true;
+    baseIndex = 1;
+    aggressiveResize = true;
   };
+  programs.irssi = { enable = true; };
 
 }

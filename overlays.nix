@@ -6,6 +6,7 @@
       };
     });
   };
+  nixpkgs.config.permittedInsecurePackages = [ "p7zip-16.02" ];
   nixpkgs.overlays = [
     (import ./pkgs/overlay.nix)
     (import (builtins.fetchTarball {

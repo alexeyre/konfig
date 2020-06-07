@@ -16,4 +16,5 @@
     source = ./early-init.el;
     target = ".config/emacs/early-init.el";
   };
+  home.packages = with pkgs; [ hunspell hunspellDicts.en_GB-ise ];
 }

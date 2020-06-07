@@ -1,14 +1,29 @@
-{ pkgs, ... }: {
+{ pkgs, config, ... }: {
   imports = [ ./module.nix ];
   xsession.windowManager.bspwm = {
     enable = true;
     monitors = {
-      "eDP1" = [ "browser" "emacs" "music" "msg" "terminal" ];
-      "eDP-1" = [ "browser" "emacs" "music" "msg" "terminal" ];
-      "eDP-1-1" = [ "browser" "emacs" "music" "msg" "terminal" ];
+      "eDP1" = [
+        "rip"
+        "1"
+        "2"
+        "3"
+        "4"
+        "5"
+        "browser"
+        "emacs"
+        "music"
+        "msg"
+        "terminal"
+        "filemanager"
+      ];
     };
     rules = {
-      "KotatogramDesktop" = {
+      "Nautilus" = {
+        desktop = "filemanager";
+        follow = true;
+      };
+      "TelegramDesktop" = {
         desktop = "msg";
         follow = true;
       };
@@ -25,7 +40,6 @@
         desktop = "emacs";
         follow = true;
       };
-      "Mpv".state = "floating";
       "qutebrowser" = {
         desktop = "browser";
         follow = true;
@@ -48,13 +62,21 @@
         "border" = false;
       };
       "discord" = { state = "floating"; };
+      "Mpv" = {
+        state = "floating";
+        layer = "above";
+        sticky = true;
+        private = true;
+        locked = true;
+      };
     };
     settings = {
       top_padding = 26;
+      bottom_padding = 26;
       focus_follows_pointer = true;
       window_gap = 4;
       border_width = 1;
-      honor_size_hints = true;
+      honor_size_hints = false;
       focused_border_color = "#fc20bb";
       pointer_follows_monitor = true;
       pointer_follows_focus = false;
@@ -73,6 +95,8 @@
       "${xrandr} --output DP-3.1 --mode 1920x1080 --left-of DP-3.2"
       "${bspc} desktop %DP-3.2 -r"
       "${feh} --bg-tile ${wallpaper}"
+      # "\"${config.home.sessionVariables.TERMINAL}\" && ${bspc} node newest -d terminal"
+      "tmux new-session -n \"IRC\" -d 'irssi'"
     ];
   };
 

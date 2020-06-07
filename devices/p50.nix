@@ -14,12 +14,13 @@ let
 in {
   imports = [ ../main.nix ];
   hardware.bluetooth.enable = true;
+  services.blueman.enable = true;
 
   # sound
   hardware.pulseaudio = {
     enable = true;
-    package = pkgs.pulseaudioFull;
-  }; # for bluetooth support
+    package = pkgs.pulseaudioFull; # for bluetooth support
+  };
   sound.enable = true;
 
   # make everything use the same file dialogue
@@ -39,10 +40,13 @@ in {
   networking.firewall = {
     enable = true;
     allowedUDPPorts = [ 51820 ];
+    checkReversePath = "loose";
   };
   networking.networkmanager.enable = false;
   networking.wireless.userControlled.enable = true;
-  networking.wireless.networks = { AEORAOHECOA = { }; };
+  networking.wireless.networks = {
+    AEORAOHECOA = { };
+  }; # make wpa_supplicant work
   services.connman.enable = true;
 
   # control backlight
@@ -65,17 +69,16 @@ in {
   boot.kernelPackages = pkgs.linuxPackages_latest;
   hardware.nvidiaOptimus.disable = true;
   hardware.nvidia.prime = {
-    #offload.enable = true;
-    #sync.enable = true;
+    offload.enable = false;
     intelBusId = "PCI:0:02:0";
     nvidiaBusId = "PCI:1:00:0";
   };
   hardware.opengl.enable = true;
-  hardware.nvidia.powerManagement.enable = true;
-  hardware.nvidia.modesetting.enable = true;
+  hardware.opengl.driSupport32Bit = true;
+  hardware.nvidia.powerManagement.enable = false;
   services.xserver.dpi = 96;
-  services.xserver.videoDrivers = [ "nvidia" ];
-  environment.systemPackages = [ nvidia-offload ];
+  services.xserver.videoDrivers = [ "intel" ];
+  # environment.systemPackages = [  ];
 
   fileSystems."/" = {
     device = "/dev/disk/by-uuid/1cc49fed-355d-4190-9cb3-cc63564050b6";

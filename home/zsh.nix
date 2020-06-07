@@ -22,12 +22,12 @@
       antibody bundle zdharma/fast-syntax-highlighting
       instant-zsh-post
     '';
+    sessionVariables = { "ZSH_TMUX_AUTOSTART" = "true"; };
     dotDir = ".config/zsh";
-    sessionVariables = { ZSH_TMUX_AUTOSTART = "true"; };
     oh-my-zsh = {
       enable = true;
       theme = "evan";
-      plugins = [ "git" "tmux" "vi-mode" ];
+      plugins = [ "git" "vi-mode" ];
     };
   };
 }

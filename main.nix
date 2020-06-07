@@ -26,7 +26,8 @@
   programs.adb.enable = true;
   programs.ssh.askPassword = "";
   services.udisks2.enable = true;
-  virtualisation.docker.enable = true;
+  virtualisation.docker.enable = false;
+  virtualisation.virtualbox.host.enable = false;
   services.udev.extraRules = ''
     SUBSYSTEM=="usb", ATTR{idVendor}=="05ac", MODE="0666", GROUP="wheel"
       '';
@@ -46,16 +47,11 @@
     enable = true;
     layout = "us";
     xkbVariant = "dvp";
-    xkbOptions = "ctrl:nocaps, compose:altgr";
+    xkbOptions = "ctrl:nocaps, compose:ralt";
     libinput.enable = true;
     libinput.tapping = false;
     displayManager.xserverArgs = [ "-ardelay 300" "-arinterval 25" ];
     desktopManager = { xterm.enable = false; };
-    desktopManager.xfce = {
-      enable = true;
-      noDesktop = true;
-      enableXfwm = false;
-    };
     windowManager.bspwm.enable = true;
     displayManager.lightdm.background = builtins.fetchurl
       "https://raw.githubusercontent.com/alex-eyre/-/master/media/0ttvn2u117g41.png";

@@ -3,12 +3,12 @@
     enable = true;
     keybindings = let
       bspc = "${pkgs.bspwm}/bin/bspc";
-      launcher = "${pkgs.rofi}/bin/rofi -show run";
+      launcher =
+        "rofi -combi-modi window,ssh,drun -modi combi,run -icon-theme Arc-Dark -show-icons -matching=fuzzy -show combi";
       term = "${config.home.sessionVariables.TERMINAL}";
       dmenu = "${pkgs.rofi}/bin/rofi -dmenu";
       sed = "${pkgs.gnused}/bin/sed";
       pass = "${pkgs.gopass}/bin/gopass";
-      tdrop = "${pkgs.tdrop}/bin/tdrop";
       pactl = "${pkgs.pulseaudio}/bin/pactl";
       lock = "${pkgs.xautolock}/bin/xautolock -locknow";
     in {
@@ -17,8 +17,6 @@
       "XF86Audio{Raise,Lower}Volume" = "${pactl} set-sink-volume 0 {+,-}5%";
       "XF86AudioMute" = "${pactl} set-sink-mute 0 toggle";
       "XF86AudioMicMute" = "${pactl} set-source-mute 1 toggle";
-
-      "super + c ; a" = "${tdrop} -y 24 --class=discord Discord";
 
       "super + shift + d" =
         "systemctl --user restart random-background.service";
@@ -81,15 +79,15 @@
 
       "super + shift + f" = "${bspc} node -t \\~fullscreen";
 
-      "super + s" = "${bspc} node -g sticky -g locked";
+      "super + s" =
+        "${bspc} node -g sticky && ${bspc} node -g locked && ${bspc} node -g private";
 
       "super + q ; b" = "${bspc} desktop -f browser";
       "super + q ; e" = "${bspc} desktop -f emacs";
       "super + q ; m" = "${bspc} desktop -f msg";
       "super + q ; t" = "${bspc} desktop -f terminal";
 
-      "super + a ; e" =
-        ''emacsclient -c -a "emacs" -e "(alex/goto-dashboard)"'';
+      "super + a ; e" = "emacsclient -cuqn $HOME/notes/home.org";
     };
   };
 }

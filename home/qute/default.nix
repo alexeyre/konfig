@@ -3,6 +3,7 @@
     source = ./config.py;
     target = ".config/qutebrowser/config.py";
   };
+  home.sessionVariables = { BROWSER = "${pkgs.qutebrowser}/bin/qutebrowser"; };
   home.file.fourchanX = let
     fourchanX =
       builtins.fetchurl "https://www.4chan-x.net/builds/4chan-X-beta.user.js";
