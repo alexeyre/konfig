@@ -26,6 +26,7 @@
         wm-restack = "bspwm";
         override-redirect = true;
         enable-ipc = true;
+        background = "\${colors.bg}";
       };
       "bar/bottom" = {
         witdh = "100%";
@@ -45,6 +46,7 @@
         wm-restack = "bspwm";
         override-redirect = true;
         enable-ipc = true;
+        background = "\${colors.bg}";
       };
       "module/time" = {
         type = "internal/date";

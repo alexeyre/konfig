@@ -17,14 +17,17 @@ c.content.user_stylesheets = "notion.so.css"
 c.qt.args = ["force-webrtc-ip-handling-policy=disable_non_proxied_udp"]
 c.content.webrtc_ip_handling_policy = "disable-non-proxied-udp"
 
-config.bind("zl", "spawn --userscript qute-pass --password-only --mode gopass")
-
 config.bind(",m", "hint links spawn umpv {hint-url}")
 config.bind(";m", "hint --rapid links pawn umpv {hint-url}")
 
 c.downloads.location.directory = "~/downloads"
 
-# c.content.host_blocking.lists.append("https://block.energized.pro/unified/formats/hosts")
+
+c.auto_save.session = True
+
+c.content.host_blocking.lists.append(
+    "https://block.energized.pro/unified/formats/hosts"
+)
 c.content.host_blocking.whitelist.append("*.4chan.org")
 c.content.host_blocking.whitelist.append("*.4cdn.org")
 
@@ -42,7 +45,7 @@ config.bind("<z><o><l>", "spawn --userscript qute-pass --mode gopass --otp-only"
 
 c.url.searchengines = {
     "DEFAULT": "https://google.co.uk/search?query={}",
-    "lk": "https://duckduckgo.com/?q=%5C{}",
+    "lk": "https://duckduckgo.com/?kl=uk-en&q=%5C{}",
     "d": "https://duckduckgo.com/?q={}",
     "yt": "https://youtube.com/results?search_query={}",
     "scholar": "https://scholar.google.com/scholar?q={}",
@@ -53,6 +56,8 @@ c.url.searchengines = {
     "gitlabcc": "https://gitlab.uk.cambridgeconsultants.com/search?search={}",
     "ccwiki": "https://wiki.uk.cambridgeconsultants.com/index.php?search={}",
     "github": "https://github.com/search?q={}",
+    "cmc": "https://coinmarketcap.com/currencies/{}",
+    "sec": "https://www.sec.gov/cgi-bin/browse-edgar?company=&match=&CIK={}&filenum=&State=&Country=&SIC=&owner=exclude&Find=Find+Companies&action=getcompany",
 }
 
 config.bind("xt", "config-cycle tabs.show never multiple")

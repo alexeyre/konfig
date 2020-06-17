@@ -3,6 +3,7 @@
     ./emacs
     ./term/term.nix
     ./bspwm
+    # ./xmonad.nix
     ./email.nix
     ./git.nix
     ./mpv.nix
@@ -95,13 +96,15 @@
     todoist-electron
     spotify
     mu
-    calibre
+    # calibre # broken for some reason
     tdesktop
     neovim
     sxiv
     gnome3.nautilus
     winePackages.staging
     winePackages.fonts
+    libreoffice-fresh
+    steam
   ];
   programs.zathura.enable = true;
 
@@ -136,6 +139,17 @@
     baseIndex = 1;
     aggressiveResize = true;
   };
-  programs.irssi = { enable = true; };
+  programs.irssi = {
+    enable = true;
+    networks.freenode = {
+      nick = "absoluutely";
+      server = {
+        address = "chat.freenode.net";
+        port = 6697;
+        autoConnect = true;
+      };
+      channels = { nixos.autoJoin = true; };
+    };
+  };
 
 }
