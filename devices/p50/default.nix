@@ -49,7 +49,6 @@
   # control backlight
   programs.light.enable = true;
 
-
   # printing
   services.printing = {
     enable = false;
