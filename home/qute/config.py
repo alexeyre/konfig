@@ -12,7 +12,7 @@ c.colors.completion.fg = "#dddddd"
 c.tabs.show = "multiple"
 c.tabs.last_close = "default-page"
 
-c.content.user_stylesheets = "notion.so.css"
+#c.content.user_stylesheets = "notion.so.css"
 
 c.qt.args = ["force-webrtc-ip-handling-policy=disable_non_proxied_udp"]
 c.content.webrtc_ip_handling_policy = "disable-non-proxied-udp"
