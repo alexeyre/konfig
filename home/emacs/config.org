@@ -321,6 +321,25 @@ This is required for pretty icons etc.
 * Org
 Oh baby, there's some shit here boys.
 #+BEGIN_SRC emacs-lisp
+
+(defun org-force-open-current-window ()
+  (interactive)
+  (let ((org-link-frame-setup (quote
+                               ((vm . vm-visit-folder)
+                                (vm-imap . vm-visit-imap-folder)
+                                (gnus . gnus)
+                                (file . find-file)
+                                (wl . wl)))
+                              ))
+    (org-open-at-point)))
+;; Depending on universal argument try opening link
+(defun org-open-maybe (&optional arg)
+  (interactive "P")
+  (if arg
+      (org-open-at-point)
+    (org-force-open-current-window)
+    )
+  )
 (setq load-path (cl-remove-if (lambda (x) (string-match-p "org$" x)) load-path))
   (use-package org
     :straight org-plus-contrib
@@ -333,9 +352,11 @@ Oh baby, there's some shit here boys.
 	  org-default-notes-file (expand-file-name "inbox.org" org-directory)
 	  org-agenda-files (list (expand-file-name org-directory)))
     (org-reload)
+    (global-set-key (kbd "C-c l") 'org-store-link)
+    (global-set-key (kbd "C-c a") 'org-agenda)
+    (global-set-key (kbd "C-c c") 'org-capture)
+    (define-key org-mode-map "\C-c\C-o" 'org-open-maybe)
     :config(setq org-startup-indented t
-	org-bullets-bullet-list '(" ") ;; no bullets, needs org-bullets package
-	org-ellipsis "  " ;; folding symbol
 	org-pretty-entities t
 	org-hide-emphasis-markers t
 	;; show actually italicized text instead of /italicized text/
@@ -343,7 +364,9 @@ Oh baby, there's some shit here boys.
 	org-fontify-whole-heading-line t
 	org-fontify-done-headline t
 	org-fontify-quote-and-verse-blocks t
-       fill-column 140)
+       fill-column 140
+org-startup-with-inline-images t
+       )
     :hook
     (org-mode . (lambda () (progn
 	(set-window-buffer nil (current-buffer))
@@ -423,6 +446,33 @@ Oh baby, there's some shit here boys.
   :hook(org-mode . flyspell-mode))
 #+END_SRC
 
+**** Roam
+#+BEGIN_SRC emacs-lisp
+(use-package org-roam
+      :hook
+      (after-init . org-roam-mode)
+      :custom
+      (org-roam-directory "~/notes")
+      :bind (:map org-roam-mode-map
+              (("C-c n l" . org-roam)
+               ("C-c n f" . org-roam-find-file)
+               ("C-c n g" . org-roam-graph-show))
+              :map org-mode-map
+              (("C-c n i" . org-roam-insert))
+              (("C-c n I" . org-roam-insert-immediate))))
+#+END_SRC
+**** Download
+#+BEGIN_SRC emacs-lisp
+(use-package org-download
+  :config
+  (setq org-download-method 'directory
+  org-download-heading-lvl nil)
+  (setq-default org-download-image-dir "~/notes")
+  :hook
+  (dired-mode . org-download-enable)
+  (org-mode . org-download-enable))
+#+END_SRC
+
 * Languages
 **** Rust
 #+BEGIN_SRC emacs-lisp
@@ -481,6 +531,7 @@ Oh baby, there's some shit here boys.
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu/mu4e")
   (use-package mu4e
+    :if (not (memq window-system '(w32)))
     :config (setq mu4e-contexts (list
                                  (make-mu4e-context
                                   :name "edinburgh"
