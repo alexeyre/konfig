@@ -1,8 +1,9 @@
-{ config, pkgs, lib, ... }: {
+{ pkgs, ... }: {
   programs.emacs = {
     enable = true;
     package = pkgs.emacsUnstable;
   };
+  home.packages = with pkgs; [ hunspell hunspellDicts.en_GB-ise sqlite ];
   services.emacs.enable = true;
   home.file.init = {
     source = ./init.el;
@@ -16,5 +17,4 @@
     source = ./early-init.el;
     target = ".config/emacs/early-init.el";
   };
-  home.packages = with pkgs; [ hunspell hunspellDicts.en_GB-ise ];
 }

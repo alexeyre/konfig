@@ -87,14 +87,11 @@
       bspc = "${pkgs.bspwm}/bin/bspc";
       xrandr = "${pkgs.xorg.xrandr}/bin/xrandr";
       feh = "${pkgs.feh}/bin/feh";
-      wallpaper = builtins.fetchurl
-        "https://raw.githubusercontent.com/alex-eyre/-/master/media/0ttvn2u117g41.png";
     in [
       "${xrandr} --output eDP-1-1 --primary"
       "${xrandr} --output DP-3.2 --mode 1920x1080 --rate 144 --same-as eDP-1-1"
       "${xrandr} --output DP-3.1 --mode 1920x1080 --left-of DP-3.2"
       "${bspc} desktop %DP-3.2 -r"
-      "${feh} --bg-tile ${wallpaper}"
       # "\"${config.home.sessionVariables.TERMINAL}\" && ${bspc} node newest -d terminal"
       "tmux new-session -n \"IRC\" -d 'irssi'"
     ];

@@ -5,4 +5,5 @@ self: super: {
   croscore = super.callPackage (import ./croscore) { };
   apple-color-emoji = super.callPackage (import ./apple-color-emoji) { };
   nativefier = (super.callPackage (import ./nativefier) { }).nativefier;
+  fxkatana = super.callPackage (import ./fxKatana) { };
 }

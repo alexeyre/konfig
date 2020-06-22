@@ -72,7 +72,7 @@
     activeOpacity = "0.92";
     inactiveOpacity = "0.92";
   };
-  services.syncthing.enable = false;
+  services.syncthing.enable = true;
   xresources.properties = {
     "*.font" = "FiraCode Nerd Font:pixelsize=18:antialias=true:autohint=true;";
   };
@@ -105,11 +105,12 @@
     winePackages.fonts
     libreoffice-fresh
     steam
+    fxkatana
   ];
   programs.zathura.enable = true;
 
   services.random-background = {
-    enable = false;
+    enable = true;
     imageDirectory = "%h/images/wallpapers";
   };
   home.keyboard = {

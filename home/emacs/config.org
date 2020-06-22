@@ -347,6 +347,7 @@ Better M-x and cool stuff
     (doom-themes-org-config))
   (provide 'alex/day)
   (provide 'alex/night)
+  (run-at-time "05:00" (* 60 60 24) (lambda () (enable-theme 'doom-acario-light)))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -354,6 +355,7 @@ Better M-x and cool stuff
     ;; :if(display-graphic-p)
     :after org
     :config
+    (load-theme 'doom-Iosvkem t)
     (load-theme 'doom-acario-light t)
     (doom-themes-org-config))
 #+end_src
@@ -431,6 +433,7 @@ Oh baby, there's some shit here boys.
 **** Bullets
 #+begin_src emacs-lisp
   (use-package org-bullets
+    :disabled t
     :after org
     :hook(org-mode . org-bullets-mode)
     :config(setq org-bullets-bullet-list '(" ")))
@@ -488,6 +491,7 @@ Oh baby, there's some shit here boys.
     (after-init . org-roam-mode)
     :custom
     (org-roam-directory "~/notes")
+    (org-roam-completion-system 'ivy)
     :bind (:map org-roam-mode-map
                 (("C-c n l" . org-roam)
                  ("C-c n f" . org-roam-find-file)
@@ -496,6 +500,18 @@ Oh baby, there's some shit here boys.
                 (("C-c n i" . org-roam-insert))
                 (("C-c n I" . org-roam-insert-immediate))))
 #+end_src
+**** Deft
+#+BEGIN_SRC emacs-lisp
+(use-package deft
+  :after org
+  :bind
+  ("C-c n d" . deft)
+  :custom
+  (deft-recursive t)
+  (deft-use-filter-string-for-filename t)
+  (deft-default-extension "org")
+  (deft-directory "~/notes"))
+#+END_SRC
 **** Download
 #+begin_src emacs-lisp
   (use-package org-download

@@ -33,11 +33,15 @@
   networking.extraHosts = let
     list = builtins.readFile (builtins.fetchurl
       "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts");
+    youtube = builtins.readFile (builtins.fetchurl "https://gist.githubusercontent.com/Ewpratten/a25ae63a7200c02c850fede2f32453cf/raw/b9318009399b99e822515d388b8458557d828c37/hosts-yt-ads");
   in ''
     ${list}
+    ${youtube}
+    172.217.1.14 manifest.googlevideo.com
     0.0.0.0 *.ignore.me
     0.0.0.0 www.ignore.me
     0.0.0.0 ignore.me
+
       '';
   environment.systemPackages = with pkgs; [ gitMinimal wireguard-tools ];
   environment.pathsToLink = [ "${pkgs.xorg.libxcb}/lib/" "/share/zsh" ];
@@ -54,21 +58,19 @@
     windowManager.bspwm.enable = true;
     # windowManager.xmonad.enable = true;
     displayManager.lightdm.enable = true;
-    displayManager.lightdm.background = builtins.fetchurl
-      "https://raw.githubusercontent.com/alex-eyre/-/master/media/0ttvn2u117g41.png";
+    displayManager.lightdm.background = ./media/wallpapers/lock.png;
     xautolock.enable = true;
     xautolock.locker =
-      "${pkgs.i3lock}/bin/i3lock -i ${config.services.xserver.displayManager.lightdm.background}";
+      "${pkgs.i3lock-fancy}/bin/i3lock-fancy";
   };
   programs.xss-lock.enable = true;
-  programs.xss-lock.lockerCommand =
-    "${pkgs.i3lock}/bin/i3lock -i ${config.services.xserver.displayManager.lightdm.background}";
+  programs.xss-lock.lockerCommand = "${config.services.xserver.xautolock.locker}";
 
   programs.zsh = { enable = true; };
   users.users.alex = {
     isNormalUser = true;
     extraGroups =
-      [ "wheel" "audio" "adbusers" "video" "networkmanager" "docker" ];
+      [ "wheel" "audio" "adbusers" "video" "networkmanager" "docker" "vboxusers" ];
     shell = pkgs.zsh;
   };
   home-manager.useUserPackages = true;
