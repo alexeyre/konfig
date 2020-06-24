@@ -243,7 +243,7 @@ OR ARE YOU BEING LAZY?
 #+end_src
 **** Font
 #+begin_src emacs-lisp
-  (set-frame-font "FiraCode Nerd Font 12" nil t)
+  (set-frame-font "FiraCode NF 12" nil t)
 #+end_src
 
 ** Libraries
@@ -586,7 +586,7 @@ Oh baby, there's some shit here boys.
 #+begin_src emacs-lisp
   (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu/mu4e")
   (use-package mu4e
-    :if (not (memq window-system '(w32)))
+    :if (not (eq system-type 'windows-nt))
     :config (setq mu4e-contexts (list
                                  (make-mu4e-context
                                   :name "edinburgh"
