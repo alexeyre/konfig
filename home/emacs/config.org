@@ -379,13 +379,14 @@ Oh baby, there's some shit here boys.
         (org-open-at-point)
       (org-force-open-current-window)))
   (use-package org
+    :requires org-roam
     :mode("\\.org$" . org-mode)
     :commands(org-mode
               org-capture
               org-reload)
     :init
     (setq org-directory "~/notes"
-          org-default-notes-file (expand-file-name "inbox.org" org-directory)
+          org-default-notes-file (org-roam-find-file-immediate "Index")
           org-agenda-files (list (expand-file-name org-directory)))
     (org-reload)
     (global-set-key (kbd "C-c l") 'org-store-link)
@@ -396,7 +397,6 @@ Oh baby, there's some shit here boys.
     (setq org-startup-indented t
           org-pretty-entities t
           org-hide-emphasis-markers t
-          ;; show actually italicized text instead of /italicized text/
           org-agenda-block-separator ""
           org-fontify-whole-heading-line t
           org-fontify-done-headline t
@@ -407,13 +407,6 @@ Oh baby, there's some shit here boys.
     (remove-hook 'org-cycle-hook
                  #'org-optimize-window-after-visibility-change)
     :hook
-    ;; (org-mode . (lambda () (progn
-    ;;   			 (set-window-buffer nil (current-buffer))
-    ;;   			 (setq left-margin-width 2
-    ;;   			       right-margin-width 2
-    ;;   			       header-line-format " "
-    ;;   			       line-spacing
-    ;;                          0.1))))
     (org-mode . auto-fill-mode)
     :custom-face
     (org-document-title ((t (:height 1.75))))
@@ -457,7 +450,6 @@ Oh baby, there's some shit here boys.
 **** Pretty Tables
 #+begin_src emacs-lisp
   (use-package org-pretty-table
-    :disabled t
     :straight(org-pretty-table :type git :host github :repo "Fuco1/org-pretty-table")
     :hook
     (orgtbl-mode . org-pretty-table-mode)
