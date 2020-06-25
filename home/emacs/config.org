@@ -378,9 +378,7 @@ Oh baby, there's some shit here boys.
     (if arg
         (org-open-at-point)
       (org-force-open-current-window)))
-  (setq load-path (cl-remove-if (lambda (x) (string-match-p "org$" x)) load-path))
   (use-package org
-    :straight org-plus-contrib
     :mode("\\.org$" . org-mode)
     :commands(org-mode
   	    org-capture
@@ -480,7 +478,11 @@ Oh baby, there's some shit here boys.
 **** Hunspell
 #+begin_src emacs-lisp
   (use-package flyspell
-    :config(setq ispell-program-name "hunspell")
+    :config
+    (setq ispell-program-name "hunspell")
+    (setq ispell-hunspell-dict-paths-alist
+        '(("en_US" "C:/Hunspell/en_GB.aff")))
+    (setq ispell-local-dictionary "en_GB")
     :hook(org-mode . flyspell-mode))
 #+end_src
 
