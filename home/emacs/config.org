@@ -387,7 +387,7 @@ Better M-x and cool stuff
     :config
     (setq calendar-latitude 52.0
           calendar-longitude 0.0
-          circadium-themes '((:sunrise . doom-acario-light)
+          circadian-themes '((:sunrise . doom-acario-light)
                              (:sunset . doom-Iosvkem)))
     (circadian-setup))
 #+end_src
@@ -395,22 +395,6 @@ Better M-x and cool stuff
 * Org
 Oh baby, there's some shit here boys.
 #+begin_src emacs-lisp
-
-  (defun org-force-open-current-window ()
-    (interactive)
-    (let ((org-link-frame-setup (quote
-                                 ((vm . vm-visit-folder)
-                                  (vm-imap . vm-visit-imap-folder)
-                                  (gnus . gnus)
-                                  (file . find-file)
-                                  (wl . wl)))))
-      (org-open-at-point)))
-  ;; Depending on universal argument try opening link
-  (defun org-open-maybe (&optional arg)
-    (interactive "P")
-    (if arg
-        (org-open-at-point)
-      (org-force-open-current-window)))
   (use-package org
     :requires org-roam
     :mode("\\.org$" . org-mode)
@@ -425,7 +409,6 @@ Oh baby, there's some shit here boys.
     (global-set-key (kbd "C-c l") 'org-store-link)
     (global-set-key (kbd "C-c a") 'org-agenda)
     (global-set-key (kbd "C-c c") 'org-capture)
-    (define-key org-mode-map "\C-c\C-o" 'org-open-maybe)
     :config
     (setq org-startup-indented t
           org-pretty-entities t
@@ -436,7 +419,8 @@ Oh baby, there's some shit here boys.
           org-fontify-quote-and-verse-blocks t
           fill-column 140
           org-startup-with-inline-images t
-          org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
+          org-format-latex-options (plist-put org-format-latex-options :scale 2.0)
+	  org-link-frame-setup '((file . find-file)))
     (remove-hook 'org-cycle-hook
                  #'org-optimize-window-after-visibility-change)
     :hook
@@ -478,7 +462,7 @@ Oh baby, there's some shit here boys.
   (use-package org-spacer
     :straight (org-spacer :type git :host github :repo "dustinlacewell/org-spacer.el")
     :config(setq org-spacer-element-blanks '((3 headline)
-            				   (1 paragraph src-block table property-drawer))))
+                				   (1 paragraph src-block table property-drawer))))
 #+end_src
 **** Pretty Tables
 #+begin_src emacs-lisp
@@ -604,12 +588,13 @@ Oh baby, there's some shit here boys.
 **** M4UE
 #+begin_src emacs-lisp
   (use-package mu4e-alert
+    :requires mu4e
+    :if (not (eq system-type 'windows-nt))
     :hook(after-init . mu4e-alert-enable-mode-line-display)
     :config(setq mu4e-alert-set-default-style 'libnotify))
 #+end_src
 
 #+begin_src emacs-lisp
-  (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu/mu4e")
   (use-package mu4e
     :if (not (eq system-type 'windows-nt))
     :config (setq mu4e-contexts (list
@@ -649,8 +634,8 @@ Oh baby, there's some shit here boys.
                   mu4e-confirm-quit nil
                   starttls-use-gnutls t
                   mu4e-bookmarks (list (make-mu4e-bookmark
-            			      :name "Inbox"
-            			      :query "NOT flag:trashed AND maildir:/Inbox"
-            			      :key ?u))))
+                			      :name "Inbox"
+                			      :query "NOT flag:trashed AND maildir:/Inbox"
+                			      :key ?u))))
 #+end_src
 
