@@ -493,7 +493,11 @@ Oh baby, there's some shit here boys.
 **** Hunspell
 #+begin_src emacs-lisp
   (use-package flyspell
-    :config(setq ispell-program-name "hunspell")
+    :config
+    (setq ispell-program-name "hunspell")
+    (setq ispell-hunspell-dict-paths-alist
+        '(("en_US" "C:/Hunspell/en_GB.aff")))
+    (setq ispell-local-dictionary "en_GB")
     :hook(org-mode . flyspell-mode))
 #+end_src
 
