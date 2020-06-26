@@ -156,6 +156,13 @@ Counsel-projectile replaces a bunch of the projectile functions to use ivy.
 #+begin_src emacs-lisp
   (use-package ein)
 #+end_src
+**** Apheleia
+#+BEGIN_SRC emacs-lisp
+(use-package apheleia
+  :straight(:type git :host github :repo "raxod502/apheleia")
+  :init(apheleia-global-mode +1))
+#+END_SRC
+
 * Keyboard
 **** Evil
 I don't like RSI, so I use evil. Don't @ me.
@@ -439,10 +446,9 @@ Oh baby, there's some shit here boys.
 **** Mixed Pitch Mode
 #+begin_src emacs-lisp
   (use-package mixed-pitch
-    :disabled t
-    :after org
     :custom-face(variable-pitch ((t (:family "Tinos" :height 160))))
-    :hook(org-mode . mixed-pitch-mode))
+    :hook((org-mode . mixed-pitch-mode)
+          (text-mode . mixed-pitch-mode)))
 #+end_src
 **** Bullets
 #+begin_src emacs-lisp
@@ -464,6 +470,15 @@ Oh baby, there's some shit here boys.
     :config(setq org-spacer-element-blanks '((3 headline)
                 				   (1 paragraph src-block table property-drawer))))
 #+end_src
+**** Adaptive Wrap
+#+BEGIN_SRC emacs-lisp
+(use-package adaptive-wrap-vp
+  :straight(:type git :host github :repo "brentonk/adaptive-wrap-vp")
+  :commands(adaptive-wrap-prefix-vp-mode)
+  :hook((text-mode . adaptive-wrap-prefix-vp-mode)
+        (org-mode . adaptive-wrap-prefix-vp-mode)))
+#+END_SRC
+
 **** Pretty Tables
 #+begin_src emacs-lisp
   (use-package org-pretty-table
