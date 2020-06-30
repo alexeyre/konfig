@@ -34,9 +34,9 @@ Reloads the configuration
 #+begin_src emacs-lisp
   (defun edit-src-block (src fn language)
     "Replace SRC org-element's value property with the result of FN.
-                    FN is a function that operates on org-element's value and returns a string.
-                    LANGUAGE is a string referring to one of orb-babel's supported languages.
-                    (https://orgmode.org/manual/Languages.html#Languages)"
+                          FN is a function that operates on org-element's value and returns a string.
+                          LANGUAGE is a string referring to one of orb-babel's supported languages.
+                          (https://orgmode.org/manual/Languages.html#Languages)"
     (let ((src-language (org-element-property :language src))
           (value (org-element-property :value src)))
       (when (string= src-language language)
@@ -52,7 +52,7 @@ Reloads the configuration
         (emacs-lisp-mode)
         (insert 
          (replace-regexp-in-string "[[:space:]]*
-                    [[:space:]]*)" ")" string))
+                          [[:space:]]*)" ")" string))
         (indent-region (point-min) (point-max))
         (buffer-substring (point-min) (point-max)))))
 
@@ -77,14 +77,22 @@ Reloads the configuration
 #+end_src
 
 **** Dash
-#+BEGIN_SRC emacs-lisp
-(use-package dash
-  :demand t)
-(use-package dash-functional
-  :demand t)
-#+END_SRC
+#+begin_src emacs-lisp
+  (use-package dash
+    :demand t)
+  (use-package dash-functional
+    :demand t)
+#+end_src
 
 * Workflow
+**** LSP
+#+begin_src emacs-lisp
+  (use-package lsp-mode
+    :commands(lsp))
+  (use-package lsp-ui
+    :commands(lsp-ui-mode))
+  (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+#+end_src
 **** Updates
 #+begin_src emacs-lisp
   (use-package auto-package-update
@@ -96,7 +104,9 @@ Reloads the configuration
 **** Magit
 #+begin_src emacs-lisp
   (use-package magit
-    :commands(magit))
+    :commands(magit)
+    :config(setq magit-refresh-status-buffer nil
+      	       auto-revert-buffer-list-filter 'magit-auto-revert-repository-buffer-p))
 #+end_src
 **** Projectile
 #+begin_src emacs-lisp
@@ -121,9 +131,9 @@ Counsel-projectile replaces a bunch of the projectile functions to use ivy.
     :hook(prog-mode . company-mode))
 #+end_src
 #+begin_src emacs-lisp
-  (use-package company-jedi
-    :after company
-    :hook(python-mode . (lambda () (add-to-list 'company-backends 'company-jedi))))
+  (use-package company-lsp
+    :requires(company)
+    :config(push 'company-lsp company-backends))
 #+end_src
 
 **** Yasnippet
@@ -200,27 +210,21 @@ Evil works better if you force modes to cooperate.
 #+end_src
 take me to your leader lmao
 #+begin_src emacs-lisp
-  (defun alex/goto-dashboard ()
-    "switch to dashboard"
-    (interactive)
-    (switch-to-buffer "*dashboard*")
-    (dashboard-refresh-buffer))
-  (provide 'alex/goto-dashboard)
   (use-package evil-leader
-    :init(global-evil-leader-mode)
-    :hook(after-make-frame-functions . (lambda () (progn
-                    				  ;; globals
-                    				  (evil-leader/set-key
-                    				    "p" 'counsel-projectile-switch-project
-                    				    "o" 'counsel-projectile-find-file
-                    				    "e" 'find-file
-                    				    "b" 'switch-to-buffer
-                    				    "k" 'kill-buffer
-                    				    "d" 'alex/goto-dashboard
-                    				    "r" 'restart-emacs)
-                    				  ;; org-only
-                    				  (evil-leader/set-key-for-mode 'org-mode
-                    				    "a" 'org-insert-heading-after-current)))))
+    :config
+    ;; globals
+    (evil-leader/set-key
+      "p" 'counsel-projectile-switch-project
+      "o" 'counsel-projectile-find-file
+      "e" 'find-file
+      "b" 'switch-to-buffer
+      "k" 'kill-buffer
+      "r" 'alex/reload
+      "j" 'org-roam-jump-to-index)
+    ;; org-only
+    (evil-leader/set-key-for-mode 'org-mode
+      "a" 'org-insert-heading-after-current)
+    (global-evil-leader-mode))
 #+end_src
 #+begin_src emacs-lisp
   (use-package evil-numbers
@@ -269,6 +273,11 @@ OR ARE YOU BEING LAZY?
   (set-frame-font "FiraCode NF 12" nil t)
 #+end_src
 
+**** Font Caches
+#+begin_src emacs-lisp
+(when (eq system-type 'windows-nt)
+  (setq inhibit-compacting-font-caches t))
+#+end_src emacs-lisp
 ** Libraries
 **** All The Icons
 This is required for pretty icons etc.
@@ -280,6 +289,7 @@ This is required for pretty icons etc.
 **** Dashboard
 #+begin_src emacs-lisp
   (use-package dashboard
+    :disabled t
     :config
     (setq dashboard-items '((recents  . 5)
                             (bookmarks . 5)
@@ -289,15 +299,53 @@ This is required for pretty icons etc.
           dashboard-startup-banner 3)
     (dashboard-setup-startup-hook))
 #+end_src
+#+begin_src emacs-lisp :tangle yes
+  (setq inital-major-mode 'org-mode)
+  (add-hook 'after-init-hook (lambda () (org-roam-jump-to-index)))
+#+end_src
 **** Counsel/Ivy
 Better M-x and cool stuff
 #+begin_src emacs-lisp
   (use-package ivy
+    :config(setq ivy-re-builders-alist '((t . ivy--regex-ignore-order)))
+    :bind
+    ("M-x" . counsel-M-x)
+    ("C-x C-f" . counsel-find-file)
+    ("M-y"   . counsel-yank-pop)
+    ("<f1> f" . counsel-describe-function)
+    ("<f1> v" . counsel-describe-variable)
+    ("<f1> l" . counsel-find-library)
+    ("<f2> i" . counsel-info-lookup-symbol)
+    ("<f2> u" . counsel-unicode-char)
+    ("<f2> j" . counsel-set-variable)
+    ("C-x b" . ivy-switch-buffer)
+    ("C-c v" . ivy-push-view)
+    ("C-c V" . ivy-pop-view)
     :demand t)
   (use-package counsel
-    :init(counsel-mode))
+    :bind
+    ("C-c c" . counsel-compile)
+    ("C-c g" . counsel-git)
+    ("C-c j" . counsel-git-grep)
+    ("C-c L" . counsel-git-log)
+    ("C-c k" . counsel-rg)
+    ("C-c m" . counsel-linux-app)
+    ("C-c n" . counsel-fzf)
+    ("C-x l" . counsel-locate)
+    ("C-c J" . counsel-file-jump)
+    ("C-S-o" . counsel-rhythmbox)
+    ("C-c w" . counsel-wmctrl)
+    ("C-c C-r" . ivy-resume)
+    ("C-c b" 'counsel-bookmark)
+    ("C-c d" 'counsel-descbinds)
+    ("C-c g" 'counsel-git)
+    ("C-c o" 'counsel-outline)
+    ("C-c t" 'counsel-load-theme)
+    ("C-c F" 'counsel-org-file)
+    :config(counsel-mode))
   (use-package swiper
     :after ivy
+    :bind("C-s" . swiper-isearch)
     :config
     (setq swiper-action-recenter t)
     (setq swiper-goto-start-of-match t))
@@ -321,7 +369,6 @@ Better M-x and cool stuff
     :requires ivy
     :init(all-the-icons-ivy-rich-mode 1))
 #+end_src
-
 
 **** Modeline
 #+begin_src emacs-lisp
@@ -379,8 +426,25 @@ Better M-x and cool stuff
 #+begin_src emacs-lisp
   (use-package neotree
     :config(setq neo-theme 'icons)
+    :hook(after-init . neotree-show)
     :commands(neotree-show
               neotree-toggle))
+#+end_src
+**** Vertical iComplete
+#+begin_src emacs-lisp :tangle yes
+  (use-package icomplete-custom
+    :custom
+    (completion-styles '(partial-completion substring))
+    (completion-category-overrides '((file (styles basic substring))))
+    (read-file-name-completion-ignore-case t)
+    (read-buffer-completion-ignore-case t)
+    (completion-ignore-case t)
+    :hook
+    (after-init . icomplete-mode)
+    (icomplete-mode . icomplete-vertical-mode)
+    :bind(:map icomplete-minibuffer-map
+  	     ("C-j . icomplete-backward-completions)
+         ("C-k . icomplete-forward-completions)))
 #+end_src
 ** Colours
 #+begin_src emacs-lisp
@@ -421,72 +485,73 @@ Oh baby, there's some shit here boys.
   (use-package org
     :mode("\\.org$" . org-mode)
     :bind(:map global-map
-  	     ("C-c l" . org-store-link)
-  	     ("C-c a" . org-agenda)
-  	     ("C-c c" . org-capture))
+               ("C-c l" . org-store-link)
+               ("C-c a" . org-agenda)
+               ("C-c c" . org-capture))
     :config
     (prettify-utils-add-hook org-mode 
-                         ("[ ]" "☐")
-                         ("[X]" "☑")
-                         ("[-]" "❍"))
+                             ("[ ]" "☐")
+                             ("[X]" "☑")
+                             ("[-]" "❍"))
     (setq org-startup-indented t
-  	org-pretty-entities t
-  	org-hide-emphasis-markers t
-  	org-agenda-block-separator ""
-  	org-fontify-whole-heading-line t
-  	org-fontify-done-headline t
-  	org-fontify-quote-and-verse-blocks t
-  	fill-column 140
-      org-id-track-globally t
-  	org-startup-with-inline-images t
-  	org-format-latex-options (plist-put org-format-latex-options :scale 2.0)
-  	org-directory "~/notes"
-  	org-default-notes-file (concat org-directory "/notes.org")
-  	org-agenda-files (list (expand-file-name org-directory))
-  	org-link-frame-setup '((file . find-file))
-  	org-link-abbrev-alist '(("Google" . "http://www.google.com/search?q=%s")
-  				("google" . "http://www.google.com/search?q=%s")
-  				("DuckDuckGo" . "https://duckduckgo.com/?q=%s")
-  				("Wikipedia" . "http://en.wikipedia.org/w/index.php?search=%s")
-  				("Wikia" . "http://www.wikia.com/index.php?search=%s")
-  				("Quora" . "https://www.quora.com/search?q=%s")
-  				("Stack Overflow" . "http://stackoverflow.com/search?q=%s")
-  				("Google Maps" . "http://maps.google.com/maps?q=%s")
-  				("Emacs Wiki" . "https://duckduckgo.com/?q=%s+site%3Aemacswiki.org")
-  				("search code" . "http://searchcode.com/?q=%s")
-  				("GitHub" . "https://github.com/search?q=%s")
-  				("Bitbucket" . "https://bitbucket.org/repo/all?name=%s")
-  				("Google Code" . "https://code.google.com/query/#q=%s")
-  				("Launchpad" . "https://launchpad.net/+search?field.text=%s")
-  				("Code Project" . "http://www.codeproject.com/search.aspx?q=%s")
-  				("CodePlex" . "https://www.codeplex.com/site/search?query=%s")
-  				("Gitorious" . "https://gitorious.org/search?q=%s")
-  				("SourceForge" . "https://sourceforge.net/directory/?q=%s")
-  				("Freecode" . "http://freecode.com/search?q=%s")
-  				("Active State" . "http://code.activestate.com/search/#q=%s")
-  				("Ohloh Code" . "http://code.ohloh.net/search?s=%s")
-  				("Snipplr" . "http://snipplr.com/search.php?q=%s")
-  				("lispdoc" . "http://lispdoc.com/?q=%s")
-  				("Ruby-Doc" . "http://ruby-doc.com/search.html?q=%s")
-  				("Python 3 Documentation" . "http://docs.python.org/3/search.html?q=%s")
-  				("Perl CPAN" . "http://search.cpan.org/search?mode=all&query=%s")
-  				("PHP online documentation" . "http://cn2.php.net/results.php?q=%s&p=manual")
-  				("bug" . "http://bugzilla/show_bug.cgi?id=%s")
-  				("The Pirate Bay" . "http://thepiratebay.se/search/%s")))
+          org-pretty-entities t
+          org-hide-emphasis-markers t
+          org-agenda-block-separator ""
+          org-fontify-whole-heading-line t
+          org-fontify-done-headline t
+          org-fontify-quote-and-verse-blocks t
+          fill-column 140
+    	org-image-actual-width nil
+          org-id-track-globally t
+          org-startup-with-inline-images t
+          org-format-latex-options (plist-put org-format-latex-options :scale 2.0)
+          org-directory "~/notes"
+          org-default-notes-file (concat org-directory "/notes.org")
+          org-agenda-files (list (expand-file-name org-directory))
+          org-link-frame-setup '((file . find-file))
+          org-link-abbrev-alist '(("Google" . "http://www.google.com/search?q=%s")
+                                  ("google" . "http://www.google.com/search?q=%s")
+                                  ("DuckDuckGo" . "https://duckduckgo.com/?q=%s")
+                                  ("Wikipedia" . "http://en.wikipedia.org/w/index.php?search=%s")
+                                  ("Wikia" . "http://www.wikia.com/index.php?search=%s")
+                                  ("Quora" . "https://www.quora.com/search?q=%s")
+                                  ("Stack Overflow" . "http://stackoverflow.com/search?q=%s")
+                                  ("Google Maps" . "http://maps.google.com/maps?q=%s")
+                                  ("Emacs Wiki" . "https://duckduckgo.com/?q=%s+site%3Aemacswiki.org")
+                                  ("search code" . "http://searchcode.com/?q=%s")
+                                  ("GitHub" . "https://github.com/search?q=%s")
+                                  ("Bitbucket" . "https://bitbucket.org/repo/all?name=%s")
+                                  ("Google Code" . "https://code.google.com/query/#q=%s")
+                                  ("Launchpad" . "https://launchpad.net/+search?field.text=%s")
+                                  ("Code Project" . "http://www.codeproject.com/search.aspx?q=%s")
+                                  ("CodePlex" . "https://www.codeplex.com/site/search?query=%s")
+                                  ("Gitorious" . "https://gitorious.org/search?q=%s")
+                                  ("SourceForge" . "https://sourceforge.net/directory/?q=%s")
+                                  ("Freecode" . "http://freecode.com/search?q=%s")
+                                  ("Active State" . "http://code.activestate.com/search/#q=%s")
+                                  ("Ohloh Code" . "http://code.ohloh.net/search?s=%s")
+                                  ("Snipplr" . "http://snipplr.com/search.php?q=%s")
+                                  ("lispdoc" . "http://lispdoc.com/?q=%s")
+                                  ("Ruby-Doc" . "http://ruby-doc.com/search.html?q=%s")
+                                  ("Python 3 Documentation" . "http://docs.python.org/3/search.html?q=%s")
+                                  ("Perl CPAN" . "http://search.cpan.org/search?mode=all&query=%s")
+                                  ("PHP online documentation" . "http://cn2.php.net/results.php?q=%s&p=manual")
+                                  ("bug" . "http://bugzilla/show_bug.cgi?id=%s")
+                                  ("The Pirate Bay" . "http://thepiratebay.se/search/%s")))
     (remove-hook 'org-cycle-hook
-  	       #'org-optimize-window-after-visibility-change)
+                 #'org-optimize-window-after-visibility-change)
     :hook
-    (org-mode . auto-fill-mode)
-    :custom-face
-    (org-document-title ((t (:height 1.75))))
-    (org-level-1 ((t (:inherit outline-1 :height 1.5))))
-    (org-level-2 ((t (:inherit outline-2 :height 1.4))))
-    (org-level-3 ((t (:inherit outline-3 :height 1.3))))
-    (org-level-4 ((t (:inherit outline-4 :height 1.2))))
-    (org-level-5 ((t (:inherit outline-5 :height 1.1))))
-    (org-level-6 ((t (:inherit outline-6 :height 1.0))))
-    (org-level-7 ((t (:inherit outline-7 :height 1.0))))
-    (org-level-8 ((t (:inherit outline-8 :height 1.0)))))
+    (org-mode . auto-fill-mode))
+  ;; :custom-face
+  ;; (org-document-title ((t (:height 1.75))))
+  ;; (org-level-1 ((t (:inherit outline-1 :height 1.5))))
+  ;; (org-level-2 ((t (:inherit outline-2 :height 1.4))))
+  ;; (org-level-3 ((t (:inherit outline-3 :height 1.3))))
+  ;; (org-level-4 ((t (:inherit outline-4 :height 1.2))))
+  ;; (org-level-5 ((t (:inherit outline-5 :height 1.1))))
+  ;; (org-level-6 ((t (:inherit outline-6 :height 1.0))))
+  ;; (org-level-7 ((t (:inherit outline-7 :height 1.0))))
+  ;; (org-level-8 ((t (:inherit outline-8 :height 1.0)))))
 #+end_src
 **** Mixed Pitch Mode
 #+begin_src emacs-lisp
@@ -514,7 +579,7 @@ Oh baby, there's some shit here boys.
   (use-package org-spacer
     :straight (org-spacer :type git :host github :repo "dustinlacewell/org-spacer.el")
     :config(setq org-spacer-element-blanks '((3 headline)
-                        			   (1 paragraph src-block table property-drawer))))
+                              		   (1 paragraph src-block table property-drawer))))
 #+end_src
 **** Pretty Tables
 #+begin_src emacs-lisp
@@ -549,9 +614,9 @@ Oh baby, there's some shit here boys.
     :ensure-system-package(hunspell . hunspell)
     :config
     (setq ispell-program-name "hunspell"
-        	ispell-hunspell-dict-paths-alist
-        	'(("en_GB" "C:/Hunspell/en_GB.aff"))
-        	ispell-local-dictionary "en_GB")
+          ispell-hunspell-dict-paths-alist
+          '(("en_GB" "C:/Hunspell/en_GB.aff"))
+          ispell-local-dictionary "en_GB")
     :hook(org-mode . flyspell-mode))
 #+end_src
 
@@ -563,13 +628,15 @@ Oh baby, there's some shit here boys.
     :custom
     (org-roam-directory "~/notes")
     (org-roam-completion-system 'ivy)
-    :bind (:map org-roam-mode-map
-                (("C-c n l" . org-roam)
-                 ("C-c n f" . org-roam-find-file)
-                 ("C-c n g" . org-roam-graph-show))
-                :map org-mode-map
-                (("C-c n i" . org-roam-insert))
-                (("C-c n I" . org-roam-insert-immediate))))
+    (org-roam-index-file "./20200619184615-index.org")
+    :bind (("C-c n j" . org-roam-jump-to-index)
+           :map org-roam-mode-map
+           (("C-c n l" . org-roam)
+            ("C-c n f" . org-roam-find-file)
+            ("C-c n g" . org-roam-graph-show))
+           :map org-mode-map
+           (("C-c n i" . org-roam-insert))
+           (("C-c n I" . org-roam-insert-immediate))))
 #+end_src
 **** Deft
 #+begin_src emacs-lisp
@@ -596,11 +663,11 @@ Oh baby, there's some shit here boys.
 #+end_src
 
 **** Org-Jira
-#+BEGIN_SRC emacs-lisp
-(use-package org-jira
-  :commands(org-jira-get-issues)
-  :config(setq jiralib-url "https://issues.cambridgeconsultants.com"))
-#+END_SRC
+#+begin_src emacs-lisp
+  (use-package org-jira
+    :commands(org-jira-get-issues)
+    :config(setq jiralib-url "https://issues.cambridgeconsultants.com"))
+#+end_src
 
 * Languages
 **** Rust
@@ -616,14 +683,19 @@ Oh baby, there's some shit here boys.
 
 **** Python
 #+begin_src emacs-lisp
-  (use-package python-black
-    :hook(python-mode . python-black-on-save-mode))
-#+end_src
-#+begin_src emacs-lisp
   (use-package python-mode
-    :config(setq python-environment-virtualenv '("nix" "run" "nixpkgs.python38Packages.virtualenv" "nixpkgs.python38" "nixpkgs.coreutils" "-c" "virtualenv")))
-#+end_src
+    :mode("\\.py\\'" . python-mode)
+    :hook(python-mode . lsp))
+    					; :config(setq python-environment-virtualenv '("nix" "run" "nixpkgs.python38Packages.virtualenv" "nixpkgs.python38" "nixpkgs.coreutils" "-c" "virtualenv")))
 
+  (use-package lsp-python-ms
+    :disabled t
+    :requires lsp
+    :init (setq lsp-python-ms-auto-install-server t)
+    :hook (python-mode . (lambda ()
+                           (require 'lsp-python-ms)
+                           (lsp))))  ; or lsp-deferred
+#+end_src
 **** GLSL
 #+begin_src emacs-lisp
   (use-package glsl-mode
@@ -633,14 +705,9 @@ Oh baby, there's some shit here boys.
 **** C# mode
 #+begin_src emacs-lisp
   (use-package csharp-mode
+    :hook(csharp-mode . lsp)
     :mode("\\.cs\\'" . csharp-mode))
-#+end_src
-#+begin_src emacs-lisp
-
-  (use-package omnisharp
-    :after company
-    :config(add-to-list 'company-backends 'company-omnisharp)
-    :hook(csharp-mode . omnisharp-mode))
+  (use-package omnisharp)
 #+end_src
 * Emacs as a Platform
 **** YonChan
@@ -649,6 +716,11 @@ Oh baby, there's some shit here boys.
     :disabled t
     :straight(q4 :type git :host github :repo "rosbo018/q4")
     :demand t)
+#+end_src
+**** Gitlab
+#+begin_src emacs-lisp :tangle yes
+(use-package gitlab
+    :config(setq gitlab-host "https://gitlab.uk.cambridgeconsultants.com"))
 #+end_src
 **** M4UE
 #+begin_src emacs-lisp
@@ -699,7 +771,7 @@ Oh baby, there's some shit here boys.
                   mu4e-confirm-quit nil
                   starttls-use-gnutls t
                   mu4e-bookmarks (list (make-mu4e-bookmark
-                        		      :name "Inbox"
-                        		      :query "NOT flag:trashed AND maildir:/Inbox"
-                        		      :key ?u))))
+                              	      :name "Inbox"
+                              	      :query "NOT flag:trashed AND maildir:/Inbox"
+                              	      :key ?u))))
 #+end_src
