@@ -34,9 +34,9 @@ Reloads the configuration
 #+begin_src emacs-lisp
   (defun edit-src-block (src fn language)
     "Replace SRC org-element's value property with the result of FN.
-                          FN is a function that operates on org-element's value and returns a string.
-                          LANGUAGE is a string referring to one of orb-babel's supported languages.
-                          (https://orgmode.org/manual/Languages.html#Languages)"
+                            FN is a function that operates on org-element's value and returns a string.
+                            LANGUAGE is a string referring to one of orb-babel's supported languages.
+                            (https://orgmode.org/manual/Languages.html#Languages)"
     (let ((src-language (org-element-property :language src))
           (value (org-element-property :value src)))
       (when (string= src-language language)
@@ -52,7 +52,7 @@ Reloads the configuration
         (emacs-lisp-mode)
         (insert 
          (replace-regexp-in-string "[[:space:]]*
-                          [[:space:]]*)" ")" string))
+                            [[:space:]]*)" ")" string))
         (indent-region (point-min) (point-max))
         (buffer-substring (point-min) (point-max)))))
 
@@ -106,7 +106,7 @@ Reloads the configuration
   (use-package magit
     :commands(magit)
     :config(setq magit-refresh-status-buffer nil
-      	       auto-revert-buffer-list-filter 'magit-auto-revert-repository-buffer-p))
+        	       auto-revert-buffer-list-filter 'magit-auto-revert-repository-buffer-p))
 #+end_src
 **** Projectile
 #+begin_src emacs-lisp
@@ -190,11 +190,11 @@ Counsel-projectile replaces a bunch of the projectile functions to use ivy.
   (use-package ein)
 #+end_src
 **** Apheleia
-#+BEGIN_SRC emacs-lisp
-(use-package apheleia
-  :straight(:type git :host github :repo "raxod502/apheleia")
-  :init(apheleia-global-mode +1))
-#+END_SRC
+#+begin_src emacs-lisp
+  (use-package apheleia
+    :straight(:type git :host github :repo "raxod502/apheleia")
+    :init(apheleia-global-mode +1))
+#+end_src
 
 * Keyboard
 **** Evil
@@ -289,6 +289,12 @@ This is required for pretty icons etc.
     :demand t)
 #+end_src
 ** Meta UI
+**** Disable Welcome
+#+begin_src emacs-lisp
+  ;;disable splash screen and startup message
+  (setq inhibit-startup-message t) 
+  (setq initial-scratch-message nil)
+#+end_src
 **** Dashboard
 #+begin_src emacs-lisp
   (use-package dashboard
@@ -302,46 +308,42 @@ This is required for pretty icons etc.
           dashboard-startup-banner 3)
     (dashboard-setup-startup-hook))
 #+end_src
-#+begin_src emacs-lisp :tangle yes
-  (setq inital-major-mode 'org-mode)
-  (add-hook 'after-init-hook (lambda () (org-roam-jump-to-index)))
-#+end_src
 **** Counsel/Ivy
 Better M-x and cool stuff
 #+begin_src emacs-lisp
   (use-package ivy
     :config(setq ivy-re-builders-alist '((t . ivy--regex-ignore-order)))
     :bind(("M-x" . counsel-M-x)
-    ("C-x C-f" . counsel-find-file)
-    ("M-y"   . counsel-yank-pop)
-    ("<f1> f" . counsel-describe-function)
-    ("<f1> v" . counsel-describe-variable)
-    ("<f1> l" . counsel-find-library)
-    ("<f2> i" . counsel-info-lookup-symbol)
-    ("<f2> u" . counsel-unicode-char)
-    ("<f2> j" . counsel-set-variable)
-    ("C-x b" . ivy-switch-buffer)
-    ("C-c v" . ivy-push-view)
-    ("C-c V" . ivy-pop-view))
+  	("C-x C-f" . counsel-find-file)
+  	("M-y"   . counsel-yank-pop)
+  	("<f1> f" . counsel-describe-function)
+  	("<f1> v" . counsel-describe-variable)
+  	("<f1> l" . counsel-find-library)
+  	("<f2> i" . counsel-info-lookup-symbol)
+  	("<f2> u" . counsel-unicode-char)
+  	("<f2> j" . counsel-set-variable)
+  	("C-x b" . ivy-switch-buffer)
+  	("C-c v" . ivy-push-view)
+  	("C-c V" . ivy-pop-view))
     :demand t)
   (use-package counsel
     :bind(("C-c c" . counsel-compile)
-    ("C-c g" . counsel-git)
-    ("C-c j" . counsel-git-grep)
-    ("C-c L" . counsel-git-log)
-    ("C-c k" . counsel-rg)
-    ("C-c m" . counsel-linux-app)
-    ("C-x l" . counsel-locate)
-    ("C-c J" . counsel-file-jump)
-    ("C-S-o" . counsel-rhythmbox)
-    ("C-c w" . counsel-wmctrl)
-    ("C-c C-r" . ivy-resume)
-    ("C-c b" . 'counsel-bookmark)
-    ("C-c d" . 'counsel-descbinds)
-    ("C-c g" . 'counsel-git)
-    ("C-c o" . 'counsel-outline)
-    ("C-c t" . 'counsel-load-theme)
-    ("C-c F" . 'counsel-org-file))
+  	("C-c g" . counsel-git)
+  	("C-c j" . counsel-git-grep)
+  	("C-c L" . counsel-git-log)
+  	("C-c k" . counsel-rg)
+  	("C-c m" . counsel-linux-app)
+  	("C-x l" . counsel-locate)
+  	("C-c J" . counsel-file-jump)
+  	("C-S-o" . counsel-rhythmbox)
+  	("C-c w" . counsel-wmctrl)
+  	("C-c C-r" . ivy-resume)
+  	("C-c b" . 'counsel-bookmark)
+  	("C-c d" . 'counsel-descbinds)
+  	("C-c g" . 'counsel-git)
+  	("C-c o" . 'counsel-outline)
+  	("C-c t" . 'counsel-load-theme)
+  	("C-c F" . 'counsel-org-file))
     :config(counsel-mode))
   (use-package swiper
     :after ivy
@@ -354,7 +356,7 @@ Better M-x and cool stuff
   (use-package ivy-posframe
     :after ivy
     :config
-    (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-window-bottom-left)))
+    (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-top-center)))
     (ivy-posframe-mode 1))
 #+end_src
 #+begin_src emacs-lisp
@@ -374,11 +376,23 @@ Better M-x and cool stuff
 #+begin_src emacs-lisp
   (use-package doom-modeline
     :disabled t
-    :config(setq doom-modeline-height 1)
-    :custom-face
-    (mode-line ((t (:height 100))))
-    (mode-line-inactive ((t (:height 100))))
     :hook(after-init . doom-modeline-mode))
+#+end_src
+#+begin_src emacs-lisp
+  (use-package telephone-line
+    :config
+    (setq telephone-line-lhs
+  	       '((evil   . (telephone-line-evil-tag-segment))
+  		 (accent . (telephone-line-vc-segment
+  			    telephone-line-erc-modified-channels-segment
+  			    telephone-line-process-segment))
+  		 (nil    . (telephone-line-minor-mode-segment
+  			    telephone-line-buffer-segment)))
+  	       telephone-line-rhs
+  	       '((nil    . (telephone-line-misc-info-segment))
+  		 (accent . (telephone-line-major-mode-segment))
+  		 (evil   . (telephone-line-airline-position-segment))))
+    (telephone-line-mode 1))
 #+end_src
 **** Dimmer
 #+begin_src emacs-lisp
@@ -424,8 +438,8 @@ Better M-x and cool stuff
 #+end_src
 
 **** Vertical iComplete
-#+begin_src emacs-lisp :tangle yes
-  (use-package icomplete-custom
+#+begin_src emacs-lisp
+  (use-package icomplete-vertical
     :custom
     (completion-styles '(partial-completion substring))
     (completion-category-overrides '((file (styles basic substring))))
@@ -436,10 +450,15 @@ Better M-x and cool stuff
     (after-init . icomplete-mode)
     (icomplete-mode . icomplete-vertical-mode)
     :bind(:map icomplete-minibuffer-map
-  	     ("C-j . icomplete-backward-completions)
-         ("C-k . icomplete-forward-completions)))
+    	     ("C-j" . icomplete-backward-completions)
+               ("C-k" . icomplete-forward-completions)))
 #+end_src
 ** Colours
+
+#+begin_src emacs-lisp
+  (use-package doom-themes
+    :demand t)
+#+end_src
 #+begin_src emacs-lisp
   (defun alex/day ()
     "Day mode"
@@ -453,16 +472,13 @@ Better M-x and cool stuff
     (doom-themes-org-config))
   (provide 'alex/day)
   (provide 'alex/night)
+  (alex/night)
 #+end_src
 
-#+begin_src emacs-lisp
-  (use-package doom-themes
-    :after org
-    :defer)
-#+end_src
 
 #+begin_src emacs-lisp
   (use-package circadian
+    :disabled t
     :hook(circadian-after-load-theme . (lambda () (doom-themes-org-config)))
     :config
     (setq calendar-latitude 52.0
@@ -477,22 +493,19 @@ Oh baby, there's some shit here boys.
 #+begin_src emacs-lisp
   (use-package org
     :bind(("C-c l" . org-store-link)
-               ("C-c a" . org-agenda)
-               ("C-c c" . org-capture))
+          ("C-c a" . org-agenda)
+          ("C-c c" . org-capture))
     :config
     (prettify-utils-add-hook org-mode 
                              ("[ ]" "☐")
                              ("[X]" "☑")
                              ("[-]" "❍"))
-    (setq org-startup-indented t
-          org-pretty-entities t
-          org-hide-emphasis-markers t
-          org-agenda-block-separator ""
+    (setq org-agenda-block-separator ""
           org-fontify-whole-heading-line t
           org-fontify-done-headline t
           org-fontify-quote-and-verse-blocks t
           fill-column 140
-    	org-image-actual-width nil
+      	org-image-actual-width nil
           org-id-track-globally t
           org-startup-with-inline-images t
           org-format-latex-options (plist-put org-format-latex-options :scale 2.0)
@@ -512,14 +525,14 @@ Oh baby, there's some shit here boys.
                                   ("search code" . "http://searchcode.com/?q=%s")
                                   ("GitHub" . "https://github.com/search?q=%s")
                                   ("Bitbucket" . "https://bitbucket.org/repo/all?name=%s")
-                                  ("Google Code" . "https://code.google.com/query/#q=%s")
+                                  ("Google Code" . "https://code.google.com/query/q=%s")
                                   ("Launchpad" . "https://launchpad.net/+search?field.text=%s")
                                   ("Code Project" . "http://www.codeproject.com/search.aspx?q=%s")
                                   ("CodePlex" . "https://www.codeplex.com/site/search?query=%s")
                                   ("Gitorious" . "https://gitorious.org/search?q=%s")
                                   ("SourceForge" . "https://sourceforge.net/directory/?q=%s")
                                   ("Freecode" . "http://freecode.com/search?q=%s")
-                                  ("Active State" . "http://code.activestate.com/search/#q=%s")
+                                  ("Active State" . "http://code.activestate.com/search/q=%s")
                                   ("Ohloh Code" . "http://code.ohloh.net/search?s=%s")
                                   ("Snipplr" . "http://snipplr.com/search.php?q=%s")
                                   ("lispdoc" . "http://lispdoc.com/?q=%s")
@@ -560,16 +573,16 @@ Oh baby, there's some shit here boys.
   (use-package org-spacer
     :straight (org-spacer :type git :host github :repo "dustinlacewell/org-spacer.el")
     :config(setq org-spacer-element-blanks '((3 headline)
-                              		   (1 paragraph src-block table property-drawer))))
+                                		   (1 paragraph src-block table property-drawer))))
 #+end_src
 **** Adaptive Wrap
-#+BEGIN_SRC emacs-lisp
-(use-package adaptive-wrap-vp
-  :straight(:type git :host github :repo "brentonk/adaptive-wrap-vp")
-  :commands(adaptive-wrap-prefix-vp-mode)
-  :hook((text-mode . adaptive-wrap-prefix-vp-mode)
-        (org-mode . adaptive-wrap-prefix-vp-mode)))
-#+END_SRC
+#+begin_src emacs-lisp
+  (use-package adaptive-wrap-vp
+    :straight(:type git :host github :repo "brentonk/adaptive-wrap-vp")
+    :commands(adaptive-wrap-prefix-vp-mode)
+    :hook((text-mode . adaptive-wrap-prefix-vp-mode)
+          (org-mode . adaptive-wrap-prefix-vp-mode)))
+#+end_src
 
 **** Pretty Tables
 #+begin_src emacs-lisp
@@ -613,6 +626,7 @@ Oh baby, there's some shit here boys.
 **** Roam
 #+begin_src emacs-lisp
   (use-package org-roam
+    :demand t
     :hook
     (after-init . org-roam-mode)
     :custom
@@ -620,7 +634,7 @@ Oh baby, there's some shit here boys.
     (org-roam-completion-system 'ivy)
     (org-roam-index-file "./20200619184615-index.org")
     :bind (("C-c n j" . org-roam-jump-to-index)
-:map org-roam-mode-map
+  	 :map org-roam-mode-map
            (("C-c n l" . org-roam)
             ("C-c n f" . org-roam-find-file)
             ("C-c n g" . org-roam-graph-show))
@@ -676,7 +690,7 @@ Oh baby, there's some shit here boys.
   (use-package python-mode
     :mode("\\.py\\'" . python-mode)
     :hook(python-mode . lsp))
-    					; :config(setq python-environment-virtualenv '("nix" "run" "nixpkgs.python38Packages.virtualenv" "nixpkgs.python38" "nixpkgs.coreutils" "-c" "virtualenv")))
+      					; :config(setq python-environment-virtualenv '("nix" "run" "nixpkgs.python38Packages.virtualenv" "nixpkgs.python38" "nixpkgs.coreutils" "-c" "virtualenv")))
 
   (use-package lsp-python-ms
     :disabled t
@@ -708,8 +722,10 @@ Oh baby, there's some shit here boys.
     :demand t)
 #+end_src
 **** Gitlab
-#+begin_src emacs-lisp :tangle yes
-(use-package gitlab
+#+begin_src emacs-lisp
+  (use-package gitlab
+    :straight t
+    :demand t
     :config(setq gitlab-host "https://gitlab.uk.cambridgeconsultants.com"))
 #+end_src
 **** M4UE
@@ -761,7 +777,11 @@ Oh baby, there's some shit here boys.
                   mu4e-confirm-quit nil
                   starttls-use-gnutls t
                   mu4e-bookmarks (list (make-mu4e-bookmark
-                              	      :name "Inbox"
-                              	      :query "NOT flag:trashed AND maildir:/Inbox"
-                              	      :key ?u))))
+                                	      :name "Inbox"
+                                	      :query "NOT flag:trashed AND maildir:/Inbox"
+                                	      :key ?u))))
+#+end_src
+* Misc. End-Stuff
+#+begin_src emacs-lisp
+  (org-roam-jump-to-index)
 #+end_src
