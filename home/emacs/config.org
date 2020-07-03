@@ -11,9 +11,14 @@ Reloads the configuration
   (defun alex/reload ()
     "Reloads the config.org file, totally."
     (interactive)
-    (delete-file (expand-file-name "config.el" user-emacs-directory))
     (restart-emacs))
   (provide 'alex/reload)
+  (defun alex/force-reload ()
+    "Forces a reload."
+    (interactive)
+    (delete-file (expand-file-name "config.el" user-emacs-directory))
+    (alex/reload))
+  (provide 'alex/force-reload)
 #+end_src
 **** Config
 #+begin_src emacs-lisp
@@ -68,14 +73,12 @@ Reloads the configuration
         (insert (org-element-interpret-data AST)))))
   (provide 'format-elisp-src-blocks)
 #+end_src
-
 **** Prettify Utils
 #+begin_src emacs-lisp
   (use-package prettify-utils
     :straight(:type git :host github :repo "Ilazki/prettify-utils.el")
     :commands(prettify-utils-add-hook))
 #+end_src
-
 **** Dash
 #+begin_src emacs-lisp
   (use-package dash
@@ -83,7 +86,6 @@ Reloads the configuration
   (use-package dash-functional
     :demand t)
 #+end_src
-
 * Workflow
 **** LSP
 #+begin_src emacs-lisp
@@ -96,6 +98,7 @@ Reloads the configuration
 **** Updates
 #+begin_src emacs-lisp
   (use-package auto-package-update
+    :disabled t
     :config
     (setq auto-package-update-delete-old-versions t)
     (setq auto-package-update-hide-results t)
@@ -113,9 +116,12 @@ Reloads the configuration
   (use-package projectile
     :straight ripgrep
     :straight projectile
-    :config(setq projectile-completion-system 'ivy
-                 projectile-project-search-path '("~/projects")
-                 projectile-indexing-method 'alien))
+    :diminish projectile-mode
+    :config
+    (setq projectile-completion-system 'ivy
+	  projectile-project-search-path '("~/projects"))
+    (projectile-mode +1))
+	 
 #+end_src
 Counsel-projectile replaces a bunch of the projectile functions to use ivy.
 #+begin_src emacs-lisp
@@ -128,6 +134,7 @@ Counsel-projectile replaces a bunch of the projectile functions to use ivy.
 **** Company
 #+begin_src emacs-lisp
   (use-package company
+    :diminish company-mode
     :hook(prog-mode . company-mode))
 #+end_src
 #+begin_src emacs-lisp
@@ -139,19 +146,12 @@ Counsel-projectile replaces a bunch of the projectile functions to use ivy.
 **** Yasnippet
 #+begin_src emacs-lisp
   (use-package yasnippet
-    :after yasnippet-snippets
-    :after evil-leader
-    :config(evil-leader/set-key "i" 'yas-insert-snippet)
-    :hook(after-init . yas-global-mode))
-#+end_src
-#+begin_src emacs-lisp
-  (use-package yasnippet-snippets)
+    :init(yas-global-mode))
 #+end_src
 #+begin_src emacs-lisp
   (use-package doom-snippets
-    :disabled t
     :straight(doom-snippets :type git :host github :repo "hlissner/doom-snippets")
-    :after yasnippet)
+    :requires yasnippet)
 #+end_src
 **** Aggressive Indent
 #+begin_src emacs-lisp
@@ -192,6 +192,7 @@ Counsel-projectile replaces a bunch of the projectile functions to use ivy.
 **** Apheleia
 #+begin_src emacs-lisp
   (use-package apheleia
+    :diminish apheleia-mode
     :straight(:type git :host github :repo "raxod502/apheleia")
     :init(apheleia-global-mode +1))
 #+end_src
@@ -202,7 +203,7 @@ I don't like RSI, so I use evil. Don't @ me.
 #+begin_src emacs-lisp
   (setq evil-want-keybinding nil)
   (use-package evil
-    :init(evil-mode 1))
+    :config(evil-mode 1))
 #+end_src
 Evil works better if you force modes to cooperate.
 #+begin_src emacs-lisp
@@ -215,24 +216,6 @@ Evil works better if you force modes to cooperate.
     :after magit
     :config(setq evil-magit-state 'normal))
 #+end_src
-take me to your leader lmao
-#+begin_src emacs-lisp
-  (use-package evil-leader
-    :config
-    ;; globals
-    (evil-leader/set-key
-      "p" 'counsel-projectile-switch-project
-      "o" 'counsel-projectile-find-file
-      "e" 'find-file
-      "b" 'switch-to-buffer
-      "k" 'kill-buffer
-      "r" 'alex/reload
-      "j" 'org-roam-jump-to-index)
-    ;; org-only
-    (evil-leader/set-key-for-mode 'org-mode
-      "a" 'org-insert-heading-after-current)
-    (global-evil-leader-mode))
-#+end_src
 #+begin_src emacs-lisp
   (use-package evil-numbers
     :after evil
@@ -240,29 +223,25 @@ take me to your leader lmao
     (define-key evil-normal-state-map (kbd "C-c a") 'evil-numbers/inc-at-pt)
     (define-key evil-normal-state-map (kbd "C-c x") 'evil-numbers/dec-at-pt))
 #+end_src
-**** I'm too used to tmux
+
 #+begin_src emacs-lisp
-  (defun setup-input-decode-map ()
-    (interactive)
-    (define-key input-decode-map (kbd "C-a") (kbd "C-x"))
-    (define-key input-decode-map (kbd "C-'") (kbd "M-x"))
-    (define-key input-decode-map (kbd "M-a") (kbd "M-x")))
-  (provide 'setup-input-decode-map)
-  (add-hook 'after-make-frame-functions 'setup-input-decode-map)
-  (global-set-key (kbd "C-x |") (lambda () (interactive)(split-window-horizontally) (other-window 1)))
-  (global-set-key (kbd "C-x _") (lambda () (interactive)(split-window-vertically) (other-window 1)))
-  (global-set-key (kbd "C-x \\") (lambda () (interactive)(split-window-horizontally) (other-window 1)))
-  (global-set-key (kbd "C-x -") (lambda () (interactive)(split-window-vertically) (other-window 1)))
+(use-package evil-snipe
+  :hook(magit-mode . turn-off-evil-snipe-override-mode)
+  :init
+  (evil-snipe-mode +1)
+  (evil-snipe-override-mode +1))
 #+end_src
 **** Miscellaneous Binds
-FUTURE ALEX
-DOES THIS BIND REALLY BELONG HERE
-OR ARE YOU BEING LAZY?
 #+begin_src emacs-lisp
   (global-set-key (kbd "C-x t t") 'multi-term)
 #+end_src
 
 * User Interface
+**** Dired Icons
+#+begin_src emacs-lisp
+(use-package all-the-icons-dired
+:hook(dired-mode . all-the-icons-dired-mode))
+#+end_src
 **** Dialogue Boxes
 #+begin_src emacs-lisp
   (setq use-dialog-box nil)
@@ -278,8 +257,7 @@ OR ARE YOU BEING LAZY?
 
 **** Font Caches
 #+begin_src emacs-lisp
-(when (eq system-type 'windows-nt)
-  (setq inhibit-compacting-font-caches t))
+(setq inhibit-compacting-font-caches t)
 #+end_src emacs-lisp
 ** Libraries
 **** All The Icons
@@ -324,9 +302,9 @@ Better M-x and cool stuff
   	("<f2> j" . counsel-set-variable)
   	("C-x b" . ivy-switch-buffer)
   	("C-c v" . ivy-push-view)
-  	("C-c V" . ivy-pop-view))
-    :demand t)
+  	("C-c V" . ivy-pop-view)))
   (use-package counsel
+    :diminish counsel-mode
     :bind(("C-c c" . counsel-compile)
   	("C-c g" . counsel-git)
   	("C-c j" . counsel-git-grep)
@@ -344,7 +322,7 @@ Better M-x and cool stuff
   	("C-c o" . 'counsel-outline)
   	("C-c t" . 'counsel-load-theme)
   	("C-c F" . 'counsel-org-file))
-    :config(counsel-mode))
+    :hook(emacs-startup . counsel-mode))
   (use-package swiper
     :after ivy
     :bind("C-s" . swiper-isearch)
@@ -354,22 +332,22 @@ Better M-x and cool stuff
 #+end_src
 #+begin_src emacs-lisp
   (use-package ivy-posframe
-    :after ivy
+    :requires ivy
     :config
     (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-top-center)))
     (ivy-posframe-mode 1))
 #+end_src
 #+begin_src emacs-lisp
   (use-package ivy-rich
-    :disabled t
-    :after ivy
-    :init(ivy-rich-mode 1))
+    :requires ivy
+    :config(setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line)
+    :init(ivy-rich-mode +1))
   (use-package all-the-icons-ivy-rich
-    :disabled t
+    :straight(:type git :host github :repo "seagle0128/all-the-icons-ivy-rich")
     :requires all-the-icons
     :requires ivy-rich
     :requires ivy
-    :init(all-the-icons-ivy-rich-mode 1))
+    :init(all-the-icons-ivy-rich-mode +1))
 #+end_src
 
 **** Modeline
@@ -417,7 +395,7 @@ Better M-x and cool stuff
 #+end_src
 
 **** Line Numbers
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (defun display-line-numbers/relative ()
     "Relative"
     (interactive)
@@ -430,16 +408,17 @@ Better M-x and cool stuff
     (when (not (eq major-mode 'org-mode))
       (menu-bar--display-line-numbers-mode-absolute)))
   (use-package display-line-numbers
+    :disabled t
     :hook
     (evil-insert-state-exit . (lambda () (display-line-numbers/relative)))
     (evil-insert-state-entry . (lambda () (display-line-numbers/absolute)))
     (prog-mode . display-line-numbers-mode)
     (org-mode . (lambda () (display-line-numbers-mode -1))))
 #+end_src
-
 **** Vertical iComplete
 #+begin_src emacs-lisp
   (use-package icomplete-vertical
+    :disabled t
     :custom
     (completion-styles '(partial-completion substring))
     (completion-category-overrides '((file (styles basic substring))))
@@ -457,22 +436,23 @@ Better M-x and cool stuff
 
 #+begin_src emacs-lisp
   (use-package doom-themes
-    :demand t)
+    :config(load-theme 'doom-Iosvkem t))
 #+end_src
 #+begin_src emacs-lisp
   (defun alex/day ()
     "Day mode"
     (interactive)
     (load-theme 'doom-acario-light t)
+    (disable-theme 'doom-Iosvkem)
     (doom-themes-org-config))
   (defun alex/night ()
     "Night mode"
     (interactive)
     (load-theme 'doom-Iosvkem t)
+    (disable-theme 'doom-acario-light)
     (doom-themes-org-config))
   (provide 'alex/day)
   (provide 'alex/night)
-  (alex/night)
 #+end_src
 
 
@@ -545,7 +525,8 @@ Oh baby, there's some shit here boys.
     (remove-hook 'org-cycle-hook
                  #'org-optimize-window-after-visibility-change)
     :hook
-    (org-mode . auto-fill-mode))
+    (org-mode . auto-fill-mode)
+    :diminish auto-fill-mode)
 #+end_src
 **** Mixed Pitch Mode
 #+begin_src emacs-lisp
@@ -626,7 +607,7 @@ Oh baby, there's some shit here boys.
 **** Roam
 #+begin_src emacs-lisp
   (use-package org-roam
-    :demand t
+    :diminish org-roam-mode
     :hook
     (after-init . org-roam-mode)
     :custom
@@ -711,8 +692,13 @@ Oh baby, there's some shit here boys.
   (use-package csharp-mode
     :hook(csharp-mode . lsp)
     :mode("\\.cs\\'" . csharp-mode))
-  (use-package omnisharp)
+  (use-package omnisharp
+    :hook(csharp-mode . omnisharp-mode)
+    :mode("\\.cs\\'" . omnisharp-mode))
 #+end_src
+**** GitlabCI
+(use-package gitlab-ci-mode
+  :mode("\\.gitlab-ci.yml'" . gitlab-ci-mode))
 * Emacs as a Platform
 **** YonChan
 #+begin_src emacs-lisp
@@ -724,8 +710,7 @@ Oh baby, there's some shit here boys.
 **** Gitlab
 #+begin_src emacs-lisp
   (use-package gitlab
-    :straight t
-    :demand t
+    :defer 5.0
     :config(setq gitlab-host "https://gitlab.uk.cambridgeconsultants.com"))
 #+end_src
 **** M4UE
@@ -781,7 +766,8 @@ Oh baby, there's some shit here boys.
                                 	      :query "NOT flag:trashed AND maildir:/Inbox"
                                 	      :key ?u))))
 #+end_src
-* Misc. End-Stuff
+**** VTerm
 #+begin_src emacs-lisp
-  (org-roam-jump-to-index)
+(use-package vterm
+  :bind("C-x t t" . vterm))
 #+end_src
