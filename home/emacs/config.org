@@ -511,11 +511,12 @@ Oh baby, there's some shit here boys.
           org-fontify-done-headline t
           org-fontify-quote-and-verse-blocks t
           fill-column 140
-        	org-image-actual-width nil
+	  org-image-actual-width nil
           org-id-track-globally t
           org-startup-with-inline-images t
           org-format-latex-options (plist-put org-format-latex-options :scale 2.0)
           org-directory "~/notes"
+	  org-archive-location "::* Archived Tasks"
           org-default-notes-file (concat org-directory "/20200619184615-index.org")
   					; org-agenda-files (list (expand-file-name org-directory))
   	org-agenda-files '("~/notes/notes.org")
