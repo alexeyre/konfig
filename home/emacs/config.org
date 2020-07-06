@@ -164,7 +164,7 @@ Counsel-projectile replaces a bunch of the projectile functions to use ivy.
 #+begin_src emacs-lisp
   (use-package ace-window
     :config(setq aw-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s))
-    :bind("C-x o" . ace-window))
+    :bind("C-o" . ace-window))
 #+end_src
 **** Multiterm
 #+begin_src emacs-lisp
@@ -226,6 +226,7 @@ Evil works better if you force modes to cooperate.
 
 #+begin_src emacs-lisp
 (use-package evil-snipe
+  :diminish(evil-snipe-mode evil-snipe-override-mode)
   :hook(magit-mode . turn-off-evil-snipe-override-mode)
   :init
   (evil-snipe-mode +1)
@@ -252,7 +253,7 @@ Evil works better if you force modes to cooperate.
 #+end_src
 **** Font
 #+begin_src emacs-lisp
-  (set-frame-font "FiraCode NF 11" nil t)
+  (set-frame-font "Hack 10" nil t)
 #+end_src
 
 **** Font Caches
@@ -383,6 +384,7 @@ Better M-x and cool stuff
 **** Modern Fringes
 #+begin_src emacs-lisp
   (use-package modern-fringes
+    :disabled t
     :straight(modern-fringes :type git :host github :repo "SpecialBomb/emacs-modern-fringes")
     :hook(after-init . modern-fringes-mode))
 #+end_src
@@ -408,7 +410,6 @@ Better M-x and cool stuff
     (when (not (eq major-mode 'org-mode))
       (menu-bar--display-line-numbers-mode-absolute)))
   (use-package display-line-numbers
-    :disabled t
     :hook
     (evil-insert-state-exit . (lambda () (display-line-numbers/relative)))
     (evil-insert-state-entry . (lambda () (display-line-numbers/absolute)))
@@ -432,24 +433,28 @@ Better M-x and cool stuff
     	     ("C-j" . icomplete-backward-completions)
                ("C-k" . icomplete-forward-completions)))
 #+end_src
+**** Hide Modeline Helper
+     #+begin_src emacs-lisp
+     (use-package hide-mode-line
+       :defer
+       :hook((completion-list-mode . hide-mode-line-mode)))
+     #+end_src
 ** Colours
-
 #+begin_src emacs-lisp
-  (use-package doom-themes
-    :config(load-theme 'doom-Iosvkem t))
+  (use-package doom-themes :demand :defer)
 #+end_src
 #+begin_src emacs-lisp
   (defun alex/day ()
     "Day mode"
     (interactive)
-    (load-theme 'doom-acario-light t)
-    (disable-theme 'doom-Iosvkem)
+    (load-theme 'doom-one-light t)
+    (disable-theme 'doom-one)
     (doom-themes-org-config))
   (defun alex/night ()
     "Night mode"
     (interactive)
-    (load-theme 'doom-Iosvkem t)
-    (disable-theme 'doom-acario-light)
+    (load-theme 'doom-one t)
+    (disable-theme 'doom-one-light)
     (doom-themes-org-config))
   (provide 'alex/day)
   (provide 'alex/night)
@@ -458,24 +463,60 @@ Better M-x and cool stuff
 
 #+begin_src emacs-lisp
   (use-package circadian
-    :disabled t
     :hook(circadian-after-load-theme . (lambda () (doom-themes-org-config)))
     :config
     (setq calendar-latitude 52.0
           calendar-longitude 0.0
-          circadian-themes '((:sunrise . doom-acario-light)
-                             (:sunset . doom-Iosvkem)))
+          circadian-themes '((:sunrise . doom-one-light)
+                             (:sunset . doom-one)))
     (circadian-setup))
 #+end_src
 
 * Org
 Oh baby, there's some shit here boys.
+**** main org config
 #+begin_src emacs-lisp
-  (use-package org
+(setq load-path (cl-remove-if (lambda (x) (string-match-p "org$" x)) load-path))
+;;______________________________________________________________________
+;;;;  Installing Org with straight.el
+;;; https://github.com/raxod502/straight.el/blob/develop/README.md#installing-org-with-straightel
+(require 'subr-x)
+(straight-use-package 'git)
+
+(defun org-git-version ()
+  "The Git version of 'org-mode'.
+Inserted by installing 'org-mode' or when a release is made."
+  (require 'git)
+  (let ((git-repo (expand-file-name
+                   "straight/repos/org/" user-emacs-directory)))
+    (string-trim
+     (git-run "describe"
+              "--match=release\*"
+              "--abbrev=6"
+              "HEAD"))))
+
+(defun org-release ()
+  "The release version of 'org-mode'.
+Inserted by installing 'org-mode' or when a release is made."
+  (require 'git)
+  (let ((git-repo (expand-file-name
+                   "straight/repos/org/" user-emacs-directory)))
+    (string-trim
+     (string-remove-prefix
+      "release_"
+      (git-run "describe"
+               "--match=release\*"
+               "--abbrev=0"
+               "HEAD")))))
+
+(provide 'org-version)
+  (use-package org-plus-contrib
+    :mode(("\\.org$" . org-mode))
     :bind(("C-c l" . org-store-link)
           ("C-c a" . org-agenda)
           ("C-c c" . org-capture))
     :config
+    (require 'org-tempo)
     (prettify-utils-add-hook org-mode 
                              ("[ ]" "☐")
                              ("[X]" "☑")
@@ -485,13 +526,14 @@ Oh baby, there's some shit here boys.
           org-fontify-done-headline t
           org-fontify-quote-and-verse-blocks t
           fill-column 140
-      	org-image-actual-width nil
+      	  org-image-actual-width nil
           org-id-track-globally t
           org-startup-with-inline-images t
           org-format-latex-options (plist-put org-format-latex-options :scale 2.0)
           org-directory "~/notes"
           org-default-notes-file (concat org-directory "/notes.org")
-          org-agenda-files (list (expand-file-name org-directory))
+          ; org-agenda-files (list (expand-file-name org-directory))
+	  org-agenda-files '("~/notes/notes.org")
           org-link-frame-setup '((file . find-file))
           org-link-abbrev-alist '(("Google" . "http://www.google.com/search?q=%s")
                                   ("google" . "http://www.google.com/search?q=%s")
@@ -654,6 +696,31 @@ Oh baby, there's some shit here boys.
     :config(setq jiralib-url "https://issues.cambridgeconsultants.com"))
 #+end_src
 
+**** Olivetti
+#+begin_src emacs-lisp
+(use-package olivetti :defer :commands(olivetti-mode))
+#+end_src
+**** Flowy
+     #+begin_src emacs-lisp
+(defun alex/flowy-note ()
+  "Helper function for pretty quick note-taking"
+  (olivetti-mode +1)
+  (hide-mode-line-mode +1))
+     #+end_src
+**** Mermaid
+     #+begin_src emacs-lisp
+       (use-package ob-mermaid
+	 :requires org
+	 :hook(org-babel-after-execute . (lambda () (org-redisplay-inline-images)))
+	 :config
+	 (setq ob-mermaid-cli-path (executable-find "mmdc"))
+	 (add-to-list 'org-babel-load-languages '(mermaid . t)))
+     #+end_src
+**** Async Babel
+     #+begin_src emacs-lisp
+     (use-package ob-async
+       :config(setq ob-async-no-async-languages-alist '("ipython")))
+     #+end_src
 * Languages
 **** Rust
 #+begin_src emacs-lisp
