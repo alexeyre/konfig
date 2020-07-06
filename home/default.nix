@@ -109,16 +109,17 @@
   ];
   programs.zathura.enable = true;
 
-  xsession.windowManager.command = "
-xhost +SI:localuser:$USER
-export _JAVA_AWT_WM_NONREPARENTING=1
-xsetroot -cursor_name left_ptr
-export XMODIFIERS=@im=exwm-xim
-export GTK_IM_MODULE=xim
-export QT_IM_MODULE=xim
-export CLUTTER_IM_MODULE=xim
-exec emacs
-  ";
+  xsession.windowManager.command = ''
+
+    xhost +SI:localuser:$USER
+    export _JAVA_AWT_WM_NONREPARENTING=1
+    xsetroot -cursor_name left_ptr
+    export XMODIFIERS=@im=exwm-xim
+    export GTK_IM_MODULE=xim
+    export QT_IM_MODULE=xim
+    export CLUTTER_IM_MODULE=xim
+    exec emacs
+      '';
 
   services.random-background = {
     enable = true;
