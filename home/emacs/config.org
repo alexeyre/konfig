@@ -39,9 +39,9 @@ Reloads the configuration
 #+begin_src emacs-lisp
   (defun edit-src-block (src fn language)
     "Replace SRC org-element's value property with the result of FN.
-                            FN is a function that operates on org-element's value and returns a string.
-                            LANGUAGE is a string referring to one of orb-babel's supported languages.
-                            (https://orgmode.org/manual/Languages.html#Languages)"
+                              FN is a function that operates on org-element's value and returns a string.
+                              LANGUAGE is a string referring to one of orb-babel's supported languages.
+                              (https://orgmode.org/manual/Languages.html#Languages)"
     (let ((src-language (org-element-property :language src))
           (value (org-element-property :value src)))
       (when (string= src-language language)
@@ -57,7 +57,7 @@ Reloads the configuration
         (emacs-lisp-mode)
         (insert 
          (replace-regexp-in-string "[[:space:]]*
-                            [[:space:]]*)" ")" string))
+                              [[:space:]]*)" ")" string))
         (indent-region (point-min) (point-max))
         (buffer-substring (point-min) (point-max)))))
 
@@ -87,6 +87,13 @@ Reloads the configuration
     :demand t)
 #+end_src
 * Workflow
+**** GitLink
+     #+begin_src emacs-lisp
+(use-package git-link
+  :commands(git-link
+            git-link-commit
+	    git-link-homepage))
+     #+end_src
 **** LSP
 #+begin_src emacs-lisp
   (use-package lsp-mode
@@ -108,8 +115,9 @@ Reloads the configuration
 #+begin_src emacs-lisp
   (use-package magit
     :commands(magit)
-    :config(setq magit-refresh-status-buffer nil
-        	       auto-revert-buffer-list-filter 'magit-auto-revert-repository-buffer-p))
+    :config(setq ediff-window-setup-function 'ediff-setup-windows-plain
+		 magit-refresh-status-buffer nil
+                 auto-revert-buffer-list-filter 'magit-auto-revert-repository-buffer-p))
 #+end_src
 **** Projectile
 #+begin_src emacs-lisp
@@ -119,9 +127,8 @@ Reloads the configuration
     :diminish projectile-mode
     :config
     (setq projectile-completion-system 'ivy
-	  projectile-project-search-path '("~/projects"))
+  	projectile-project-search-path '("~/projects"))
     (projectile-mode +1))
-	 
 #+end_src
 Counsel-projectile replaces a bunch of the projectile functions to use ivy.
 #+begin_src emacs-lisp
@@ -139,7 +146,6 @@ Counsel-projectile replaces a bunch of the projectile functions to use ivy.
 #+end_src
 #+begin_src emacs-lisp
   (use-package company-lsp
-    :requires(company)
     :config(push 'company-lsp company-backends))
 #+end_src
 
@@ -150,8 +156,7 @@ Counsel-projectile replaces a bunch of the projectile functions to use ivy.
 #+end_src
 #+begin_src emacs-lisp
   (use-package doom-snippets
-    :straight(doom-snippets :type git :host github :repo "hlissner/doom-snippets")
-    :requires yasnippet)
+    :straight(doom-snippets :type git :host github :repo "hlissner/doom-snippets"))
 #+end_src
 **** Aggressive Indent
 #+begin_src emacs-lisp
@@ -164,7 +169,7 @@ Counsel-projectile replaces a bunch of the projectile functions to use ivy.
 #+begin_src emacs-lisp
   (use-package ace-window
     :config(setq aw-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s))
-    :bind("C-x o" . ace-window))
+    :bind("C-o" . ace-window))
 #+end_src
 **** Multiterm
 #+begin_src emacs-lisp
@@ -203,12 +208,21 @@ I don't like RSI, so I use evil. Don't @ me.
 #+begin_src emacs-lisp
   (setq evil-want-keybinding nil)
   (use-package evil
-    :config(evil-mode 1))
+    :init(evil-mode 1))
 #+end_src
 Evil works better if you force modes to cooperate.
 #+begin_src emacs-lisp
   (use-package evil-collection
+    :config(setq evil-collection-setup-minibuffer t)
     :init(evil-collection-init))
+#+end_src
+#+begin_src emacs-lisp
+  (use-package evil-org
+    :disabled t
+    :straight(:type git :host github :repo "Somelauw/evil-org-mode")
+    :hook
+    (org-mode . evil-org-mode)
+    (evil-org-mode . (lambda () (evil-org-set-key-theme))))
 #+end_src
 #+begin_src emacs-lisp
   (use-package evil-magit
@@ -225,22 +239,29 @@ Evil works better if you force modes to cooperate.
 #+end_src
 
 #+begin_src emacs-lisp
-(use-package evil-snipe
-  :hook(magit-mode . turn-off-evil-snipe-override-mode)
-  :init
-  (evil-snipe-mode +1)
-  (evil-snipe-override-mode +1))
+  (use-package evil-snipe
+    :diminish(evil-snipe-mode evil-snipe-override-mode)
+    :hook(magit-mode . turn-off-evil-snipe-override-mode)
+    :init
+    (evil-snipe-mode +1)
+    (evil-snipe-override-mode +1))
 #+end_src
 **** Miscellaneous Binds
 #+begin_src emacs-lisp
   (global-set-key (kbd "C-x t t") 'multi-term)
+  (global-set-key (kbd "S-p") 'counsel-M-x)
 #+end_src
-
 * User Interface
+**** Stop doing frames on my behalf
+#+begin_src emacs-lisp
+(setq ediff-window-setup-function 'ediff-setup-windows-plain)
+(use-package popwin
+  :init(popwin-mode +1))
+#+end_src
 **** Dired Icons
 #+begin_src emacs-lisp
-(use-package all-the-icons-dired
-:hook(dired-mode . all-the-icons-dired-mode))
+  (use-package all-the-icons-dired
+    :hook(dired-mode . all-the-icons-dired-mode))
 #+end_src
 **** Dialogue Boxes
 #+begin_src emacs-lisp
@@ -252,7 +273,7 @@ Evil works better if you force modes to cooperate.
 #+end_src
 **** Font
 #+begin_src emacs-lisp
-  (set-frame-font "FiraCode NF 11" nil t)
+  (set-frame-font "Hack 10" nil t)
 #+end_src
 
 **** Font Caches
@@ -290,38 +311,40 @@ This is required for pretty icons etc.
 Better M-x and cool stuff
 #+begin_src emacs-lisp
   (use-package ivy
-    :config(setq ivy-re-builders-alist '((t . ivy--regex-ignore-order)))
+    :config(setq ivy-re-builders-alist '((t . ivy--regex-ignore-order))
+                 ivy-height 15)
+    :init(ivy-mode +1)
     :bind(("M-x" . counsel-M-x)
-  	("C-x C-f" . counsel-find-file)
-  	("M-y"   . counsel-yank-pop)
-  	("<f1> f" . counsel-describe-function)
-  	("<f1> v" . counsel-describe-variable)
-  	("<f1> l" . counsel-find-library)
-  	("<f2> i" . counsel-info-lookup-symbol)
-  	("<f2> u" . counsel-unicode-char)
-  	("<f2> j" . counsel-set-variable)
-  	("C-x b" . ivy-switch-buffer)
-  	("C-c v" . ivy-push-view)
-  	("C-c V" . ivy-pop-view)))
+    	("C-x C-f" . counsel-find-file)
+    	("M-y"   . counsel-yank-pop)
+    	("<f1> f" . counsel-describe-function)
+    	("<f1> v" . counsel-describe-variable)
+    	("<f1> l" . counsel-find-library)
+    	("<f2> i" . counsel-info-lookup-symbol)
+    	("<f2> u" . counsel-unicode-char)
+    	("<f2> j" . counsel-set-variable)
+    	("C-x b" . ivy-switch-buffer)
+    	("C-c v" . ivy-push-view)
+    	("C-c V" . ivy-pop-view)))
   (use-package counsel
     :diminish counsel-mode
     :bind(("C-c c" . counsel-compile)
-  	("C-c g" . counsel-git)
-  	("C-c j" . counsel-git-grep)
-  	("C-c L" . counsel-git-log)
-  	("C-c k" . counsel-rg)
-  	("C-c m" . counsel-linux-app)
-  	("C-x l" . counsel-locate)
-  	("C-c J" . counsel-file-jump)
-  	("C-S-o" . counsel-rhythmbox)
-  	("C-c w" . counsel-wmctrl)
-  	("C-c C-r" . ivy-resume)
-  	("C-c b" . 'counsel-bookmark)
-  	("C-c d" . 'counsel-descbinds)
-  	("C-c g" . 'counsel-git)
-  	("C-c o" . 'counsel-outline)
-  	("C-c t" . 'counsel-load-theme)
-  	("C-c F" . 'counsel-org-file))
+    	("C-c g" . counsel-git)
+    	("C-c j" . counsel-git-grep)
+    	("C-c L" . counsel-git-log)
+    	("C-c k" . counsel-rg)
+    	("C-c m" . counsel-linux-app)
+    	("C-x l" . counsel-locate)
+    	("C-c J" . counsel-file-jump)
+    	("C-S-o" . counsel-rhythmbox)
+    	("C-c w" . counsel-wmctrl)
+    	("C-c C-r" . ivy-resume)
+    	("C-c b" . 'counsel-bookmark)
+    	("C-c d" . 'counsel-descbinds)
+    	("C-c g" . 'counsel-git)
+    	("C-c o" . 'counsel-outline)
+    	("C-c t" . 'counsel-load-theme)
+    	("C-c F" . 'counsel-org-file))
     :hook(emacs-startup . counsel-mode))
   (use-package swiper
     :after ivy
@@ -332,21 +355,17 @@ Better M-x and cool stuff
 #+end_src
 #+begin_src emacs-lisp
   (use-package ivy-posframe
-    :requires ivy
     :config
     (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-top-center)))
+    :init
     (ivy-posframe-mode 1))
 #+end_src
 #+begin_src emacs-lisp
   (use-package ivy-rich
-    :requires ivy
     :config(setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line)
     :init(ivy-rich-mode +1))
   (use-package all-the-icons-ivy-rich
     :straight(:type git :host github :repo "seagle0128/all-the-icons-ivy-rich")
-    :requires all-the-icons
-    :requires ivy-rich
-    :requires ivy
     :init(all-the-icons-ivy-rich-mode +1))
 #+end_src
 
@@ -360,16 +379,16 @@ Better M-x and cool stuff
   (use-package telephone-line
     :config
     (setq telephone-line-lhs
-  	       '((evil   . (telephone-line-evil-tag-segment))
-  		 (accent . (telephone-line-vc-segment
-  			    telephone-line-erc-modified-channels-segment
-  			    telephone-line-process-segment))
-  		 (nil    . (telephone-line-minor-mode-segment
-  			    telephone-line-buffer-segment)))
-  	       telephone-line-rhs
-  	       '((nil    . (telephone-line-misc-info-segment))
-  		 (accent . (telephone-line-major-mode-segment))
-  		 (evil   . (telephone-line-airline-position-segment))))
+    	'((evil   . (telephone-line-evil-tag-segment))
+    	  (accent . (telephone-line-vc-segment
+    		     telephone-line-erc-modified-channels-segment
+    		     telephone-line-process-segment))
+    	  (nil    . (telephone-line-minor-mode-segment
+    		     telephone-line-buffer-segment)))
+    	telephone-line-rhs
+    	'((nil    . (telephone-line-misc-info-segment))
+    	  (accent . (telephone-line-major-mode-segment))
+    	  (evil   . (telephone-line-airline-position-segment))))
     (telephone-line-mode 1))
 #+end_src
 **** Dimmer
@@ -383,6 +402,7 @@ Better M-x and cool stuff
 **** Modern Fringes
 #+begin_src emacs-lisp
   (use-package modern-fringes
+    :disabled t
     :straight(modern-fringes :type git :host github :repo "SpecialBomb/emacs-modern-fringes")
     :hook(after-init . modern-fringes-mode))
 #+end_src
@@ -408,7 +428,6 @@ Better M-x and cool stuff
     (when (not (eq major-mode 'org-mode))
       (menu-bar--display-line-numbers-mode-absolute)))
   (use-package display-line-numbers
-    :disabled t
     :hook
     (evil-insert-state-exit . (lambda () (display-line-numbers/relative)))
     (evil-insert-state-entry . (lambda () (display-line-numbers/absolute)))
@@ -429,27 +448,31 @@ Better M-x and cool stuff
     (after-init . icomplete-mode)
     (icomplete-mode . icomplete-vertical-mode)
     :bind(:map icomplete-minibuffer-map
-    	     ("C-j" . icomplete-backward-completions)
+      	     ("C-j" . icomplete-backward-completions)
                ("C-k" . icomplete-forward-completions)))
 #+end_src
-** Colours
-
+**** Hide Modeline Helper
 #+begin_src emacs-lisp
-  (use-package doom-themes
-    :config(load-theme 'doom-Iosvkem t))
+  (use-package hide-mode-line
+    :defer
+    :hook((completion-list-mode . hide-mode-line-mode)))
+#+end_src
+** Colours
+#+begin_src emacs-lisp
+  (use-package doom-themes :demand :defer)
 #+end_src
 #+begin_src emacs-lisp
   (defun alex/day ()
     "Day mode"
     (interactive)
-    (load-theme 'doom-acario-light t)
-    (disable-theme 'doom-Iosvkem)
+    (load-theme 'doom-one-light t)
+    (disable-theme 'doom-one)
     (doom-themes-org-config))
   (defun alex/night ()
     "Night mode"
     (interactive)
-    (load-theme 'doom-Iosvkem t)
-    (disable-theme 'doom-acario-light)
+    (load-theme 'doom-one t)
+    (disable-theme 'doom-one-light)
     (doom-themes-org-config))
   (provide 'alex/day)
   (provide 'alex/night)
@@ -458,24 +481,27 @@ Better M-x and cool stuff
 
 #+begin_src emacs-lisp
   (use-package circadian
-    :disabled t
     :hook(circadian-after-load-theme . (lambda () (doom-themes-org-config)))
     :config
     (setq calendar-latitude 52.0
           calendar-longitude 0.0
-          circadian-themes '((:sunrise . doom-acario-light)
-                             (:sunset . doom-Iosvkem)))
+          circadian-themes '((:sunrise . doom-one-light)
+                             (:sunset . doom-one)))
     (circadian-setup))
 #+end_src
 
 * Org
 Oh baby, there's some shit here boys.
+**** main org config
 #+begin_src emacs-lisp
   (use-package org
+    :straight(org :type git :repo "https://code.orgmode.org/bzg/org-mode.git")
+    :mode(("\\.org$" . org-mode))
     :bind(("C-c l" . org-store-link)
           ("C-c a" . org-agenda)
           ("C-c c" . org-capture))
     :config
+    (require 'org-tempo)
     (prettify-utils-add-hook org-mode 
                              ("[ ]" "☐")
                              ("[X]" "☑")
@@ -485,13 +511,15 @@ Oh baby, there's some shit here boys.
           org-fontify-done-headline t
           org-fontify-quote-and-verse-blocks t
           fill-column 140
-      	org-image-actual-width nil
+	  org-image-actual-width nil
           org-id-track-globally t
           org-startup-with-inline-images t
           org-format-latex-options (plist-put org-format-latex-options :scale 2.0)
           org-directory "~/notes"
-          org-default-notes-file (concat org-directory "/notes.org")
-          org-agenda-files (list (expand-file-name org-directory))
+	  org-archive-location "::* Archived Tasks"
+          org-default-notes-file (concat org-directory "/20200619184615-index.org")
+  					; org-agenda-files (list (expand-file-name org-directory))
+  	org-agenda-files '("~/notes/notes.org")
           org-link-frame-setup '((file . find-file))
           org-link-abbrev-alist '(("Google" . "http://www.google.com/search?q=%s")
                                   ("google" . "http://www.google.com/search?q=%s")
@@ -554,7 +582,7 @@ Oh baby, there's some shit here boys.
   (use-package org-spacer
     :straight (org-spacer :type git :host github :repo "dustinlacewell/org-spacer.el")
     :config(setq org-spacer-element-blanks '((3 headline)
-                                		   (1 paragraph src-block table property-drawer))))
+                                  	   (1 paragraph src-block table property-drawer))))
 #+end_src
 **** Adaptive Wrap
 #+begin_src emacs-lisp
@@ -615,7 +643,7 @@ Oh baby, there's some shit here boys.
     (org-roam-completion-system 'ivy)
     (org-roam-index-file "./20200619184615-index.org")
     :bind (("C-c n j" . org-roam-jump-to-index)
-  	 :map org-roam-mode-map
+    	 :map org-roam-mode-map
            (("C-c n l" . org-roam)
             ("C-c n f" . org-roam-find-file)
             ("C-c n g" . org-roam-graph-show))
@@ -654,6 +682,31 @@ Oh baby, there's some shit here boys.
     :config(setq jiralib-url "https://issues.cambridgeconsultants.com"))
 #+end_src
 
+**** Olivetti
+#+begin_src emacs-lisp
+  (use-package olivetti :defer :commands(olivetti-mode))
+#+end_src
+**** Flowy
+#+begin_src emacs-lisp
+  (defun alex/flowy-note ()
+    "Helper function for pretty quick note-taking"
+    (olivetti-mode +1)
+    (hide-mode-line-mode +1))
+#+end_src
+**** Mermaid
+#+begin_src emacs-lisp
+  (use-package ob-mermaid
+  
+    :hook(org-babel-after-execute . (lambda () (org-redisplay-inline-images)))
+    :config
+    (setq ob-mermaid-cli-path (executable-find "mmdc"))
+    (add-to-list 'org-babel-load-languages '(mermaid . t)))
+#+end_src
+**** Async Babel
+#+begin_src emacs-lisp
+  (use-package ob-async
+    :config(setq ob-async-no-async-languages-alist '("ipython")))
+#+end_src
 * Languages
 **** Rust
 #+begin_src emacs-lisp
@@ -671,11 +724,11 @@ Oh baby, there's some shit here boys.
   (use-package python-mode
     :mode("\\.py\\'" . python-mode)
     :hook(python-mode . lsp))
-      					; :config(setq python-environment-virtualenv '("nix" "run" "nixpkgs.python38Packages.virtualenv" "nixpkgs.python38" "nixpkgs.coreutils" "-c" "virtualenv")))
+        					; :config(setq python-environment-virtualenv '("nix" "run" "nixpkgs.python38Packages.virtualenv" "nixpkgs.python38" "nixpkgs.coreutils" "-c" "virtualenv")))
 
   (use-package lsp-python-ms
     :disabled t
-    :requires lsp
+  
     :init (setq lsp-python-ms-auto-install-server t)
     :hook (python-mode . (lambda ()
                            (require 'lsp-python-ms)
@@ -716,7 +769,7 @@ Oh baby, there's some shit here boys.
 **** M4UE
 #+begin_src emacs-lisp
   (use-package mu4e-alert
-    :requires mu4e
+  
     :if (not (eq system-type 'windows-nt))
     :hook(after-init . mu4e-alert-enable-mode-line-display)
     :config(setq mu4e-alert-set-default-style 'libnotify))
@@ -762,14 +815,14 @@ Oh baby, there's some shit here boys.
                   mu4e-confirm-quit nil
                   starttls-use-gnutls t
                   mu4e-bookmarks (list (make-mu4e-bookmark
-                                	      :name "Inbox"
-                                	      :query "NOT flag:trashed AND maildir:/Inbox"
-                                	      :key ?u))))
+                                        :name "Inbox"
+                                        :query "NOT flag:trashed AND maildir:/Inbox"
+                                        :key ?u))))
 #+end_src
 **** VTerm
 #+begin_src emacs-lisp
-(use-package vterm
-  :bind("C-x t t" . vterm))
+  (use-package vterm
+    :bind("C-x t t" . vterm))
 #+end_src
 **** EXWM
 #+begin_src emacs-lisp
