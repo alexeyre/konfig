@@ -1,5 +1,4 @@
 ; -*- lexical-binding: t; -*-
-
 (if (version< emacs-version "27.0")
   (load-file (expand-file-name "early-init.el" user-emacs-directory)))
 (let ((file-name-handler-alist nil))
