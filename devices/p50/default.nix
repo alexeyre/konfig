@@ -55,7 +55,7 @@
     drivers = [ pkgs.samsung-unified-linux-driver ];
   };
 
-  # boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
   hardware.nvidiaOptimus.disable = true;
   hardware.nvidia.prime = {
     offload.enable = false;

@@ -42,7 +42,8 @@
     0.0.0.0 *.ignore.me
     0.0.0.0 www.ignore.me
     0.0.0.0 ignore.me
-
+    0.0.0.0 reddit.com
+    0.0.0.0 www.reddit.com
       '';
   environment.systemPackages = with pkgs; [ gitMinimal wireguard-tools ];
   environment.pathsToLink = [ "${pkgs.xorg.libxcb}/lib/" "/share/zsh" ];
@@ -63,10 +64,6 @@
     xautolock.enable = true;
     xautolock.locker = "${pkgs.i3lock-fancy}/bin/i3lock-fancy";
   };
-  programs.xss-lock.enable = true;
-  programs.xss-lock.lockerCommand =
-    "${config.services.xserver.xautolock.locker}";
-
   programs.zsh = { enable = true; };
   users.users.alex = {
     isNormalUser = true;

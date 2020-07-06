@@ -2,14 +2,13 @@
   imports = [
     ./emacs
     ./term/term.nix
-    ./bspwm
-    # ./xmonad.nix
+    # ./bspwm
     ./email.nix
     ./git.nix
     ./mpv.nix
     ./newsboat.nix
-    ./polybar.nix
-    ./sxhkd.nix
+    # ./polybar.nix
+    # ./sxhkd.nix
     ./zsh.nix
     ./audacity.nix
     ./rofi
@@ -83,8 +82,8 @@
     sha256 = "08msc3mgf1qzz6j82gi10fin12iwl2zh5annfgbp6nkig63j6fcx";
   } + "/xresources/base16-isotope-256.Xresources");
   home.packages = with pkgs; [
-    acpi
     (pkgs.chromium.override { enableWideVine = true; })
+    acpi
     gitkraken
     gimp
     scrot
@@ -96,7 +95,6 @@
     todoist-electron
     spotify
     mu
-    # calibre # broken for some reason
     tdesktop
     neovim
     sxiv
@@ -105,9 +103,22 @@
     winePackages.fonts
     libreoffice-fresh
     steam
-    fxkatana
+    texlive.combined.scheme-medium
+    ghidra-bin
+    anki
   ];
   programs.zathura.enable = true;
+
+  xsession.windowManager.command = "
+xhost +SI:localuser:$USER
+export _JAVA_AWT_WM_NONREPARENTING=1
+xsetroot -cursor_name left_ptr
+export XMODIFIERS=@im=exwm-xim
+export GTK_IM_MODULE=xim
+export QT_IM_MODULE=xim
+export CLUTTER_IM_MODULE=xim
+exec emacs
+  ";
 
   services.random-background = {
     enable = true;
@@ -129,7 +140,7 @@
     longitude = "0.0";
   };
   programs.tmux = {
-    enable = true;
+    enable = false;
     shortcut = "a";
     keyMode = "vi";
     newSession = true;
@@ -143,7 +154,7 @@
   programs.irssi = {
     enable = true;
     networks.freenode = {
-      nick = "absoluutely";
+      nick = "absoluutely_";
       server = {
         address = "chat.freenode.net";
         port = 6697;

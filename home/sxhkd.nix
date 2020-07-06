@@ -82,12 +82,9 @@
       "super + s" =
         "${bspc} node -g sticky && ${bspc} node -g locked && ${bspc} node -g private";
 
-      "super + q ; b" = "${bspc} desktop -f browser";
-      "super + q ; e" = "${bspc} desktop -f emacs";
-      "super + q ; m" = "${bspc} desktop -f msg";
-      "super + q ; t" = "${bspc} desktop -f terminal";
-
-      "super + a ; e" = "emacsclient -cuqn $HOME/notes/home.org";
+      "super + less" = "${bspc} desktop -f browser";
+      "super + apostrophe" = "${bspc} desktop -f emacs";
+      "super + q" = "${bspc} desktop -f msg";
     };
   };
 }

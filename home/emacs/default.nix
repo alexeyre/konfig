@@ -1,10 +1,15 @@
 { pkgs, ... }: {
+  home.packages = with pkgs; [ hunspell hunspellDicts.en_GB-large sqlite ];
   programs.emacs = {
     enable = true;
-    package = pkgs.emacsUnstable;
+    package = (pkgs.emacsUnstable.overrideDerivation
+      (old: { depsBuildTarget = old.depsBuildTarget ++ [ pkgs.findutils ]; }));
   };
-  home.packages = with pkgs; [ hunspell hunspellDicts.en_GB-ise sqlite ];
-  services.emacs.enable = true;
+  services.emacs = {
+    enable = true;
+    client.enable = true;
+    socketActivation.enable = true;
+  };
   home.file.init = {
     source = ./init.el;
     target = ".config/emacs/init.el";

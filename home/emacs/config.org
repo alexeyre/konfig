@@ -771,3 +771,13 @@ Oh baby, there's some shit here boys.
 (use-package vterm
   :bind("C-x t t" . vterm))
 #+end_src
+**** EXWM
+#+begin_src emacs-lisp
+(use-package exwm
+    :config
+    (require 'exwm-config)
+    (exwm-config-default))
+(use-package desktop-environment
+  :init(desktop-environment-mode))
+(use-package gpastel)
+#+end_src

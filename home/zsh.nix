@@ -41,7 +41,7 @@
     oh-my-zsh = {
       enable = true;
       theme = "evan";
-      plugins = [ "tmux" "git" "vi-mode" ];
+      plugins = [ "git" "vi-mode" ];
     };
   };
 }
