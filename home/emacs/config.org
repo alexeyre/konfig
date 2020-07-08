@@ -111,13 +111,16 @@ Reloads the configuration
     (setq auto-package-update-hide-results t)
     (auto-package-update-maybe))
 #+end_src
-**** Magit
+**** Magit + Forge
 #+begin_src emacs-lisp
   (use-package magit
     :commands(magit)
     :config(setq ediff-window-setup-function 'ediff-setup-windows-plain
 		 magit-refresh-status-buffer nil
                  auto-revert-buffer-list-filter 'magit-auto-revert-repository-buffer-p))
+  (use-package forge
+    :after magit
+    :config(add-to-list 'forge-alist '("gitlab.uk.cambridgeconsultants.com" "gitlab.uk.cambridgeconsultants.com/api/v4" "gitlab.uk.cambridgeconsultants.com" forge-gitlab-repository)))
 #+end_src
 **** Projectile
 #+begin_src emacs-lisp
@@ -763,7 +766,6 @@ Oh baby, there's some shit here boys.
 **** Gitlab
 #+begin_src emacs-lisp
   (use-package gitlab
-    :defer 5.0
     :config(setq gitlab-host "https://gitlab.uk.cambridgeconsultants.com"))
 #+end_src
 **** M4UE
