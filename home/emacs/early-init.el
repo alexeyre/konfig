@@ -1,7 +1,8 @@
 (setq gc-cons-threshold 100000000)
-(tool-bar-mode -1)
+(when window-system
+  (scroll-bar-mode -1)
+  (tool-bar-mode -1))
 (menu-bar-mode -1)
-(scroll-bar-mode -1)
 (setq straight-use-symlinks t)
 (setq package-user-dir (expand-file-name "packages" user-emacs-directory))
 (with-no-warnings
