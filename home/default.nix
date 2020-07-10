@@ -6,7 +6,7 @@
     ./email.nix
     ./git.nix
     ./mpv.nix
-    ./newsboat.nix
+    # ./newsboat.nix
     # ./polybar.nix
     # ./sxhkd.nix
     ./zsh.nix

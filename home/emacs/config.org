@@ -141,8 +141,7 @@ Counsel-projectile replaces a bunch of the projectile functions to use ivy.
 **** Company
 #+begin_src emacs-lisp
   (use-package company
-    :diminish company-mode
-    :hook(prog-mode . company-mode))
+    :init(global-company-mode))
 #+end_src
 #+begin_src emacs-lisp
   (use-package company-lsp
@@ -248,8 +247,8 @@ Evil works better if you force modes to cooperate.
 #+end_src
 **** Miscellaneous Binds
 #+begin_src emacs-lisp
-  (global-set-key (kbd "C-x t t") 'multi-term)
-  (global-set-key (kbd "S-p") 'counsel-M-x)
+  (global-set-key (kbd "C-x t t") 'eshell)
+  (global-set-key (kbd "s-p") 'counsel-M-x)
 #+end_src
 * User Interface
 **** Stop doing frames on my behalf
@@ -330,6 +329,7 @@ Better M-x and cool stuff
     :diminish counsel-mode
     :bind(("C-c c" . counsel-compile)
     	("C-c g" . counsel-git)
+	("C-x d" . counsel-dired)
     	("C-c j" . counsel-git-grep)
     	("C-c L" . counsel-git-log)
     	("C-c k" . counsel-rg)
@@ -495,7 +495,6 @@ Oh baby, there's some shit here boys.
 **** main org config
 #+begin_src emacs-lisp
   (use-package org
-    :straight(org :type git :repo "https://code.orgmode.org/bzg/org-mode.git")
     :mode(("\\.org$" . org-mode))
     :bind(("C-c l" . org-store-link)
           ("C-c a" . org-agenda)
@@ -822,15 +821,56 @@ Oh baby, there's some shit here boys.
 **** VTerm
 #+begin_src emacs-lisp
   (use-package vterm
+    :disabled t
     :bind("C-x t t" . vterm))
 #+end_src
 **** EXWM
+#+begin_src emacs-lisp :tangle no
+(defun +ivy-posframe-display-exwm (str)
+  (ivy-posframe--display str
+   (lambda (info)
+     (let* ((workarea (elt exwm-workspace--workareas exwm-workspace-current-index))
+            (x (aref workarea 0))
+            (y (aref workarea 1))
+
+            (fw (aref workarea 2))
+            (fh (aref workarea 3))
+
+            (pw (plist-get info :posframe-width))
+            (ph (plist-get info :posframe-height)))
+       
+       (cons (+ x (/ (- fw pw) 2)) (+ y (/ (- fh ph) 2)))))))
+
+(setq ivy-posframe-display-functions-alist
+      '((t . +ivy-posframe-display-exwm))
+
+      ivy-posframe-parmeters '((parent-frame nil)
+                                (z-group . above)))
+
+;; force set frame-position on every posframe display
+(advice-add 'posframe--set-frame-position :before
+            (lambda (&rest args)
+              (setq-local posframe--last-posframe-pixel-position nil)))
+#+end_src
 #+begin_src emacs-lisp
 (use-package exwm
     :config
+    (setq ivy-posframe-parameters '((parent-frame nil)))
     (require 'exwm-config)
     (exwm-config-default))
 (use-package desktop-environment
+  :ensure-system-package((brightnessctl)
+                         (slock))
   :init(desktop-environment-mode))
-(use-package gpastel)
+(use-package gpastel
+  :init(gpastel-mode +1))
 #+end_src
+**** Transmission
+#+BEGIN_SRC emacs-lisp
+(use-package transmission)
+#+END_SRC
+**** Bluetooth
+     #+begin_src emacs-lisp
+(use-package bluetooth
+  :commands(bluetooth))
+     #+end_src

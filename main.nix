@@ -7,12 +7,13 @@
     allTheIcons
     croscore
     noto-fonts-emoji
+    hack-font
   ];
   fonts.fontconfig = {
     defaultFonts = {
       serif = [ "Tinos" ];
       sansSerif = [ "Arimo" ];
-      monospace = [ "FiraCode Nerd Font" ];
+      monospace = [ "Hack" ];
       emoji = [ "Noto Color Emoji" ];
     };
   };
@@ -22,6 +23,15 @@
   };
   i18n.defaultLocale = "en_GB.UTF-8";
   time.timeZone = "Europe/London";
+  services.transmission = {
+    enable = true;
+    home = "/data";
+    settings = {
+      download-dir = "/data";
+      incomplete-dir-enabled = false;
+      rpc-whitelist = "127.0.0.1";
+    };
+  };
   programs.dconf.enable = true;
   programs.adb.enable = true;
   programs.ssh.askPassword = "";
@@ -61,8 +71,6 @@
     # windowManager.xmonad.enable = true;
     displayManager.lightdm.enable = true;
     displayManager.lightdm.background = ./media/wallpapers/lock.png;
-    xautolock.enable = true;
-    xautolock.locker = "${pkgs.i3lock-fancy}/bin/i3lock-fancy";
   };
   programs.zsh = { enable = true; };
   users.users.alex = {
@@ -75,6 +83,7 @@
       "networkmanager"
       "docker"
       "vboxusers"
+      "transmission"
     ];
     shell = pkgs.zsh;
   };
