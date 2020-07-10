@@ -484,6 +484,7 @@ Better M-x and cool stuff
 
 #+begin_src emacs-lisp
   (use-package circadian
+    :if(window-system)
     :hook(circadian-after-load-theme . (lambda () (doom-themes-org-config)))
     :config
     (setq calendar-latitude 52.0
@@ -491,14 +492,19 @@ Better M-x and cool stuff
           circadian-themes '((:sunrise . doom-one-light)
                              (:sunset . doom-one)))
     (circadian-setup))
+(when (not window-system)
+  (alex/night))
 #+end_src
 
 * Org
 Oh baby, there's some shit here boys.
 **** main org config
 #+begin_src emacs-lisp
+(when (not window-system)
+  (add-hook 'org-mode-hook                                                                      
+          (lambda ()                                                                          
+        (define-key evil-normal-state-map (kbd "TAB") 'org-cycle))))
   (use-package org
-    :straight(org :type git :repo "https://code.orgmode.org/bzg/org-mode.git")
     :mode(("\\.org$" . org-mode))
     :bind(("C-c l" . org-store-link)
           ("C-c a" . org-agenda)
@@ -625,6 +631,7 @@ Oh baby, there's some shit here boys.
 **** Hunspell
 #+begin_src emacs-lisp
   (use-package flyspell
+    :disabled t
     :if (not (eq system-type 'windows-nt))
     :ensure-system-package(hunspell . hunspell)
     :config
@@ -771,15 +778,14 @@ Oh baby, there's some shit here boys.
 **** M4UE
 #+begin_src emacs-lisp
   (use-package mu4e-alert
-  
-    :if (not (eq system-type 'windows-nt))
+    :requires mu4e
     :hook(after-init . mu4e-alert-enable-mode-line-display)
     :config(setq mu4e-alert-set-default-style 'libnotify))
 #+end_src
 
 #+begin_src emacs-lisp
   (use-package mu4e
-    :if (not (eq system-type 'windows-nt))
+    :disabled t
     :config (setq mu4e-contexts (list
                                  (make-mu4e-context
                                   :name "edinburgh"
@@ -828,11 +834,12 @@ Oh baby, there's some shit here boys.
 #+end_src
 **** EXWM
 #+begin_src emacs-lisp
-(use-package exwm
-    :config
-    (require 'exwm-config)
-    (exwm-config-default))
-(use-package desktop-environment
-  :init(desktop-environment-mode))
-(use-package gpastel)
+(when window-system
+    (use-package exwm
+	:config
+	(require 'exwm-config)
+	(exwm-config-default))
+    (use-package desktop-environment
+    :init(desktop-environment-mode))
+    (use-package gpastel))
 #+end_src
