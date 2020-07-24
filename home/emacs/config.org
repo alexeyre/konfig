@@ -1,4 +1,14 @@
 #+startup: overview
+* Evaluate secrets
+#+begin_src emacs-lisp
+(load-file (expand-file-name "secret.el" user-emacs-directory))
+#+end_src
+* GC
+  #+begin_src emacs-lisp
+    (use-package gcmh
+      :diminish gcmh-mode
+      :init(gcmh-mode +1))
+  #+end_src
 * Defuns
 **** Restart Emacs
 #+begin_src emacs-lisp
@@ -87,6 +97,66 @@ Reloads the configuration
     :demand t)
 #+end_src
 * Workflow
+**** Work groups
+     #+begin_src emacs-lisp
+       (use-package workgroups2
+	 :config
+	 (setq wg-use-default-session-file nil)
+	 ;; don't open last workgroup automatically in `wg-open-session',
+	 ;; I only want to check available workgroups! Nothing more.
+	 (setq wg-load-last-workgroup nil)
+	 (setq wg-open-this-wg nil)
+
+					       ;(workgroups-mode 1) ; put this one at the bottom of .emacs
+	 ;; by default, the sessions are saved in "~/.emacs_workgroups"
+	 (autoload 'wg-create-workgroup "workgroups2" nil t)
+
+	 (defun my-wg-switch-workgroup ()
+	   (interactive)
+	   (let (group-names selected-group)
+	     (unless (featurep 'workgroups2)
+	       (require 'workgroups2))
+	     (setq group-names
+		   (mapcar (lambda (group)
+			     ;; re-shape list for the ivy-read
+			     (cons (wg-workgroup-name group) group))
+			   (wg-session-workgroup-list (read (f-read-text (file-truename wg-session-file))))))
+	     (ivy-read "work groups" group-names
+		       :action (lambda (group)
+				 (wg-find-session-file wg-default-session-file)
+				 (wg-switch-to-workgroup group)))))
+
+	 (with-eval-after-load 'workgroups2
+	   ;; make sure wg-create-workgroup always success
+	   (defadvice wg-create-workgroup (around wg-create-workgroup-hack activate)
+	     (unless (file-exists-p (wg-get-session-file))
+	       (wg-reset t)
+	       (wg-save-session t))
+
+	     (unless wg-current-session
+	       ;; code extracted from `wg-open-session'.
+	       ;; open session but do NOT load any workgroup.
+	       (let ((session (read (f-read-text (file-truename wg-session-file)))))
+		 (setf (wg-session-file-name session) wg-session-file)
+		 (wg-reset-internal (wg-unpickel-session-parameters session))))
+	     ad-do-it
+	     ;; save the session file in real time
+	     (wg-save-session t))
+
+	   (defadvice wg-reset (after wg-reset-hack activate)
+	     (wg-save-session t))
+
+	   ;; I'm fine to to override the original workgroup
+	   (defadvice wg-unique-workgroup-name-p (around wg-unique-workgroup-name-p-hack activate)
+	     (setq ad-return-value t)))
+	 :init(workgroups-mode 1))
+
+     #+end_src
+**** Smart Dash
+     #+begin_src emacs-lisp
+	      (use-package smart-dash
+       :hook(prog-mode . smart-dash-mode))
+     #+end_src
 **** GitLink
      #+begin_src emacs-lisp
 (use-package git-link
@@ -140,9 +210,11 @@ Counsel-projectile replaces a bunch of the projectile functions to use ivy.
 #+end_src
 **** Company
 #+begin_src emacs-lisp
-  (use-package company
-    :diminish company-mode
-    :hook(prog-mode . company-mode))
+    (use-package company
+      :diminish company-mode
+      :hook(prog-mode . company-mode))
+  (use-package company-quickhelp
+:hook(company-mode . company-quickhelp-mode))
 #+end_src
 #+begin_src emacs-lisp
   (use-package company-lsp
@@ -152,6 +224,7 @@ Counsel-projectile replaces a bunch of the projectile functions to use ivy.
 **** Yasnippet
 #+begin_src emacs-lisp
   (use-package yasnippet
+    :diminish yas-minor-mode
     :init(yas-global-mode))
 #+end_src
 #+begin_src emacs-lisp
@@ -168,6 +241,7 @@ Counsel-projectile replaces a bunch of the projectile functions to use ivy.
 **** Ace
 #+begin_src emacs-lisp
   (use-package ace-window
+    :demand t
     :config(setq aw-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s))
     :bind("C-o" . ace-window))
 #+end_src
@@ -218,11 +292,15 @@ Evil works better if you force modes to cooperate.
 #+end_src
 #+begin_src emacs-lisp
   (use-package evil-org
-    :disabled t
-    :straight(:type git :host github :repo "Somelauw/evil-org-mode")
-    :hook
-    (org-mode . evil-org-mode)
-    (evil-org-mode . (lambda () (evil-org-set-key-theme))))
+    :diminish evil-org-mode
+    :after org
+    :config
+    (add-hook 'org-mode-hook 'evil-org-mode)
+    (add-hook 'evil-org-mode-hook
+	      (lambda ()
+		(evil-org-set-key-theme)))
+    (require 'evil-org-agenda)
+    (evil-org-agenda-set-keys))
 #+end_src
 #+begin_src emacs-lisp
   (use-package evil-magit
@@ -240,7 +318,8 @@ Evil works better if you force modes to cooperate.
 
 #+begin_src emacs-lisp
   (use-package evil-snipe
-    :diminish(evil-snipe-mode evil-snipe-override-mode)
+    :diminish evil-snipe-mode
+    :diminish evil-snipe-override-mode
     :hook(magit-mode . turn-off-evil-snipe-override-mode)
     :init
     (evil-snipe-mode +1)
@@ -252,6 +331,10 @@ Evil works better if you force modes to cooperate.
   (global-set-key (kbd "S-p") 'counsel-M-x)
 #+end_src
 * User Interface
+**** Glasses
+     #+begin_src emacs-lisp
+(add-hook 'prog-mode-hook #'glasses-mode)
+     #+end_src
 **** Stop doing frames on my behalf
 #+begin_src emacs-lisp
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
@@ -311,40 +394,41 @@ This is required for pretty icons etc.
 Better M-x and cool stuff
 #+begin_src emacs-lisp
   (use-package ivy
+    :diminish ivy-mode
     :config(setq ivy-re-builders-alist '((t . ivy--regex-ignore-order))
-                 ivy-height 15)
+		 ivy-height 15)
     :init(ivy-mode +1)
     :bind(("M-x" . counsel-M-x)
-    	("C-x C-f" . counsel-find-file)
-    	("M-y"   . counsel-yank-pop)
-    	("<f1> f" . counsel-describe-function)
-    	("<f1> v" . counsel-describe-variable)
-    	("<f1> l" . counsel-find-library)
-    	("<f2> i" . counsel-info-lookup-symbol)
-    	("<f2> u" . counsel-unicode-char)
-    	("<f2> j" . counsel-set-variable)
-    	("C-x b" . ivy-switch-buffer)
-    	("C-c v" . ivy-push-view)
-    	("C-c V" . ivy-pop-view)))
+	("C-x C-f" . counsel-find-file)
+	("M-y"   . counsel-yank-pop)
+	("<f1> f" . counsel-describe-function)
+	("<f1> v" . counsel-describe-variable)
+	("<f1> l" . counsel-find-library)
+	("<f2> i" . counsel-info-lookup-symbol)
+	("<f2> u" . counsel-unicode-char)
+	("<f2> j" . counsel-set-variable)
+	("C-x b" . ivy-switch-buffer)
+	("C-c v" . ivy-push-view)
+	("C-c V" . ivy-pop-view)))
   (use-package counsel
     :diminish counsel-mode
     :bind(("C-c c" . counsel-compile)
-    	("C-c g" . counsel-git)
-    	("C-c j" . counsel-git-grep)
-    	("C-c L" . counsel-git-log)
-    	("C-c k" . counsel-rg)
-    	("C-c m" . counsel-linux-app)
-    	("C-x l" . counsel-locate)
-    	("C-c J" . counsel-file-jump)
-    	("C-S-o" . counsel-rhythmbox)
-    	("C-c w" . counsel-wmctrl)
-    	("C-c C-r" . ivy-resume)
-    	("C-c b" . 'counsel-bookmark)
-    	("C-c d" . 'counsel-descbinds)
-    	("C-c g" . 'counsel-git)
-    	("C-c o" . 'counsel-outline)
-    	("C-c t" . 'counsel-load-theme)
-    	("C-c F" . 'counsel-org-file))
+	("C-c g" . counsel-git)
+	("C-c j" . counsel-git-grep)
+	("C-c L" . counsel-git-log)
+	("C-c k" . counsel-rg)
+	("C-c m" . counsel-linux-app)
+	("C-x l" . counsel-locate)
+	("C-c J" . counsel-file-jump)
+	("C-S-o" . counsel-rhythmbox)
+	("C-c w" . counsel-wmctrl)
+	("C-c C-r" . ivy-resume)
+	("C-c b" . 'counsel-bookmark)
+	("C-c d" . 'counsel-descbinds)
+	("C-c g" . 'counsel-git)
+	("C-c o" . 'counsel-outline)
+	("C-c t" . 'counsel-load-theme)
+	("C-c F" . 'counsel-org-file))
     :hook(emacs-startup . counsel-mode))
   (use-package swiper
     :after ivy
@@ -355,6 +439,7 @@ Better M-x and cool stuff
 #+end_src
 #+begin_src emacs-lisp
   (use-package ivy-posframe
+    :diminish ivy-posframe-mode
     :config
     (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-top-center)))
     :init
@@ -409,24 +494,31 @@ Better M-x and cool stuff
 
 **** Indent Guide
 #+begin_src emacs-lisp
-  (use-package highlight-indent-guides
-    :config(setq highlight-indent-guides-method 'character)
-    :hook(prog-mode . highlight-indent-guides-mode))
+    (use-package highlight-indent-guides
+      :disabled t
+      :config(setq highlight-indent-guides-method 'character)
+      :hook(prog-mode . highlight-indent-guides-mode))
+  (use-package leerzeichen
+      :hook(prog-mode . leerzeichen-mode))
 #+end_src
 
+**** Darkroom
+     #+begin_src emacs-lisp
+       (use-package darkroom
+	 :commands(darkroom-mode))
+     #+end_src
+
 **** Line Numbers
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (defun display-line-numbers/relative ()
     "Relative"
     (interactive)
-    (when (not (eq major-mode 'org-mode))
-      (menu-bar--display-line-numbers-mode-relative)))
+    (menu-bar--display-line-numbers-mode-relative))
 
   (defun display-line-numbers/absolute ()
     "Absolute"
     (interactive)
-    (when (not (eq major-mode 'org-mode))
-      (menu-bar--display-line-numbers-mode-absolute)))
+    (menu-bar--display-line-numbers-mode-absolute))
   (use-package display-line-numbers
     :hook
     (evil-insert-state-exit . (lambda () (display-line-numbers/relative)))
@@ -459,23 +551,26 @@ Better M-x and cool stuff
 #+end_src
 ** Colours
 #+begin_src emacs-lisp
-  (use-package doom-themes :demand :defer)
+    (use-package doom-themes :demand :defer)
+  (use-package moe-theme :demand :defer)
 #+end_src
 #+begin_src emacs-lisp
-  (defun alex/day ()
-    "Day mode"
-    (interactive)
-    (load-theme 'doom-one-light t)
-    (disable-theme 'doom-one)
-    (doom-themes-org-config))
-  (defun alex/night ()
-    "Night mode"
-    (interactive)
-    (load-theme 'doom-one t)
-    (disable-theme 'doom-one-light)
-    (doom-themes-org-config))
-  (provide 'alex/day)
-  (provide 'alex/night)
+  (setq day-theme 'moe-light)
+  (setq night-theme 'moe-dark)
+    (defun alex/day ()
+      "Day mode"
+      (interactive)
+      (load-theme day-theme t)
+      (disable-theme night-theme)
+      (doom-themes-org-config))
+    (defun alex/night ()
+      "Night mode"
+      (interactive)
+      (load-theme night-theme t)
+      (disable-theme day-theme)
+      (doom-themes-org-config))
+    (provide 'alex/day)
+    (provide 'alex/night)
 #+end_src
 
 
@@ -485,21 +580,28 @@ Better M-x and cool stuff
     :config
     (setq calendar-latitude 52.0
           calendar-longitude 0.0
-          circadian-themes '((:sunrise . doom-one-light)
-                             (:sunset . doom-one)))
+          circadian-themes '((:sunrise . day-theme)
+                             (:sunset . night-theme)))
     (circadian-setup))
 #+end_src
 
 * Org
-Oh baby, there's some shit here boys.
+  Oh baby, there's some shit here boys.
 **** main org config
 #+begin_src emacs-lisp
+(require 'cl)
+(require 'cl-lib)
+(setq load-path (remove-if (lambda (x) (string-match-p "org$" x)) load-path))
+(setq load-path (remove-if (lambda (x) (string-match-p "org-20" x)) load-path))
   (use-package org
-    :straight(org :type git :repo "https://code.orgmode.org/bzg/org-mode.git")
-    :mode(("\\.org$" . org-mode))
+    :straight org-plus-contrib
+    :straight org
+    :demand t
+    :mode("\\.org\\'" . org-mode)
+    :commands(counsel-org-capture)
     :bind(("C-c l" . org-store-link)
           ("C-c a" . org-agenda)
-          ("C-c c" . org-capture))
+          ("C-c c" . counsel-org-capture))
     :config
     (require 'org-tempo)
     (prettify-utils-add-hook org-mode 
@@ -517,9 +619,8 @@ Oh baby, there's some shit here boys.
           org-format-latex-options (plist-put org-format-latex-options :scale 2.0)
           org-directory "~/notes"
 	  org-archive-location "::* Archived Tasks"
-          org-default-notes-file (concat org-directory "/20200619184615-index.org")
-  					; org-agenda-files (list (expand-file-name org-directory))
-  	org-agenda-files '("~/notes/notes.org")
+          org-default-notes-file "~/notes/20200619184615-index.org"
+	  org-agenda-files '("~/notes/20200619184615-index.org")
           org-link-frame-setup '((file . find-file))
           org-link-abbrev-alist '(("Google" . "http://www.google.com/search?q=%s")
                                   ("google" . "http://www.google.com/search?q=%s")
@@ -635,9 +736,9 @@ Oh baby, there's some shit here boys.
 **** Roam
 #+begin_src emacs-lisp
   (use-package org-roam
+    :demand t
     :diminish org-roam-mode
-    :hook
-    (after-init . org-roam-mode)
+    :init(org-roam-mode)
     :custom
     (org-roam-directory "~/notes")
     (org-roam-completion-system 'ivy)
@@ -724,15 +825,12 @@ Oh baby, there's some shit here boys.
   (use-package python-mode
     :mode("\\.py\\'" . python-mode)
     :hook(python-mode . lsp))
-        					; :config(setq python-environment-virtualenv '("nix" "run" "nixpkgs.python38Packages.virtualenv" "nixpkgs.python38" "nixpkgs.coreutils" "-c" "virtualenv")))
-
   (use-package lsp-python-ms
     :disabled t
-  
-    :init (setq lsp-python-ms-auto-install-server t)
+    :demand t
     :hook (python-mode . (lambda ()
-                           (require 'lsp-python-ms)
-                           (lsp))))  ; or lsp-deferred
+			   (require 'lsp-python-ms)
+			   (lsp))))  ; or lsp-deferred
 #+end_src
 **** GLSL
 #+begin_src emacs-lisp
@@ -743,15 +841,21 @@ Oh baby, there's some shit here boys.
 **** C# mode
 #+begin_src emacs-lisp
   (use-package csharp-mode
-    :hook(csharp-mode . lsp)
-    :mode("\\.cs\\'" . csharp-mode))
-  (use-package omnisharp
-    :hook(csharp-mode . omnisharp-mode)
-    :mode("\\.cs\\'" . omnisharp-mode))
+    :hook(csharp-mode . lsp))
 #+end_src
 **** GitlabCI
 (use-package gitlab-ci-mode
   :mode("\\.gitlab-ci.yml'" . gitlab-ci-mode))
+**** YAML
+#+BEGIN_SRC emacs-lisp
+(use-package yaml-mode
+  :mode("\\.ya?ml\\'" . yaml-mode))
+#+END_SRC
+**** MAtLAb
+     #+begin_src emacs-lisp
+       (use-package matlab-mode
+	 :mode("\\.m\\'" . matlab-mode))
+     #+end_src
 * Emacs as a Platform
 **** YonChan
 #+begin_src emacs-lisp
@@ -832,5 +936,19 @@ Oh baby, there's some shit here boys.
     (exwm-config-default))
 (use-package desktop-environment
   :init(desktop-environment-mode))
-(use-package gpastel)
+(use-package gpastel
+  :init(gpastel-mode +1))
 #+end_src
+**** EMMS
+     #+begin_src emacs-lisp
+ (use-package emms
+  :demand t
+  :config
+  (require 'emms-setup)
+  (emms-all)
+  (emms-default-players)
+  (setq emms-source-file-default-directory "~/Music/"
+  emms-playlist-buffer-name "*Music*"
+  emms-info-asynchronously t))
+     #+end_src
+
