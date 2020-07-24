@@ -15,6 +15,8 @@
   sound.enable = true;
   virtualisation.virtualbox.host.enable = true;
 
+  programs.slock.enable = true;
+
   # make everything use the same file dialogue
   xdg.portal = {
     enable = false;
@@ -45,9 +47,6 @@
     AEORAOHECOA = { };
   }; # make wpa_supplicant work
   services.connman.enable = true;
-
-  # control backlight
-  programs.light.enable = true;
 
   # printing
   services.printing = {

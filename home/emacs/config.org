@@ -181,13 +181,16 @@ Reloads the configuration
     (setq auto-package-update-hide-results t)
     (auto-package-update-maybe))
 #+end_src
-**** Magit
+**** Magit + Forge
 #+begin_src emacs-lisp
   (use-package magit
     :commands(magit)
     :config(setq ediff-window-setup-function 'ediff-setup-windows-plain
 		 magit-refresh-status-buffer nil
                  auto-revert-buffer-list-filter 'magit-auto-revert-repository-buffer-p))
+  (use-package forge
+    :after magit
+    :config(add-to-list 'forge-alist '("gitlab.uk.cambridgeconsultants.com" "gitlab.uk.cambridgeconsultants.com/api/v4" "gitlab.uk.cambridgeconsultants.com" forge-gitlab-repository)))
 #+end_src
 **** Projectile
 #+begin_src emacs-lisp
@@ -210,11 +213,11 @@ Counsel-projectile replaces a bunch of the projectile functions to use ivy.
 #+end_src
 **** Company
 #+begin_src emacs-lisp
-    (use-package company
-      :diminish company-mode
-      :hook(prog-mode . company-mode))
+  (use-package company
+    :diminish company-mode
+    :hook(prog-mode . company-mode))
   (use-package company-quickhelp
-:hook(company-mode . company-quickhelp-mode))
+    :hook(company-mode . company-quickhelp-mode))
 #+end_src
 #+begin_src emacs-lisp
   (use-package company-lsp
@@ -327,8 +330,8 @@ Evil works better if you force modes to cooperate.
 #+end_src
 **** Miscellaneous Binds
 #+begin_src emacs-lisp
-  (global-set-key (kbd "C-x t t") 'multi-term)
-  (global-set-key (kbd "S-p") 'counsel-M-x)
+  (global-set-key (kbd "C-x t t") 'eshell)
+  (global-set-key (kbd "s-p") 'counsel-M-x)
 #+end_src
 * User Interface
 **** Glasses
@@ -414,6 +417,7 @@ Better M-x and cool stuff
     :diminish counsel-mode
     :bind(("C-c c" . counsel-compile)
 	("C-c g" . counsel-git)
+	("C-x d" . counsel-dired)
 	("C-c j" . counsel-git-grep)
 	("C-c L" . counsel-git-log)
 	("C-c k" . counsel-rg)
@@ -429,7 +433,7 @@ Better M-x and cool stuff
 	("C-c o" . 'counsel-outline)
 	("C-c t" . 'counsel-load-theme)
 	("C-c F" . 'counsel-org-file))
-    :hook(emacs-startup . counsel-mode))
+    :init(counsel-mode))
   (use-package swiper
     :after ivy
     :bind("C-s" . swiper-isearch)
@@ -576,6 +580,7 @@ Better M-x and cool stuff
 
 #+begin_src emacs-lisp
   (use-package circadian
+    :if(window-system)
     :hook(circadian-after-load-theme . (lambda () (doom-themes-org-config)))
     :config
     (setq calendar-latitude 52.0
@@ -583,6 +588,8 @@ Better M-x and cool stuff
           circadian-themes '((:sunrise . day-theme)
                              (:sunset . night-theme)))
     (circadian-setup))
+(when (not window-system)
+  (alex/night))
 #+end_src
 
 * Org
@@ -598,7 +605,6 @@ Better M-x and cool stuff
     :straight org
     :demand t
     :mode("\\.org\\'" . org-mode)
-    :commands(counsel-org-capture)
     :bind(("C-c l" . org-store-link)
           ("C-c a" . org-agenda)
           ("C-c c" . counsel-org-capture))
@@ -723,6 +729,7 @@ Better M-x and cool stuff
 **** Hunspell
 #+begin_src emacs-lisp
   (use-package flyspell
+    :disabled t
     :if (not (eq system-type 'windows-nt))
     :ensure-system-package(hunspell . hunspell)
     :config
@@ -867,21 +874,19 @@ Better M-x and cool stuff
 **** Gitlab
 #+begin_src emacs-lisp
   (use-package gitlab
-    :defer 5.0
     :config(setq gitlab-host "https://gitlab.uk.cambridgeconsultants.com"))
 #+end_src
 **** M4UE
 #+begin_src emacs-lisp
   (use-package mu4e-alert
-  
-    :if (not (eq system-type 'windows-nt))
+    :requires mu4e
     :hook(after-init . mu4e-alert-enable-mode-line-display)
     :config(setq mu4e-alert-set-default-style 'libnotify))
 #+end_src
 
 #+begin_src emacs-lisp
   (use-package mu4e
-    :if (not (eq system-type 'windows-nt))
+    :disabled t
     :config (setq mu4e-contexts (list
                                  (make-mu4e-context
                                   :name "edinburgh"
@@ -926,6 +931,7 @@ Better M-x and cool stuff
 **** VTerm
 #+begin_src emacs-lisp
   (use-package vterm
+    :disabled t
     :bind("C-x t t" . vterm))
 #+end_src
 **** EXWM
@@ -952,3 +958,54 @@ Better M-x and cool stuff
   emms-info-asynchronously t))
      #+end_src
 
+=======
+#+begin_src emacs-lisp :tangle no
+(defun +ivy-posframe-display-exwm (str)
+  (ivy-posframe--display str
+   (lambda (info)
+     (let* ((workarea (elt exwm-workspace--workareas exwm-workspace-current-index))
+            (x (aref workarea 0))
+            (y (aref workarea 1))
+
+            (fw (aref workarea 2))
+            (fh (aref workarea 3))
+
+            (pw (plist-get info :posframe-width))
+            (ph (plist-get info :posframe-height)))
+       
+       (cons (+ x (/ (- fw pw) 2)) (+ y (/ (- fh ph) 2)))))))
+
+(setq ivy-posframe-display-functions-alist
+      '((t . +ivy-posframe-display-exwm))
+
+      ivy-posframe-parmeters '((parent-frame nil)
+                                (z-group . above)))
+
+;; force set frame-position on every posframe display
+(advice-add 'posframe--set-frame-position :before
+            (lambda (&rest args)
+              (setq-local posframe--last-posframe-pixel-position nil)))
+#+end_src
+#+begin_src emacs-lisp
+(when window-system
+    (use-package exwm
+	:config
+	(setq ivy-posframe-parameters '((parent-frame nil)))
+	(require 'exwm-config)
+	(exwm-config-default))
+    (use-package desktop-environment
+    :ensure-system-package((brightnessctl)
+			    (slock))
+    :init(desktop-environment-mode))
+    (use-package gpastel
+    :init(gpastel-mode +1)))
+#+end_src
+**** Transmission
+#+BEGIN_SRC emacs-lisp
+(use-package transmission)
+#+END_SRC
+**** Bluetooth
+     #+begin_src emacs-lisp
+(use-package bluetooth
+  :commands(bluetooth))
+     #+end_src
