@@ -1,0 +1,13 @@
+{
+  "title": "Alex Keyboard Autism",
+  "author": "Alex Eyre(hi@alexey.re)",
+  "rules": [
+    {
+      "description": "CapsLock -> RControl/Escape",
+      "from": { "key_code": "caps_lock" },
+      "to": { "key_code": "right_control" },
+      "to_if_alone": [{ "key_code": "escape" }],
+      "type": "basic"
+    }
+  ]
+}
