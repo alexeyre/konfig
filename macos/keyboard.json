@@ -1,13 +1,18 @@
 {
   "title": "Alex Keyboard Autism",
   "author": "Alex Eyre(hi@alexey.re)",
+  "import_url": "karabiner://karabiner/assets/complex_modifications/import?url=https://raw.githubusercontent.com/alex-eyre/-/master/macos/keyboard.json",
   "rules": [
     {
       "description": "CapsLock -> RControl/Escape",
-      "from": { "key_code": "caps_lock" },
-      "to": { "key_code": "right_control" },
-      "to_if_alone": [{ "key_code": "escape" }],
-      "type": "basic"
+      "manipulators": [
+        {
+          "from": { "key_code": "caps_lock" },
+          "to": { "key_code": "right_control" },
+          "to_if_alone": [{ "key_code": "escape" }],
+          "type": "basic"
+        }
+      ]
     }
   ]
 }
