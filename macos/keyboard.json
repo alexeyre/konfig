@@ -4,7 +4,7 @@
   "import_url": "karabiner://karabiner/assets/complex_modifications/import?url=https://raw.githubusercontent.com/alex-eyre/-/master/macos/keyboard.json",
   "rules": [
     {
-      "description": "CapsLock to Hyper/Escape",
+      "description": "CapsLock -> Control/Escape",
       "manipulators": [
         {
           "from": {
@@ -15,8 +15,7 @@
           },
           "to": [
             {
-              "key_code": "right_shift",
-              "modifiers": ["right_command", "right_control", "right_option"]
+              "key_code": "right_command"
             }
           ],
           "to_if_alone": [
