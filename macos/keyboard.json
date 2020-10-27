@@ -32,7 +32,7 @@
       "manipulators": [
         {
           "from": {
-            "key_code": "space",
+            "key_code": "spacebar",
             "modifiers": {
               "optional": ["any"]
             }
@@ -44,7 +44,7 @@
           ],
           "to_if_alone": [
             {
-              "key_code": "spacet"
+              "key_code": "spacebar"
             }
           ],
           "type": "basic"
