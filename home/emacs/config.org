@@ -1,948 +1,108 @@
-#+startup: overview
-* Evaluate secrets
+**** load theme
+     #+begin_src emacs-lisp
+     (use-package cyberpunk-theme
+	:init(load-theme 'cyberpunk t))
+     (fringe-mode 0)
+     #+end_src
+**** garbage collection magic hack
+does magic on the GC values to make start-up fast but the GC values
+not ridiculous.
 #+begin_src emacs-lisp
-(load-file (expand-file-name "secret.el" user-emacs-directory))
-#+end_src
-* GC
-  #+begin_src emacs-lisp
     (use-package gcmh
       :diminish gcmh-mode
       :init(gcmh-mode +1))
-  #+end_src
-* Defuns
-**** Restart Emacs
-#+begin_src emacs-lisp
-  (use-package restart-emacs
-    :commands(restart-emacs))
 #+end_src
-**** Reload
-Reloads the configuration
-#+begin_src emacs-lisp
-  (defun alex/reload ()
-    "Reloads the config.org file, totally."
-    (interactive)
-    (restart-emacs))
-  (provide 'alex/reload)
-  (defun alex/force-reload ()
-    "Forces a reload."
-    (interactive)
-    (delete-file (expand-file-name "config.el" user-emacs-directory))
-    (alex/reload))
-  (provide 'alex/force-reload)
-#+end_src
-**** Config
-#+begin_src emacs-lisp
-  (defun alex/config ()
-    (interactive)
-    (find-file (expand-file-name "config.org" user-emacs-directory)))
-  (provide 'alex/config)
-#+end_src
-
-**** Notes
-#+begin_src emacs-lisp
-  (defun alex/note ()
-    (interactive)
-    (projectile-find-file-in-directory "~/notes"))
-  (provide 'alex/note)
-#+end_src
-**** Format
-#+begin_src emacs-lisp
-  (defun edit-src-block (src fn language)
-    "Replace SRC org-element's value property with the result of FN.
-                              FN is a function that operates on org-element's value and returns a string.
-                              LANGUAGE is a string referring to one of orb-babel's supported languages.
-                              (https://orgmode.org/manual/Languages.html#Languages)"
-    (let ((src-language (org-element-property :language src))
-          (value (org-element-property :value src)))
-      (when (string= src-language language)
-        (let ((copy (org-element-copy src)))
-          (org-element-put-property copy :value
-                                    (funcall fn value))
-          (org-element-set-element src copy)))))
-
-  (defun format-elisp-string (string)
-    "Indents elisp buffer string and reformats dangling parens."
-    (with-temp-buffer
-      (let ((inhibit-message t))
-        (emacs-lisp-mode)
-        (insert 
-         (replace-regexp-in-string "[[:space:]]*
-                              [[:space:]]*)" ")" string))
-        (indent-region (point-min) (point-max))
-        (buffer-substring (point-min) (point-max)))))
-
-  (defun format-elisp-src-blocks ()
-    "Format Elisp src blocks in the current org buffer"
-    (interactive)
-    (save-mark-and-excursion
-      (let ((AST (org-element-parse-buffer)))
-        (org-element-map AST 'src-block
-          (lambda (element) 
-            (edit-src-block element #'format-elisp-string "emacs-lisp")))
-        (delete-region (point-min) (point-max))
-        (insert (org-element-interpret-data AST)))))
-  (provide 'format-elisp-src-blocks)
-#+end_src
-**** Prettify Utils
-#+begin_src emacs-lisp
-  (use-package prettify-utils
-    :straight(:type git :host github :repo "Ilazki/prettify-utils.el")
-    :commands(prettify-utils-add-hook))
-#+end_src
-**** Dash
-#+begin_src emacs-lisp
-  (use-package dash
-    :demand t)
-  (use-package dash-functional
-    :demand t)
-#+end_src
-* Workflow
-**** Work groups
+**** evil
      #+begin_src emacs-lisp
-       (use-package workgroups2
-	 :init(workgroups-mode 1))
+       (use-package evil
+	 :demand t
+	 :init
+	 (setq evil-want-keybinding nil)
+	 (evil-mode 1))
+       (use-package evil-collection
+	 :requires evil
+	 :config(setq evil-collection-setup-minibuffer t)
+	 :init(evil-collection-init))
+       (use-package evil-magit
+	 :requires evil
+	 :requires magit
+	 :config(setq evil-magit-state 'normal))
+
+       (use-package evil-snipe
+	 :diminish evil-snipe-mode
+	 :diminish evil-snipe-override-mode
+	 :diminish evil-snipe-local-mode
+	 :requires evil
+	 :hook(magit-mode . turn-off-evil-snipe-override-mode)
+	 :init
+	 (evil-snipe-mode +1)
+	 (evil-snipe-override-mode +1))
+
      #+end_src
-**** Smart Dash
-     #+begin_src emacs-lisp
-	      (use-package smart-dash
-       :hook(prog-mode . smart-dash-mode))
-     #+end_src
-**** GitLink
-     #+begin_src emacs-lisp
-(use-package git-link
-  :commands(git-link
-            git-link-commit
-	    git-link-homepage))
-     #+end_src
-**** LSP
+**** disable splash screen
 #+begin_src emacs-lisp
-  (use-package lsp-mode
-    :commands(lsp))
-  (use-package lsp-ui
-    :commands(lsp-ui-mode))
-  (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-#+end_src
-**** Updates
-#+begin_src emacs-lisp
-  (use-package auto-package-update
-    :disabled t
-    :config
-    (setq auto-package-update-delete-old-versions t)
-    (setq auto-package-update-hide-results t)
-    (auto-package-update-maybe))
-#+end_src
-**** Magit + Forge
-#+begin_src emacs-lisp
-  (use-package magit
-    :commands(magit)
-    :config(setq ediff-window-setup-function 'ediff-setup-windows-plain
-		 magit-refresh-status-buffer nil
-                 auto-revert-buffer-list-filter 'magit-auto-revert-repository-buffer-p))
-  (use-package forge
-    :after magit
-    :config(add-to-list 'forge-alist '("gitlab.uk.cambridgeconsultants.com" "gitlab.uk.cambridgeconsultants.com/api/v4" "gitlab.uk.cambridgeconsultants.com" forge-gitlab-repository)))
-#+end_src
-**** Projectile
-#+begin_src emacs-lisp
-  (use-package projectile
-    :straight ripgrep
-    :straight projectile
-    :diminish projectile-mode
-    :config
-    (setq projectile-completion-system 'ivy
-  	projectile-project-search-path '("~/projects"))
-    (projectile-mode +1))
-#+end_src
-Counsel-projectile replaces a bunch of the projectile functions to use ivy.
-#+begin_src emacs-lisp
-  (use-package counsel-projectile
-    :after projectile
-    :commands(counsel-projectile
-              counsel-projectile-switch-project
-              counsel-projectile-find-file))
-#+end_src
-**** Company
-#+begin_src emacs-lisp
-  (use-package company
-    :diminish company-mode
-    :hook(prog-mode . company-mode))
-  (use-package company-quickhelp
-    :hook(company-mode . company-quickhelp-mode))
-#+end_src
-#+begin_src emacs-lisp
-  (use-package company-lsp
-    :config(push 'company-lsp company-backends))
-#+end_src
-
-**** Yasnippet
-#+begin_src emacs-lisp
-  (use-package yasnippet
-    :diminish yas-minor-mode
-    :init(yas-global-mode))
-#+end_src
-#+begin_src emacs-lisp
-  (use-package doom-snippets
-    :straight(doom-snippets :type git :host github :repo "hlissner/doom-snippets"))
-#+end_src
-**** Aggressive Indent
-#+begin_src emacs-lisp
-  (use-package aggressive-indent
-    :disabled t
-    :hook(prog-mode . aggressive-indent-mode))
-#+end_src
-
-**** Ace
-#+begin_src emacs-lisp
-  (use-package ace-window
-    :demand t
-    :config(setq aw-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s))
-    :bind("C-o" . ace-window))
-#+end_src
-**** Multiterm
-#+begin_src emacs-lisp
-  (use-package multi-term
-    :commands(multi-term
-              multi-term-next
-              multi-term-prev
-              multi-term-dedicated-open
-              multi-term-dedicated-close
-              multi-term-dedicated-toggle
-              multi-term-dedicated-select)
-    :config(setq multi-term-program "/run/current-system/sw/bin/bash"))
-#+end_src
-
-**** Flycheck
-#+begin_src emacs-lisp
-  (use-package flycheck
-    :hook(prog-mode . flycheck-mode))
-#+end_src
-
-**** iPython
-#+begin_src emacs-lisp
-  (use-package ein)
-#+end_src
-**** Apheleia
-#+begin_src emacs-lisp
-  (use-package apheleia
-    :diminish apheleia-mode
-    :straight(:type git :host github :repo "raxod502/apheleia")
-    :init(apheleia-global-mode +1))
-#+end_src
-
-* Keyboard
-**** Evil
-I don't like RSI, so I use evil. Don't @ me.
-#+begin_src emacs-lisp
-  (setq evil-want-keybinding nil)
-  (use-package evil
-    :init(evil-mode 1))
-#+end_src
-Evil works better if you force modes to cooperate.
-#+begin_src emacs-lisp
-  (use-package evil-collection
-    :config(setq evil-collection-setup-minibuffer t)
-    :init(evil-collection-init))
-#+end_src
-#+begin_src emacs-lisp
-  (use-package evil-org
-    :diminish evil-org-mode
-    :after org
-    :config
-    (add-hook 'org-mode-hook 'evil-org-mode)
-    (add-hook 'evil-org-mode-hook
-	      (lambda ()
-		(evil-org-set-key-theme)))
-    (require 'evil-org-agenda)
-    (evil-org-agenda-set-keys))
-#+end_src
-#+begin_src emacs-lisp
-  (use-package evil-magit
-    :after evil
-    :after magit
-    :config(setq evil-magit-state 'normal))
-#+end_src
-#+begin_src emacs-lisp
-  (use-package evil-numbers
-    :after evil
-    :init
-    (define-key evil-normal-state-map (kbd "C-c a") 'evil-numbers/inc-at-pt)
-    (define-key evil-normal-state-map (kbd "C-c x") 'evil-numbers/dec-at-pt))
-#+end_src
-
-#+begin_src emacs-lisp
-  (use-package evil-snipe
-    :diminish evil-snipe-mode
-    :diminish evil-snipe-override-mode
-    :hook(magit-mode . turn-off-evil-snipe-override-mode)
-    :init
-    (evil-snipe-mode +1)
-    (evil-snipe-override-mode +1))
-#+end_src
-**** Miscellaneous Binds
-#+begin_src emacs-lisp
-  (global-set-key (kbd "C-x t t") 'eshell)
-  (global-set-key (kbd "s-p") 'counsel-M-x)
-#+end_src
-
-* User Interface
-**** Parens
-     #+begin_src emacs-lisp
-    (show-paren-mode t)
-    (setq show-paren-style 'expression)
-     #+end_src
-**** Glasses
-     #+begin_src emacs-lisp
-(add-hook 'prog-mode-hook #'glasses-mode)
-     #+end_src
-**** Stop doing frames on my behalf
-#+begin_src emacs-lisp
-(setq ediff-window-setup-function 'ediff-setup-windows-plain)
-(use-package popwin
-  :init(popwin-mode +1))
-#+end_src
-**** Dired Icons
-#+begin_src emacs-lisp
-  (use-package all-the-icons-dired
-    :hook(dired-mode . all-the-icons-dired-mode))
-#+end_src
-**** Dialogue Boxes
-#+begin_src emacs-lisp
-  (setq use-dialog-box nil)
-#+end_src
-**** Font Size
-#+begin_src emacs-lisp
-  (set-face-attribute 'default nil :height 110)
-#+end_src
-**** Font
-#+begin_src emacs-lisp
-  (set-frame-font "Hack 10" nil t)
-#+end_src
-
-**** Font Caches
-#+begin_src emacs-lisp
-(setq inhibit-compacting-font-caches t)
-#+end_src emacs-lisp
-** Libraries
-**** All The Icons
-This is required for pretty icons etc.
-#+begin_src emacs-lisp
-  (use-package all-the-icons
-    :demand t)
-#+end_src
-** Meta UI
-**** Disable Welcome
-#+begin_src emacs-lisp
-  ;;disable splash screen and startup message
   (setq inhibit-startup-message t) 
   (setq initial-scratch-message nil)
 #+end_src
-**** Dashboard
-#+begin_src emacs-lisp
-  (use-package dashboard
-    :disabled t
-    :config
-    (setq dashboard-items '((recents  . 5)
-                            (bookmarks . 5)
-                            (projects . 5)
-                            (agenda . 5)
-                            (registers . 5))
-          dashboard-startup-banner 3)
-    (dashboard-setup-startup-hook))
-#+end_src
-**** Counsel/Ivy
-Better M-x and cool stuff
-#+begin_src emacs-lisp
-  (use-package ivy
-    :diminish ivy-mode
-    :config(setq ivy-re-builders-alist '((t . ivy--regex-ignore-order))
-		 ivy-height 15)
-    :init(ivy-mode +1)
-    :bind(("M-x" . counsel-M-x)
-	("C-x C-f" . counsel-find-file)
-	("M-y"   . counsel-yank-pop)
-	("<f1> f" . counsel-describe-function)
-	("<f1> v" . counsel-describe-variable)
-	("<f1> l" . counsel-find-library)
-	("<f2> i" . counsel-info-lookup-symbol)
-	("<f2> u" . counsel-unicode-char)
-	("<f2> j" . counsel-set-variable)
-	("C-x b" . ivy-switch-buffer)
-	("C-c v" . ivy-push-view)
-	("C-c V" . ivy-pop-view)))
-  (use-package counsel
-    :diminish counsel-mode
-    :bind(("C-c c" . counsel-compile)
-	("C-c g" . counsel-git)
-	("C-x d" . counsel-dired)
-	("C-c j" . counsel-git-grep)
-	("C-c L" . counsel-git-log)
-	("C-c k" . counsel-rg)
-	("C-c m" . counsel-linux-app)
-	("C-x l" . counsel-locate)
-	("C-c J" . counsel-file-jump)
-	("C-S-o" . counsel-rhythmbox)
-	("C-c w" . counsel-wmctrl)
-	("C-c C-r" . ivy-resume)
-	("C-c b" . 'counsel-bookmark)
-	("C-c d" . 'counsel-descbinds)
-	("C-c g" . 'counsel-git)
-	("C-c o" . 'counsel-outline)
-	("C-c t" . 'counsel-load-theme)
-	("C-c F" . 'counsel-org-file))
-    :init(counsel-mode))
-  (use-package swiper
-    :after ivy
-    :bind("C-s" . swiper-isearch)
-    :config
-    (setq swiper-action-recenter t)
-    (setq swiper-goto-start-of-match t))
-#+end_src
-#+begin_src emacs-lisp
-  (use-package ivy-posframe
-    :diminish ivy-posframe-mode
-    :config
-    (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-top-center)))
-    :init
-    (ivy-posframe-mode 1))
-#+end_src
-#+begin_src emacs-lisp
-  (use-package ivy-rich
-    :config(setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line)
-    :init(ivy-rich-mode +1))
-  (use-package all-the-icons-ivy-rich
-    :straight(:type git :host github :repo "seagle0128/all-the-icons-ivy-rich")
-    :init(all-the-icons-ivy-rich-mode +1))
-#+end_src
-
-**** Modeline
-#+begin_src emacs-lisp
-  (use-package doom-modeline
-    :disabled t
-    :hook(after-init . doom-modeline-mode))
-#+end_src
-#+begin_src emacs-lisp
-  (use-package telephone-line
-    :config
-    (setq telephone-line-lhs
-    	'((evil   . (telephone-line-evil-tag-segment))
-    	  (accent . (telephone-line-vc-segment
-    		     telephone-line-erc-modified-channels-segment
-    		     telephone-line-process-segment))
-    	  (nil    . (telephone-line-minor-mode-segment
-    		     telephone-line-buffer-segment)))
-    	telephone-line-rhs
-    	'((nil    . (telephone-line-misc-info-segment))
-    	  (accent . (telephone-line-major-mode-segment))
-    	  (evil   . (telephone-line-airline-position-segment))))
-    (telephone-line-mode 1))
-#+end_src
-**** Dimmer
-#+begin_src emacs-lisp
-  (use-package dimmer
-    :config
-    (dimmer-configure-magit)
-    (dimmer-configure-org)
-    :hook(after-init . dimmer-mode))
-#+end_src
-**** Modern Fringes
-#+begin_src emacs-lisp
-  (use-package modern-fringes
-    :disabled t
-    :straight(modern-fringes :type git :host github :repo "SpecialBomb/emacs-modern-fringes")
-    :hook(after-init . modern-fringes-mode))
-#+end_src
-
-**** Indent Guide
-#+begin_src emacs-lisp
-    (use-package highlight-indent-guides
-      :disabled t
-      :config(setq highlight-indent-guides-method 'character)
-      :hook(prog-mode . highlight-indent-guides-mode))
-  (use-package leerzeichen
-      :hook(prog-mode . leerzeichen-mode))
-#+end_src
-
-**** Darkroom
-     #+begin_src emacs-lisp
-       (use-package darkroom
-	 :commands(darkroom-mode))
-     #+end_src
-
-**** Line Numbers
-#+begin_src emacs-lisp
-  (defun display-line-numbers/relative ()
-    "Relative"
-    (interactive)
-    (menu-bar--display-line-numbers-mode-relative))
-
-  (defun display-line-numbers/absolute ()
-    "Absolute"
-    (interactive)
-    (menu-bar--display-line-numbers-mode-absolute))
-  (use-package display-line-numbers
-    :hook
-    (evil-insert-state-exit . (lambda () (display-line-numbers/relative)))
-    (evil-insert-state-entry . (lambda () (display-line-numbers/absolute)))
-    (prog-mode . display-line-numbers-mode)
-    (org-mode . (lambda () (display-line-numbers-mode -1))))
-#+end_src
-**** Vertical iComplete
-#+begin_src emacs-lisp
-  (use-package icomplete-vertical
-    :disabled t
-    :custom
-    (completion-styles '(partial-completion substring))
-    (completion-category-overrides '((file (styles basic substring))))
-    (read-file-name-completion-ignore-case t)
-    (read-buffer-completion-ignore-case t)
-    (completion-ignore-case t)
-    :hook
-    (after-init . icomplete-mode)
-    (icomplete-mode . icomplete-vertical-mode)
-    :bind(:map icomplete-minibuffer-map
-      	     ("C-j" . icomplete-backward-completions)
-               ("C-k" . icomplete-forward-completions)))
-#+end_src
-**** Hide Modeline Helper
-#+begin_src emacs-lisp
-  (use-package hide-mode-line
-    :defer
-    :hook((completion-list-mode . hide-mode-line-mode)))
-#+end_src
-** Colours
-#+begin_src emacs-lisp
-  (use-package doom-themes
-    :disabled t
-    :demand
-    :init(doom-themes-org-config))
-#+end_src
-#+begin_src emacs-lisp
-  (defun alex/day ()
-    "Day mode"
-    (interactive)
-    (disable-theme 'wombat))
-  (defun alex/night ()
-    "Night mode"
-    (interactive)
-    (load-theme 'wombat))
-  (provide 'alex/day)
-  (provide 'alex/night)
-  (alex/night)
-#+end_src
-* Org
-  Oh baby, there's some shit here boys.
-**** main org config
-#+begin_src emacs-lisp
-(require 'cl)
-(require 'cl-lib)
-(setq load-path (remove-if (lambda (x) (string-match-p "org$" x)) load-path))
-(setq load-path (remove-if (lambda (x) (string-match-p "org-20" x)) load-path))
-  (use-package org
-    :straight org-plus-contrib
-    :straight org
-    :demand t
-    :mode("\\.org\\'" . org-mode)
-    :bind(("C-c l" . org-store-link)
-          ("C-c a" . org-agenda)
-          ("C-c c" . counsel-org-capture))
-    :config
-    (require 'org-tempo)
-    (prettify-utils-add-hook org-mode 
-                             ("[ ]" "☐")
-                             ("[X]" "☑")
-                             ("[-]" "❍"))
-    (setq org-agenda-block-separator ""
-          org-fontify-whole-heading-line t
-          org-fontify-done-headline t
-          org-fontify-quote-and-verse-blocks t
-          fill-column 140
-	  org-image-actual-width nil
-          org-id-track-globally t
-          org-startup-with-inline-images t
-          org-format-latex-options (plist-put org-format-latex-options :scale 2.0)
-          org-directory "~/notes"
-	  org-archive-location "::* Archived Tasks"
-          org-default-notes-file "~/notes/20200619184615-index.org"
-	  org-agenda-files '("~/notes/20200619184615-index.org")
-          org-link-frame-setup '((file . find-file))
-          org-link-abbrev-alist '(("Google" . "http://www.google.com/search?q=%s")
-                                  ("google" . "http://www.google.com/search?q=%s")
-                                  ("DuckDuckGo" . "https://duckduckgo.com/?q=%s")
-                                  ("Wikipedia" . "http://en.wikipedia.org/w/index.php?search=%s")
-                                  ("Wikia" . "http://www.wikia.com/index.php?search=%s")
-                                  ("Quora" . "https://www.quora.com/search?q=%s")
-                                  ("Stack Overflow" . "http://stackoverflow.com/search?q=%s")
-                                  ("Google Maps" . "http://maps.google.com/maps?q=%s")
-                                  ("Emacs Wiki" . "https://duckduckgo.com/?q=%s+site%3Aemacswiki.org")
-                                  ("search code" . "http://searchcode.com/?q=%s")
-                                  ("GitHub" . "https://github.com/search?q=%s")
-                                  ("Bitbucket" . "https://bitbucket.org/repo/all?name=%s")
-                                  ("Google Code" . "https://code.google.com/query/q=%s")
-                                  ("Launchpad" . "https://launchpad.net/+search?field.text=%s")
-                                  ("Code Project" . "http://www.codeproject.com/search.aspx?q=%s")
-                                  ("CodePlex" . "https://www.codeplex.com/site/search?query=%s")
-                                  ("Gitorious" . "https://gitorious.org/search?q=%s")
-                                  ("SourceForge" . "https://sourceforge.net/directory/?q=%s")
-                                  ("Freecode" . "http://freecode.com/search?q=%s")
-                                  ("Active State" . "http://code.activestate.com/search/q=%s")
-                                  ("Ohloh Code" . "http://code.ohloh.net/search?s=%s")
-                                  ("Snipplr" . "http://snipplr.com/search.php?q=%s")
-                                  ("lispdoc" . "http://lispdoc.com/?q=%s")
-                                  ("Ruby-Doc" . "http://ruby-doc.com/search.html?q=%s")
-                                  ("Python 3 Documentation" . "http://docs.python.org/3/search.html?q=%s")
-                                  ("Perl CPAN" . "http://search.cpan.org/search?mode=all&query=%s")
-                                  ("PHP online documentation" . "http://cn2.php.net/results.php?q=%s&p=manual")
-                                  ("bug" . "http://bugzilla/show_bug.cgi?id=%s")
-                                  ("The Pirate Bay" . "http://thepiratebay.se/search/%s")))
-    (remove-hook 'org-cycle-hook
-                 #'org-optimize-window-after-visibility-change)
-    :hook
-    (org-mode . auto-fill-mode)
-    :diminish auto-fill-mode)
-#+end_src
-**** Mixed Pitch Mode
-#+begin_src emacs-lisp
-  (use-package mixed-pitch
-    :disabled t
-    :custom-face(variable-pitch ((t (:family "Tinos" :height 160))))
-    :hook((org-mode . mixed-pitch-mode)
-          (text-mode . mixed-pitch-mode)))
-#+end_src
-**** Bullets
-#+begin_src emacs-lisp
-  (use-package org-bullets
-    :disabled t
-    :after org
-    :hook(org-mode . org-bullets-mode)
-    :config(setq org-bullets-bullet-list '(" ")))
-#+end_src
-**** Writeroom
-#+begin_src emacs-lisp
-  (use-package writeroom-mode
-    :commands(writeroom-mode))
-#+end_src
-**** Spacing
-#+begin_src emacs-lisp
-  (use-package org-spacer
-    :straight (org-spacer :type git :host github :repo "dustinlacewell/org-spacer.el")
-    :config(setq org-spacer-element-blanks '((3 headline)
-                                  	   (1 paragraph src-block table property-drawer))))
-#+end_src
-**** Adaptive Wrap
-#+begin_src emacs-lisp
-  (use-package adaptive-wrap-vp
-    :straight(:type git :host github :repo "brentonk/adaptive-wrap-vp")
-    :commands(adaptive-wrap-prefix-vp-mode)
-    :hook((text-mode . adaptive-wrap-prefix-vp-mode)
-          (org-mode . adaptive-wrap-prefix-vp-mode)))
-#+end_src
-
-**** Pretty Tables
-#+begin_src emacs-lisp
-  (use-package org-pretty-table
-    :straight(org-pretty-table :type git :host github :repo "Fuco1/org-pretty-table")
-    :hook
-    (orgtbl-mode . org-pretty-table-mode)
-    (org-mode . org-pretty-table-mode))
-#+end_src
-**** Grip
-#+begin_src emacs-lisp
-  (use-package grip-mode
-    :commands(grip-mode))
-#+end_src
-
-**** Sublimity
-#+begin_src emacs-lisp
-  (use-package sublimity
-    :straight(sublimity :type git :host github :repo "zk-phi/sublimity")
-    :commands(sublimity-mode)
-    :init
-    (require 'sublimity-scroll)
-    (require 'sublimity-attractive))
-  (use-package hide-mode-line
-    :hook(sublimity-mode . hide-mode-line-mode))
-#+end_src
-
-**** Hunspell
-#+begin_src emacs-lisp
-  (use-package flyspell
-    :disabled t
-    :if (not (eq system-type 'windows-nt))
-    :ensure-system-package(hunspell . hunspell)
-    :config
-    (setq ispell-program-name "hunspell"
-          ispell-hunspell-dict-paths-alist
-          '(("en_GB" "C:/Hunspell/en_GB.aff"))
-          ispell-local-dictionary "en_GB")
-    :hook(org-mode . flyspell-mode))
-#+end_src
-
-**** Roam
-#+begin_src emacs-lisp
-  (use-package org-roam
-    :demand t
-    :diminish org-roam-mode
-    :init(org-roam-mode)
-    :custom
-    (org-roam-directory "~/notes")
-    (org-roam-completion-system 'ivy)
-    (org-roam-index-file "./20200619184615-index.org")
-    :bind (("C-c n j" . org-roam-jump-to-index)
-    	 :map org-roam-mode-map
-           (("C-c n l" . org-roam)
-            ("C-c n f" . org-roam-find-file)
-            ("C-c n g" . org-roam-graph-show))
-           :map org-mode-map
-           (("C-c n i" . org-roam-insert))
-           (("C-c n I" . org-roam-insert-immediate))))
-#+end_src
-**** Deft
-#+begin_src emacs-lisp
-  (use-package deft
-    :after org
-    :bind
-    ("C-c n d" . deft)
-    :custom
-    (deft-recursive t)
-    (deft-use-filter-string-for-filename t)
-    (deft-default-extension "org")
-    (deft-directory "~/notes"))
-#+end_src
-**** Download
-#+begin_src emacs-lisp
-  (use-package org-download
-    :config
-    (setq org-download-method 'directory
-          org-download-heading-lvl nil)
-    (setq-default org-download-image-dir "~/notes")
-    :hook
-    (dired-mode . org-download-enable)
-    (org-mode . org-download-enable))
-#+end_src
-
-**** Org-Jira
-#+begin_src emacs-lisp
-  (use-package org-jira
-    :commands(org-jira-get-issues)
-    :config(setq jiralib-url "https://issues.cambridgeconsultants.com"))
-#+end_src
-
-**** Olivetti
-#+begin_src emacs-lisp
-  (use-package olivetti :defer :commands(olivetti-mode))
-#+end_src
-**** Flowy
-#+begin_src emacs-lisp
-  (defun alex/flowy-note ()
-    "Helper function for pretty quick note-taking"
-    (olivetti-mode +1)
-    (hide-mode-line-mode +1))
-#+end_src
-**** Mermaid
-#+begin_src emacs-lisp
-  (use-package ob-mermaid
-  
-    :hook(org-babel-after-execute . (lambda () (org-redisplay-inline-images)))
-    :config
-    (setq ob-mermaid-cli-path (executable-find "mmdc"))
-    (add-to-list 'org-babel-load-languages '(mermaid . t)))
-#+end_src
-**** Async Babel
-#+begin_src emacs-lisp
-  (use-package ob-async
-    :config(setq ob-async-no-async-languages-alist '("ipython")))
-#+end_src
-* Languages
-**** Rust
-#+begin_src emacs-lisp
-  (use-package rust-mode
-    :mode("\\.rs\\'" . rust-mode))
-#+end_src
-**** Nix
-#+begin_src emacs-lisp
-  (use-package nix-mode
-    :mode("\\.nix\\'" . nix-mode))
-#+end_src
-
-**** Python
-#+begin_src emacs-lisp
-  (use-package python-mode
-    :mode("\\.py\\'" . python-mode)
-    :hook(python-mode . lsp))
-  (use-package lsp-python-ms
-    :disabled t
-    :demand t
-    :hook (python-mode . (lambda ()
-			   (require 'lsp-python-ms)
-			   (lsp))))  ; or lsp-deferred
-#+end_src
-**** GLSL
-#+begin_src emacs-lisp
-  (use-package glsl-mode
-    :mode("\\.compute\\'" . glsl-mode))
-#+end_src
-
-**** C# mode
-#+begin_src emacs-lisp
-  (use-package csharp-mode
-    :hook(csharp-mode . lsp))
-#+end_src
-**** GitlabCI
-(use-package gitlab-ci-mode
-  :mode("\\.gitlab-ci.yml'" . gitlab-ci-mode))
-**** YAML
+**** org tweaks
 #+BEGIN_SRC emacs-lisp
-(use-package yaml-mode
-  :mode("\\.ya?ml\\'" . yaml-mode))
+(require 'org-tempo)
 #+END_SRC
-**** MAtLAb
+**** misc utils.
+***** restart emacs
+      #+begin_src emacs-lisp
+      (use-package restart-emacs
+:commands(restart-emacs))
+      #+end_src
+**** line numbers
      #+begin_src emacs-lisp
-       (use-package matlab-mode
-	 :mode("\\.m\\'" . matlab-mode))
-     #+end_src
-* Emacs as a Platform
-**** YonChan
-#+begin_src emacs-lisp
-  (use-package q4
-    :disabled t
-    :straight(q4 :type git :host github :repo "rosbo018/q4")
-    :demand t)
-#+end_src
-**** Gitlab
-#+begin_src emacs-lisp
-  (use-package gitlab
-    :config(setq gitlab-host "https://gitlab.uk.cambridgeconsultants.com"))
-#+end_src
-**** M4UE
-#+begin_src emacs-lisp
-  (use-package mu4e-alert
-    :requires mu4e
-    :hook(after-init . mu4e-alert-enable-mode-line-display)
-    :config(setq mu4e-alert-set-default-style 'libnotify))
-#+end_src
+     (defun display-line-numbers/relative ()
+  "Relative"
+  (interactive)
+  (menu-bar--display-line-numbers-mode-relative))
 
-#+begin_src emacs-lisp
-  (use-package mu4e
-    :disabled t
-    :config (setq mu4e-contexts (list
-                                 (make-mu4e-context
-                                  :name "edinburgh"
-                                  :vars '((mu4e-maildir . "~/.local/share/maildir/edinburgh")
-                                          (mu4e-sent-folder . "/Sent Items")
-                                          (mu4e-drafts-folder . "/Drafts") 
-                                          (mu4e-trash-folder . "/Deleted Items")
-                                          (mu4e-refile-folder . "/Archive")
-                                          (user-mail-address . "A.Eyre@sms.ed.ac.uk")
-                                          (smtpmail-local-domain . "ed.ac.uk")
-                                          (smtpmail-smtp-user . "s2031787@ed.ac.uk")
-                                          (smtpmail-smtp-server . "smtp.office365.com")
-                                          (smtpmail-default-smtp-server . "smtp.office365.com")))
-                                 (make-mu4e-context
-                                  :name "alexeeyre"
-                                  :vars '((mu4e-maildir . "~/.local/share/maildir/alexeeyre")
-                                          (mu4e-drafts-folder . "/[Gmail]/Drafts")
-                                          (mu4e-sent-folder . "/[Gmail]/Sent Mail")
-                                          (mu4e-trash-folder . "/[Gmail]/Trash")
-                                          (mu4e-sent-messages-behavior . 'delete)
-                                          (smtpmail-starttls-credentials . '(("smtp.gmail.com" 587 nil nil)))
-                                          (smtpmail-auth-credentials . '(("smtp.gmail.com" 587 "alexeeyre@gmail.com" nil)))
-                                          (smtpmail-default-smtp-server . "smtp.gmail.com")
-                                          (smtpmail-smtp-server . "smtp.gmail.com")
-                                          (smtpmail-smtp-service . 587))))
-                  mu4e-get-mail-command "mbsync -aC"
-                  mu4e-update-interval 300
-                  mu4e-show-images t
-                  mu4e-show-addresses t
-                  mail-user-agent 'mu4e-user-agent
-                  message-send-mail-function 'smtpmail-send-it
-                  smtpmail-stream-type 'starttls
-                  smtpmail-smtp-service 587
-                  mu4e-sent-messages-behavior 'delete
-                  mu4e-confirm-quit nil
-                  starttls-use-gnutls t
-                  mu4e-bookmarks (list (make-mu4e-bookmark
-                                        :name "Inbox"
-                                        :query "NOT flag:trashed AND maildir:/Inbox"
-                                        :key ?u))))
-#+end_src
-**** VTerm
-#+begin_src emacs-lisp
-  (use-package vterm
-    :disabled t
-    :bind("C-x t t" . vterm))
-#+end_src
-**** EXWM
-#+begin_src emacs-lisp
-(use-package exwm
-    :config
-    (require 'exwm-config)
-    (exwm-config-default))
-(use-package desktop-environment
-  :init(desktop-environment-mode))
-(use-package gpastel
-  :init(gpastel-mode +1))
-#+end_src
-**** EMMS
+(defun display-line-numbers/absolute ()
+  "Absolute"
+  (interactive)
+  (menu-bar--display-line-numbers-mode-absolute))
+(use-package display-line-numbers
+  :hook
+  (evil-insert-state-exit . (lambda () (display-line-numbers/relative)))
+  (evil-insert-state-entry . (lambda () (display-line-numbers/absolute)))
+  (prog-mode . display-line-numbers-mode)
+  (org-mode . (lambda () (display-line-numbers-mode -1))))
+     #+end_src
+**** pdf
      #+begin_src emacs-lisp
- (use-package emms
-  :demand t
+     (use-package pdf-tools
+  :load-path "site-lisp/pdf-tools/lisp"
+  :magic ("%PDF" . pdf-view-mode)
   :config
-  (require 'emms-setup)
-  (emms-all)
-  (emms-default-players)
-  (setq emms-source-file-default-directory "~/Music/"
-  emms-playlist-buffer-name "*Music*"
-  emms-info-asynchronously t))
+  (pdf-tools-install :no-query))
      #+end_src
 
-=======
-#+begin_src emacs-lisp :tangle no
-(defun +ivy-posframe-display-exwm (str)
-  (ivy-posframe--display str
-   (lambda (info)
-     (let* ((workarea (elt exwm-workspace--workareas exwm-workspace-current-index))
-            (x (aref workarea 0))
-            (y (aref workarea 1))
-
-            (fw (aref workarea 2))
-            (fh (aref workarea 3))
-
-            (pw (plist-get info :posframe-width))
-            (ph (plist-get info :posframe-height)))
-       
-       (cons (+ x (/ (- fw pw) 2)) (+ y (/ (- fh ph) 2)))))))
-
-(setq ivy-posframe-display-functions-alist
-      '((t . +ivy-posframe-display-exwm))
-
-      ivy-posframe-parmeters '((parent-frame nil)
-                                (z-group . above)))
-
-;; force set frame-position on every posframe display
-(advice-add 'posframe--set-frame-position :before
-            (lambda (&rest args)
-              (setq-local posframe--last-posframe-pixel-position nil)))
-#+end_src
-#+begin_src emacs-lisp
-(when window-system
-    (use-package exwm
-	:config
-	(setq ivy-posframe-parameters '((parent-frame nil)))
-	(require 'exwm-config)
-	(exwm-config-default))
-    (use-package desktop-environment
-    :ensure-system-package((brightnessctl)
-			    (slock))
-    :init(desktop-environment-mode))
-    (use-package gpastel
-    :init(gpastel-mode +1)))
-#+end_src
-**** Transmission
-#+BEGIN_SRC emacs-lisp
-(use-package transmission)
-#+END_SRC
-**** Bluetooth
+**** modeline
      #+begin_src emacs-lisp
-(use-package bluetooth
-  :commands(bluetooth))
+     (use-package telephone-line
+  :config
+  (setq telephone-line-lhs
+  	'((evil   . (telephone-line-evil-tag-segment))
+  	  (accent . (telephone-line-vc-segment
+  		     telephone-line-erc-modified-channels-segment
+  		     telephone-line-process-segment))
+  	  (nil    . (telephone-line-buffer-segment)))
+  	telephone-line-rhs
+  	'((nil    . (telephone-line-misc-info-segment))
+  	  (accent . (telephone-line-major-mode-segment))
+  	  (evil   . (telephone-line-airline-position-segment))))
+  (telephone-line-mode 1))
      #+end_src
+
+**** languages
+***** haskell
+      #+begin_src emacs-lisp
+      (use-package haskell-mode
+        :hook(haskell-mode . interactive-haskell-mode)
+	:mode "\\.hs\\'"
+	:interpreter "ghc")
+      #+end_src

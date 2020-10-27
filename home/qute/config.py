@@ -1,4 +1,4 @@
-c.fonts.default_family = ["FiraCode NF", "FiraCode Nerd Font", "monospace"]
+c.fonts.default_family = ["FiraCode NF", "FiraCode Nerd Font", "FiraCode Nerd Font Mono", "monospace"]
 c.tabs.position = "left"
 c.colors.tabs.bar.bg = "#1b1d1e"
 c.colors.statusbar.normal.bg = "#1b1d1e"
@@ -17,8 +17,9 @@ c.tabs.last_close = "default-page"
 c.qt.args = ["force-webrtc-ip-handling-policy=disable_non_proxied_udp"]
 c.content.webrtc_ip_handling_policy = "disable-non-proxied-udp"
 
-config.bind(",m", "hint links spawn umpv {hint-url}")
-config.bind(";m", "hint --rapid links pawn umpv {hint-url}")
+config.bind(",m", "hint links spawn /usr/local/bin/iina '{hint-url}'")
+config.bind(";m", "hint --rapid links spawn /usr/local/bin/iina '{hint-url}'")
+config.bind("zm", "spawn /usr/local/bin/iina '{url}'")
 
 c.downloads.location.directory = "~/downloads"
 

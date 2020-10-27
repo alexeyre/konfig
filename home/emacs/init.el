@@ -8,4 +8,5 @@
   (setq straight-use-package-by-default t)
   (straight-use-package 'no-littering)
   (straight-use-package 'use-package-ensure-system-package)
+  (delete-file (expand-file-name "config.el" user-emacs-directory))
   (org-babel-load-file (expand-file-name "config.org" user-emacs-directory)))
