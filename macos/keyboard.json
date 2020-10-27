@@ -26,6 +26,30 @@
           "type": "basic"
         }
       ]
+    },
+    {
+      "description": "Spacebar -> Control/Space",
+      "manipulators": [
+        {
+          "from": {
+            "key_code": "space",
+            "modifiers": {
+              "optional": ["any"]
+            }
+          },
+          "to": [
+            {
+              "key_code": "right_command"
+            }
+          ],
+          "to_if_alone": [
+            {
+              "key_code": "spacet"
+            }
+          ],
+          "type": "basic"
+        }
+      ]
     }
   ]
 }
