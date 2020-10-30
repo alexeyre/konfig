@@ -34,7 +34,7 @@
 	    "manipulators": [
 		{
 		    "from": {
-			"key_code": "h",
+			"key_code": "j",
 			"modifiers": {
 			    "optional": ["any"],
 			    "mandatory": ["left_control", "right_control"]
@@ -49,7 +49,7 @@
 		},
 		{
 		    "from": {
-			"key_code": "l",
+			"key_code": "p",
 			"modifiers": {
 			    "optional": ["any"],
 			    "mandatory": ["left_control", "right_control"]
@@ -64,7 +64,7 @@
 		},
 		{
 		    "from": {
-			"key_code": "j",
+			"key_code": "c",
 			"modifiers": {
 			    "optional": ["any"],
 			    "mandatory": ["left_control", "right_control"]
@@ -79,7 +79,7 @@
 		},
 		{
 		    "from": {
-			"key_code": "k",
+			"key_code": "v",
 			"modifiers": {
 			    "optional": ["any"],
 			    "mandatory": ["left_control", "right_control"]
