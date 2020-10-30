@@ -1,55 +1,94 @@
 {
-  "title": "Alex Keyboard Autism",
-  "author": "Alex Eyre(hi@alexey.re)",
-  "import_url": "karabiner://karabiner/assets/complex_modifications/import?url=https://raw.githubusercontent.com/alex-eyre/-/master/macos/keyboard.json",
-  "rules": [
-    {
-      "description": "CapsLock -> Control/Escape",
-      "manipulators": [
-        {
-          "from": {
-            "key_code": "caps_lock",
-            "modifiers": {
-              "optional": ["any"]
-            }
-          },
-          "to": [
-            {
-              "key_code": "right_command"
-            }
-          ],
-          "to_if_alone": [
-            {
-              "key_code": "escape"
-            }
-          ],
-          "type": "basic"
-        }
-      ]
-    },
-    {
-      "description": "Spacebar -> Control/Space",
-      "manipulators": [
-        {
-          "from": {
-            "key_code": "spacebar",
-            "modifiers": {
-              "optional": ["any"]
-            }
-          },
-          "to": [
-            {
-              "key_code": "right_command"
-            }
-          ],
-          "to_if_alone": [
-            {
-              "key_code": "spacebar"
-            }
-          ],
-          "type": "basic"
-        }
-      ]
-    }
-  ]
+    "title": "Alex Keyboard Autism",
+    "author": "Alex Eyre(hi@alexey.re)",
+    "import_url": "karabiner://karabiner/assets/complex_modifications/import?url=https://raw.githubusercontent.com/alex-eyre/-/master/macos/keyboard.json",
+    "rules": [
+	{
+	    "description": "CapsLock -> Control/Escape",
+	    "manipulators": [
+		{
+		    "from": {
+			"key_code": "caps_lock",
+			"modifiers": {
+			    "optional": ["any"]
+			}
+		    },
+		    "to": [
+			{
+			    "key_code": "left_control",
+			    "key_code": "right_control"
+			}
+		    ],
+		    "to_if_alone": [
+			{
+			    "key_code": "escape"
+			}
+		    ],
+		    "type": "basic"
+		}
+	    ]
+	},
+
+	{
+	    "description": "CapsLock + hjkl -> Arrow Keys",
+	    "manipulators": [
+		{
+		    "from": {
+			"key_code": "h",
+			"modifiers": {
+			    "required": ["left_control", "right_control"]
+			}
+		    },
+		    "to": [
+			{
+			    "key_code": "left_arrow"
+			}
+		    ],
+		    "type": "basic"
+		},
+		{
+		    "from": {
+			"key_code": "l",
+			"modifiers": {
+			    "required": ["left_control", "right_control"]
+			}
+		    },
+		    "to": [
+			{
+			    "key_code": "right_arrow"
+			}
+		    ],
+		    "type": "basic"
+		},
+		{
+		    "from": {
+			"key_code": "j",
+			"modifiers": {
+			    "required": ["left_control", "right_control"]
+			}
+		    },
+		    "to": [
+			{
+			    "key_code": "down_arrow"
+			}
+		    ],
+		    "type": "basic"
+		},
+		{
+		    "from": {
+			"key_code": "k",
+			"modifiers": {
+			    "required": ["left_control", "right_control"]
+			}
+		    },
+		    "to": [
+			{
+			    "key_code": "up_arrow"
+			}
+		    ],
+		    "type": "basic"
+		}
+	    ]
+	},
+    ]
 }

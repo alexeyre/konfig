@@ -106,3 +106,19 @@ not ridiculous.
 	:mode "\\.hs\\'"
 	:interpreter "ghc")
       #+end_src
+**** ivy & co.
+#+begin_src emacs-lisp
+(use-package ivy
+:bind(:map ivy-minibuffer-map
+("C-k" . ivy-previous-line)
+("C-j" . ivy-next-line)))
+(use-package counsel
+  :init(counsel-mode 1))
+(use-package swiper
+  :bind(("C-s" . swiper)))
+#+end_src
+**** ace window
+#+begin_src emacs-lisp
+(use-package ace-window
+  :bind("M-o" . ace-window))
+#+end_src
