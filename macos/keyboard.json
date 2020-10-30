@@ -15,7 +15,7 @@
 		    },
 		    "to": [
 			{
-			    "modifiers": "left_control",
+			    "modifiers": ["left_control"],
 			    "key_code": "right_control"
 			}
 		    ],
