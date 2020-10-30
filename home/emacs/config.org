@@ -1,3 +1,9 @@
+**** load theme
+     #+begin_src emacs-lisp
+     (use-package cyberpunk-theme
+	:init(load-theme 'cyberpunk t))
+     (fringe-mode 0)
+     #+end_src
 **** garbage collection magic hack
 does magic on the GC values to make start-up fast but the GC values
 not ridiculous.
@@ -6,17 +12,6 @@ not ridiculous.
       :diminish gcmh-mode
       :init(gcmh-mode +1))
 #+end_src
-**** font
-     #+begin_src emacs-lisp
-     (set-frame-font "Hack 14" nil t)
-     (set-face-attribute 'default nil :height 140)
-     #+end_src
-**** load theme
-     #+begin_src emacs-lisp
-     (use-package cyberpunk-theme
-	:init(load-theme 'cyberpunk t))
-     (fringe-mode 0)
-     #+end_src
 **** evil
      #+begin_src emacs-lisp
        (use-package evil
