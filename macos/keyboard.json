@@ -116,7 +116,7 @@
             }
           ],
           "parameters": {
-            "basic.to_if_alone_timeout_milliseconds": 50
+            "basic.to_if_alone_timeout_milliseconds": 200
           },
           "type": "basic"
         }
