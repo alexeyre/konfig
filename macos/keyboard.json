@@ -1,98 +1,126 @@
 {
-    "title": "Alex Keyboard Autism",
-    "author": "Alex Eyre(hi@alexey.re)",
-    "import_url": "karabiner://karabiner/assets/complex_modifications/import?url=https://raw.githubusercontent.com/alex-eyre/-/master/macos/keyboard.json",
-    "rules": [
-	{
-	    "description": "CapsLock -> Control/Escape",
-	    "manipulators": [
-		{
-		    "from": {
-			"key_code": "caps_lock",
-			"modifiers": {
-			    "optional": ["any"]
-			}
-		    },
-		    "to": [
-			{
-			    "modifiers": ["left_control"],
-			    "key_code": "right_control"
-			}
-		    ],
-		    "to_if_alone": [
-			{
-			    "key_code": "escape"
-			}
-		    ],
-		    "type": "basic"
-		}
-	    ]
-	},
+  "title": "Alex Keyboard Autism",
+  "author": "Alex Eyre(hi@alexey.re)",
+  "import_url": "karabiner://karabiner/assets/complex_modifications/import?url=https://raw.githubusercontent.com/alex-eyre/-/master/macos/keyboard.json",
+  "rules": [
+    {
+      "description": "CapsLock -> Control/Escape",
+      "manipulators": [
+        {
+          "from": {
+            "key_code": "caps_lock",
+            "modifiers": {
+              "optional": ["any"]
+            }
+          },
+          "to": [
+            {
+              "modifiers": ["left_control"],
+              "key_code": "right_control"
+            }
+          ],
+          "to_if_alone": [
+            {
+              "key_code": "escape"
+            }
+          ],
+          "type": "basic"
+        }
+      ]
+    },
 
-	{
-	    "description": "CapsLock + hjkl -> Arrow Keys",
-	    "manipulators": [
-		{
-		    "from": {
-			"key_code": "j",
-			"modifiers": {
-			    "optional": ["any"],
-			    "mandatory": ["left_control", "right_control"]
-			}
-		    },
-		    "to": [
-			{
-			    "key_code": "left_arrow"
-			}
-		    ],
-		    "type": "basic"
-		},
-		{
-		    "from": {
-			"key_code": "p",
-			"modifiers": {
-			    "optional": ["any"],
-			    "mandatory": ["left_control", "right_control"]
-			}
-		    },
-		    "to": [
-			{
-			    "key_code": "right_arrow"
-			}
-		    ],
-		    "type": "basic"
-		},
-		{
-		    "from": {
-			"key_code": "c",
-			"modifiers": {
-			    "optional": ["any"],
-			    "mandatory": ["left_control", "right_control"]
-			}
-		    },
-		    "to": [
-			{
-			    "key_code": "down_arrow"
-			}
-		    ],
-		    "type": "basic"
-		},
-		{
-		    "from": {
-			"key_code": "v",
-			"modifiers": {
-			    "optional": ["any"],
-			    "mandatory": ["left_control", "right_control"]
-			}
-		    },
-		    "to": [
-			{
-			    "key_code": "up_arrow"
-			}
-		    ],
-		    "type": "basic"
-		}
-	    ]
-	}
-    ]
+    {
+      "description": "CapsLock + hjkl -> Arrow Keys",
+      "manipulators": [
+        {
+          "from": {
+            "key_code": "j",
+            "modifiers": {
+              "optional": ["any"],
+              "mandatory": ["left_control", "right_control"]
+            }
+          },
+          "to": [
+            {
+              "key_code": "left_arrow"
+            }
+          ],
+          "type": "basic"
+        },
+        {
+          "from": {
+            "key_code": "p",
+            "modifiers": {
+              "optional": ["any"],
+              "mandatory": ["left_control", "right_control"]
+            }
+          },
+          "to": [
+            {
+              "key_code": "right_arrow"
+            }
+          ],
+          "type": "basic"
+        },
+        {
+          "from": {
+            "key_code": "c",
+            "modifiers": {
+              "optional": ["any"],
+              "mandatory": ["left_control", "right_control"]
+            }
+          },
+          "to": [
+            {
+              "key_code": "down_arrow"
+            }
+          ],
+          "type": "basic"
+        },
+        {
+          "from": {
+            "key_code": "v",
+            "modifiers": {
+              "optional": ["any"],
+              "mandatory": ["left_control", "right_control"]
+            }
+          },
+          "to": [
+            {
+              "key_code": "up_arrow"
+            }
+          ],
+          "type": "basic"
+        }
+      ]
+    },
+    {
+      "description": "Spacebar -> Spacebar/Hyper",
+      "manipulators": [
+        {
+          "from": {
+            "key_code": "spacebar",
+            "modifiers": {
+              "optional": ["any"]
+            }
+          },
+          "to": [
+            {
+              "key_code": "left_shift",
+              "modifiers": ["left_command", "left_control", "left_alt"]
+            }
+          ],
+          "to_if_alone": [
+            {
+              "key_code": "spacebar"
+            }
+          ],
+          "parameters": {
+            "basic.to_if_alone_timeout_milliseconds": 50
+          },
+          "type": "basic"
+        }
+      ]
+    }
+  ]
 }
