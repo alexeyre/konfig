@@ -26,6 +26,7 @@ not ridiculous.
        (use-package evil-magit
 	 :requires evil
 	 :requires magit
+	 :init(evil-magit-init)
 	 :config(setq evil-magit-state 'normal))
 
        (use-package evil-snipe
