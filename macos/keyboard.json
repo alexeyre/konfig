@@ -23,16 +23,13 @@
               "key_code": "escape"
             }
           ],
-            "type": "frontmost_application_if",
-	    "bundle_identifiers":
-	    [
-		"org.gnu.Emacs"
-	    ]
+          "type": "frontmost_application_if",
+          "bundle_identifiers": ["org.gnu.Emacs"]
         }
       ]
     },
     {
-      "description": "CapsLock -> Hyper/Escape otherwise"
+      "description": "CapsLock -> Hyper/Escape otherwise",
       "manipulators": [
         {
           "from": {
@@ -43,20 +40,17 @@
           },
           "to": [
             {
-		"modifiers": ["left_command", "left_option", "left_shift"],
-		"key_code": "left_control"
-	    }
+              "modifiers": ["left_command", "left_option", "left_shift"],
+              "key_code": "left_control"
+            }
           ],
           "to_if_alone": [
             {
               "key_code": "escape"
             }
           ],
-            "type": "frontmost_application_unless",
-	    "bundle_identifiers":
-	    [
-		"org.gnu.Emacs"
-	    ]
+          "type": "frontmost_application_unless",
+          "bundle_identifiers": ["org.gnu.Emacs"]
         }
       ]
     },
@@ -124,40 +118,6 @@
           "type": "basic"
         }
       ]
-    },
-    {
-      "description": "Spacebar -> Spacebar/Hyper",
-      "manipulators": [
-        {
-          "from": {
-            "key_code": "spacebar",
-            "modifiers": {
-              "optional": ["any"]
-            }
-          },
-          "to": [
-            {
-              "key_code": "left_shift",
-              "modifiers": ["left_command", "left_control", "left_alt"]
-            }
-          ],
-          "to_if_alone": [
-            {
-              "key_code": "spacebar"
-            }
-          ],
-          "parameters": {
-            "basic.to_if_alone_timeout_milliseconds": 200
-          },
-          "type": "basic"
-        }
-      ]
     }
   ]
 }
-	"to": [
-	    {
-		"key_code": "left_shift",
-		"modifiers": ["left_command", "left_control", "left_alt"]
-	    }
-	],
