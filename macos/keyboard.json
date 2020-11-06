@@ -24,7 +24,7 @@
             }
           ],
           "type": "frontmost_application_if",
-          "bundle_identifiers": ["org.gnu.Emacs"]
+          "bundle_identifiers": ["^org\\.gnu\\.Emacs$"]
         }
       ]
     },
@@ -44,13 +44,12 @@
               "key_code": "left_control"
             }
           ],
-          "to_if_alone": [
-            {
-              "key_code": "escape"
+          "to_if_alone": [            {
+              "key_code" "escape"
             }
           ],
           "type": "frontmost_application_unless",
-          "bundle_identifiers": ["org.gnu.Emacs"]
+          "bundle_identifiers": ["^org\\.gnu\\.Emacs$"]
         }
       ]
     },
@@ -91,7 +90,7 @@
           "from": {
             "key_code": "c",
             "modifiers": {
-              "optional": ["any"],
+              "optional": ["any"]
               "mandatory": ["left_control", "right_control"]
             }
           },
