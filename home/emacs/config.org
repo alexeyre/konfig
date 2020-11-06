@@ -1,8 +1,18 @@
+**** exec path
+     brew installs it's binaries to a non-standard path, emacs needs
+     to be told to look for them
+     #+begin_src emacs-lisp
+     (add-to-list 'exec-path "/usr/local/bin")
+     #+end_src
 **** load theme
      #+begin_src emacs-lisp
      (use-package cyberpunk-theme
 	:init(load-theme 'cyberpunk t))
      (fringe-mode 0)
+     #+end_src
+**** font
+     #+begin_src emacs-lisp
+     (add-to-list 'default-frame-alist '(font . "SF Mono-14" ))
      #+end_src
 **** garbage collection magic hack
 does magic on the GC values to make start-up fast but the GC values
@@ -25,8 +35,7 @@ not ridiculous.
 	 :init(evil-collection-init))
        (use-package evil-magit
 	 :requires evil
-	 :requires magit
-	 :init(evil-magit-init)
+	 :init(require 'evil-magit)
 	 :config(setq evil-magit-state 'normal))
 
        (use-package evil-snipe
@@ -38,7 +47,6 @@ not ridiculous.
 	 :init
 	 (evil-snipe-mode +1)
 	 (evil-snipe-override-mode +1))
-
      #+end_src
 **** disable splash screen
 #+begin_src emacs-lisp
@@ -121,5 +129,19 @@ not ridiculous.
 **** ace window
 #+begin_src emacs-lisp
 (use-package ace-window
+  :config(setq aw-keys '(?a ?o?e ?u ?i))
   :bind("M-o" . ace-window))
 #+end_src
+**** apheleia
+     #+begin_src emacs-lisp
+       (use-package apheleia
+	 :straight(:host github :repo "raxod502/apheleia")
+	 :ensure-system-package black
+	 :ensure-system-package prettier
+	 :hook(prog-mode . apheleia-mode))
+     #+end_src
+     
+**** auto revert mode
+     #+begin_src emacs-lisp
+     (global-auto-revert-mode +1)
+     #+end_src
