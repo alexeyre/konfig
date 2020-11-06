@@ -23,8 +23,13 @@
               "key_code": "escape"
             }
           ],
-          "type": "frontmost_application_if",
-          "bundle_identifiers": ["^org\\.gnu\\.Emacs$"]
+          "type": "basic",
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": ["^org\\.gnu\\.Emacs$"]
+            }
+          ]
         }
       ]
     },
@@ -49,8 +54,13 @@
               "key_code": "escape"
             }
           ],
-          "type": "frontmost_application_unless",
-          "bundle_identifiers": ["^org\\.gnu\\.Emacs$"]
+          "type": "basic",
+          "conditions": [
+            {
+              "type": "frontmost_application_unless",
+              "bundle_identifiers": ["^org\\.gnu\\.Emacs$"]
+            }
+          ]
         }
       ]
     },
