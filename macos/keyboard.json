@@ -4,7 +4,7 @@
   "import_url": "karabiner://karabiner/assets/complex_modifications/import?url=https://raw.githubusercontent.com/alex-eyre/-/master/macos/keyboard.json",
   "rules": [
     {
-      "description": "CapsLock -> Control/Escape",
+      "description": "CapsLock -> Control/Escape in Emacs",
       "manipulators": [
         {
           "from": {
@@ -15,8 +15,7 @@
           },
           "to": [
             {
-              "modifiers": ["left_control"],
-              "key_code": "right_control"
+              "key_code": "left_control"
             }
           ],
           "to_if_alone": [
@@ -24,11 +23,43 @@
               "key_code": "escape"
             }
           ],
-          "type": "basic"
+            "type": "frontmost_application_if",
+	    "bundle_identifiers":
+	    [
+		"org.gnu.Emacs"
+	    ]
         }
       ]
     },
-
+    {
+      "description": "CapsLock -> Hyper/Escape otherwise"
+      "manipulators": [
+        {
+          "from": {
+            "key_code": "caps_lock",
+            "modifiers": {
+              "optional": ["any"]
+            }
+          },
+          "to": [
+            {
+		"modifiers": ["left_command", "left_option", "left_shift"],
+		"key_code": "left_control"
+	    }
+          ],
+          "to_if_alone": [
+            {
+              "key_code": "escape"
+            }
+          ],
+            "type": "frontmost_application_unless",
+	    "bundle_identifiers":
+	    [
+		"org.gnu.Emacs"
+	    ]
+        }
+      ]
+    },
     {
       "description": "CapsLock + hjkl -> Arrow Keys",
       "manipulators": [
@@ -124,3 +155,9 @@
     }
   ]
 }
+	"to": [
+	    {
+		"key_code": "left_shift",
+		"modifiers": ["left_command", "left_control", "left_alt"]
+	    }
+	],
