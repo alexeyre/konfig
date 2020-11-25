@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+# removes all applications not in ~/.Brewfile and reinstalls those that are missing
+
+brew bundle install --global --verbose --no-upgrade
+brew bundle check --global --verbose
+brew bundle cleanup --global --force
