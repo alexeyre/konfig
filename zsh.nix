@@ -6,7 +6,7 @@
     initExtra = let antibody = "${pkgs.antibody}/bin/antibody";
     in ''
       export PATH=$HOME/.local/share/brew/bin:/usr/sbin:$PATH
-      if [ -e /Users/alex/.nix-profile/etc/profile.d/nix.sh ]; then . /Users/alex/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
+      # if [ -e /Users/alex/.nix-profile/etc/profile.d/nix.sh ]; then . /Users/alex/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
       if type brew &>/dev/null; then
         FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
 
