@@ -11,12 +11,15 @@
   programs.home-manager.enable = true;
   home.packages = with pkgs;
     [
-      (haskellPackages.ghcWithPackages (pkgs: [ pkgs.QuickCheck ]))
+      (haskellPackages.ghcWithPackages (pkgs: [ pkgs.QuickCheck pkgs.brittany ]))
       lldb
-      exa
       git
       htop
       latest.rustChannels.nightly.rust
+      fasd
+      gopass
+      nixfmt
+      (texlive.combine { inherit (texlive) scheme-minimal dvipng; })
     ];
   programs.tmux = {
     enable = true;

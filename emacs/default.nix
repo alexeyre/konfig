@@ -1,5 +1,5 @@
 { pkgs, ... }: {
-  home.packages = with pkgs; [ hunspell hunspellDicts.en_GB-large sqlite ];
+  home.packages = with pkgs; [ hunspell hunspellDicts.en_GB-large sqlite imagemagick_light ];
   programs.emacs = {
     enable = true;
     package = pkgs.emacsMacport;

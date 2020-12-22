@@ -1,4 +1,5 @@
 #+startup: overview
+
 **** exec path
      brew installs it's binaries to a non-standard path, emacs needs
      to be told to look for them
@@ -28,6 +29,8 @@
      #+end_src
 **** evil
      #+begin_src emacs-lisp
+     (use-package undo-tree
+    :init(global-undo-tree-mode 1))
        (use-package evil
 	 :demand t
 	 :config
@@ -71,6 +74,17 @@
 	 (evil-snipe-mode +1)
 	 (evil-snipe-override-mode +1))
      #+end_src
+**** hydra
+I'm not doing a great deal with hydra rn but I want to do more with it
+in the future, I'm not very happy about the state of my window
+management rn, feels very clunky. I'm hoping that hydra can help.
+#+begin_src emacs-lisp
+(use-package hydra)
+#+end_src
+
+#+RESULTS:
+: hydra-ivy/body
+
 **** disable splash screen
      #+begin_src emacs-lisp
        (setq inhibit-startup-message t) 
@@ -78,8 +92,52 @@
      #+end_src
 **** org tweaks
      #+BEGIN_SRC emacs-lisp
+       (add-hook 'org-mode-hook #'auto-fill-mode)
        (require 'org-tempo)
+       (org-babel-do-load-languages
+	'org-babel-load-languages '((python . t) (emacs-lisp . t) (shell . t)))
      #+END_SRC
+
+     #+RESULTS:
+
+**** org roam
+     #+begin_src emacs-lisp
+       (use-package org-roam
+	 :ensure t
+	 :hook
+	 (after-init . org-roam-mode)
+	 :custom
+	 (org-roam-directory "~/Documents/notes/")
+	 :config
+	 (setq org-roam-dailies-directory "daily"
+	       org-roam-dailies-capture-templates
+	       '(("d" "default" entry
+		  #'org-roam-capture--get-point
+		  "* %?"
+		  :file-name "daily/%<%Y-%m-%d>"
+		  :head "#+title: %<%Y-%m-%d>\n\n")))
+	 :bind (("C-c c" . org-roam-dailies-capture-today)
+		:map org-roam-mode-map
+		(("C-c n l" . org-roam)
+		 ("C-c n f" . org-roam-find-file)
+		 ("C-c n g" . org-roam-graph))
+		:map org-mode-map
+		(("C-c n i" . org-roam-insert))
+		(("C-c n I" . org-roam-insert-immediate))))
+       (use-package deft
+	 :after org
+	 :bind("C-c n d" . deft)
+	 :custom
+	 (deft-recursive t)
+	 (deft-use-filter-string-for-filename t)
+	 (deft-default-extension "org")
+	 (deft-directory "~/Documents/Notes"))
+
+     #+end_src
+
+     #+RESULTS:
+     : deft
+
 **** misc utils.
 ***** restart emacs
       #+begin_src emacs-lisp
@@ -151,6 +209,9 @@
 	 (define-key ivy-minibuffer-map (kbd "<ESC>") 'minibuffer-keyboard-quit)
 	 (define-key swiper-map (kbd "<ESC>") 'minibuffer-keyboard-quit)
 	 :bind(("C-s" . swiper)))
+       (use-package ivy-prescient
+	 :requires ivy
+	:init(ivy-prescient-mode 1))
      #+end_src
 **** ace window
      #+begin_src emacs-lisp
@@ -174,9 +235,8 @@
      
 **** auto revert mode
      #+begin_src emacs-lisp
-       (global-auto-revert-mode +1)
+       (global-auto-revert-mode 1)
      #+end_src
-
 **** zygospore
      #+begin_src emacs-lisp
        (use-package zygospore
@@ -187,9 +247,62 @@
        (global-set-key (kbd "C-x [") 'split-window-below)
        (global-set-key (kbd "C-x {") 'split-window-right)
      #+end_src
-
-**** persistent scratch
+**** smart parens
+**** scratch
      #+begin_src emacs-lisp
        (use-package persistent-scratch
        :init(persistent-scratch-setup-default))
+       (setq inital-major-mode 'org-mode)
      #+end_src
+**** centered cursor
+     #+begin_src emacs-lisp
+       (use-package centered-cursor-mode
+	 :hook(prog-mode . centered-cursor-mode))
+     #+end_src
+**** shx
+     #+begin_src emacs-lisp
+     (setq explicit-shell-file-name "/bin/bash")
+       (use-package shx
+	 :config(setq shx-max-output 1024
+		      shx-max-input 1024)
+	 :hook(comint-mode . shx-mode))
+     #+end_src
+**** direnv
+     #+begin_src emacs-lisp
+       (use-package direnv
+	 :config
+	 (direnv-mode))
+     #+end_src
+
+     #+RESULTS:
+     : t
+**** popwin
+     #+begin_src emacs-lisp
+     (use-package popwin
+     :hook(after-init .  popwin))
+     #+end_src
+**** minibuffer completions
+     without this space will attempt to complete a minibuffer. I've
+     never wanted this, I just want spaces.
+     #+begin_src emacs-lisp
+     (define-key minibuffer-local-completion-map (kbd "SPC") 'self-insert-command)
+     #+end_src
+
+     #+RESULTS:
+     : self-insert-command
+**** hunspell
+oi oi mate i'm english innit
+#+begin_src emacs-lisp
+(use-package flyspell
+  :if (not (eq system-type 'windows-nt))
+  :ensure-system-package(hunspell . hunspell)
+  :config
+  (setq ispell-program-name "hunspell"
+        ispell-hunspell-dict-paths-alist
+        '(("en_GB" "~/.nix-profile/share/hunspell/en_GB"))
+        ispell-local-dictionary "en_GB")
+  :hook(org-mode . flyspell-mode))
+#+end_src
+
+#+RESULTS:
+| flyspell-mode | (lambda nil (display-line-numbers-mode -1)) | org-tempo-setup | auto-fill-mode | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes |
