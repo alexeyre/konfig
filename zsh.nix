@@ -8,6 +8,7 @@
     };
     envExtra = ''
       export PATH=$PATH:$HOME/.local/share/brew/bin
+      export ARCHFLAGS='-arch arm64'
     '';
   };
   programs.direnv = {

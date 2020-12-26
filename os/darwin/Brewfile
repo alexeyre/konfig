@@ -1,23 +1,18 @@
 tap "homebrew/bundle"
 tap "homebrew/cask"
 tap "homebrew/core"
+tap "d12frosted/emacs-plus"
 
-
-# emacs port
-# tap "railwaycat/emacsmacport"
-# cask "emacs-mac"
-
-# emacs plus
-tap "d12frosted/emacs-plus@29"
 brew "emacs-plus"
-
+cask "homebrew/cask/programmer-dvorak"
 cask "spotify"
 cask "telegram"
-cask "zoomus"
-cask "ghidra"
-cask "homebrew/cask-versions/discord-canary"
 cask "refined-github-safari"
-cask "amethyst"
+# cask "amethyst"
 cask "syncthing"
-cask "eloston-chromium"
-cask "zotero"
+# cask "eloston-chromium"
+# cask "zotero"
+cask "karabiner-elements"
+cask "alfred"
+cask "battle-net"
+cask "anki"

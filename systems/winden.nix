@@ -1,4 +1,4 @@
 { pkgs, config, ... }: {
   imports = [ ../os/darwin ];
-  networking.hostName = "loviisa";
+  networking.hostName = "winden";
 }
