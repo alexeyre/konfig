@@ -9,7 +9,8 @@ mas "Userscripts", id: 1463298887
 mas "Vimari", id: 1480933944
 mas "Xcode", id: 497799835
 
-brew "emacs-plus"
+brew "emacs-plus@27", args: ['HEAD', 'without-imagemagick']
+
 cask "homebrew/cask/programmer-dvorak"
 cask "spotify"
 cask "telegram"

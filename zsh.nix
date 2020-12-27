@@ -7,7 +7,7 @@
       editor.keymap = "vi";
     };
     envExtra = ''
-      export PATH=$PATH:$HOME/.local/share/brew/bin
+      export PATH=$HOME/.local/share/brew/bin:$PATH
       export ARCHFLAGS='-arch arm64'
     '';
     shellAliases = {

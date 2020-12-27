@@ -290,6 +290,14 @@ management rn, feels very clunky. I'm hoping that hydra can help.
 
      #+RESULTS:
      : self-insert-command
+**** dired
+     #+begin_src emacs-lisp
+       (use-package dired-x
+	 :straight nil
+	 :hook(dired-mode . dired-omit-mode)
+	 :init(require 'dired-x)
+	 :config(setq dired-omit-files (concat dired-omit-files "\\|^\\..+$")))
+     #+end_src
 **** hunspell
 oi oi mate i'm english innit
 #+begin_src emacs-lisp
@@ -306,3 +314,4 @@ oi oi mate i'm english innit
 
 #+RESULTS:
 | flyspell-mode | (lambda nil (display-line-numbers-mode -1)) | org-tempo-setup | auto-fill-mode | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes |
+
