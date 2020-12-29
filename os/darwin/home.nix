@@ -1,21 +1,5 @@
-{ pkgs, ... }: {
-  imports = [ ../../home.nix ];
-  home.username = "alex";
-  home.homeDirectory = "/Users/alex";
-  home.file.karabiner = {
-    source = ./karabiner.json;
-    target = ".config/karabiner/karabiner.json";
-  };
-  home.file.brewfile = {
-    source = ./Brewfile;
-    target = ".Brewfile";
-    onChange = ''
-      brew bundle install --global --verbose --no-upgrade
-      brew bundle cleanup --global --force 2>/dev/null &>/dev/null
-          '';
-  };
-  home.file.vimariPreferences = {
-    text = ''
+{ pkgs, ... }:
+let vimariPrefs = pkgs.writeText "vimariPrefs" ''
 {
   "excludedUrls": "",
   "linkHintCharacters": "aoeuihtns",
@@ -47,10 +31,26 @@
       "openTab": "t"
   }
 }
-    '';
+''; in {
+  imports = [ ../../home.nix ];
+  home.username = "alex";
+  home.homeDirectory = "/Users/alex";
+  home.file.karabiner = {
+    source = ./karabiner.json;
+    target = ".config/karabiner/karabiner.json";
+  };
+  home.file.brewfile = {
+    source = ./Brewfile;
+    target = ".Brewfile";
+    onChange = ''
+      brew bundle install --global --verbose --no-upgrade
+      brew bundle cleanup --global --force 2>/dev/null &>/dev/null
+          '';
+  };
+  home.file.vimariPrefs = {
+    source = "${vimariPrefs}/vimariPrefs";
     target = "Library/Containers/net.televator.Vimari.SafariExtension/Data/Library/Application Support/userSettings.json.symlink";
     onChange = ''
-      cp ~/Library/Containers/net.televator.Vimari.SafariExtension/Data/Library/Application\ Support/userSettings.json.symlink ~/Library/Containers/net.televator.Vimari.SafariExtension/Data/Library/Application\ Support/userSettings.json
     '';
   };
   home.packages = [

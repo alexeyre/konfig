@@ -8,7 +8,7 @@
     };
     envExtra = ''
       export PATH=$HOME/.local/share/brew/sbin:$HOME/.local/share/brew/bin:$PATH
-      export ARCHFLAGS='-arch arm64'
+      #export ARCHFLAGS='-arch arm64'
     '';
     shellAliases = {
       "hm" = "home-manager";
