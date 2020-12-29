@@ -1,10 +1,4 @@
 { pkgs, ... }: {
-  home.packages = with pkgs; [
-    hunspell
-    hunspellDicts.en_GB-large
-    sqlite
-    imagemagick_light
-  ];
   home.file.init = {
     source = ./init.el;
     target = ".config/emacs/init.el";

@@ -1,5 +1,4 @@
 #+startup: overview
-
 **** exec path
      brew installs it's binaries to a non-standard path, emacs needs
      to be told to look for them
@@ -78,7 +77,7 @@
 I'm not doing a great deal with hydra rn but I want to do more with it
 in the future, I'm not very happy about the state of my window
 management rn, feels very clunky. I'm hoping that hydra can help.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (use-package hydra)
 #+end_src
 
@@ -267,15 +266,6 @@ management rn, feels very clunky. I'm hoping that hydra can help.
 		      shx-max-input 1024)
 	 :hook(comint-mode . shx-mode))
      #+end_src
-**** direnv
-     #+begin_src emacs-lisp
-       (use-package direnv
-	 :config
-	 (direnv-mode))
-     #+end_src
-
-     #+RESULTS:
-     : t
 **** popwin
      #+begin_src emacs-lisp
      (use-package popwin
@@ -314,4 +304,7 @@ oi oi mate i'm english innit
 
 #+RESULTS:
 | flyspell-mode | (lambda nil (display-line-numbers-mode -1)) | org-tempo-setup | auto-fill-mode | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes |
-
+**** ipython
+     #+begin_src emacs-lisp
+       (use-package ein)
+     #+end_src
