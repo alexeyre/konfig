@@ -4,25 +4,19 @@ tap "homebrew/core"
 tap "d12frosted/emacs-plus"
 
 brew "mas"
-mas "Dark Mode for Safari", id: 1397180934
+# mas "Dark Mode for Safari", id: 1397180934
 mas "Userscripts", id: 1463298887
 mas "Vimari", id: 1480933944
 mas "Xcode", id: 497799835
 
-brew "emacs-plus@27", args: ['HEAD', 'without-imagemagick']
-
+brew "d12frosted/emacs-plus/emacs-plus@28", args: ['without-imagemagick']
 cask "homebrew/cask/programmer-dvorak"
 cask "spotify"
 cask "telegram"
-cask "refined-github-safari"
-# cask "amethyst"
 cask "syncthing"
-# cask "eloston-chromium"
-# cask "zotero"
 cask "karabiner-elements"
 cask "alfred"
-cask "battle-net"
 cask "anki"
-cask "signal"
-cask "qbittorrent"
-cask "iina"
+cask "mullvadvpn"
+cask "iterm2"
+brew "openjdk"

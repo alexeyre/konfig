@@ -3,6 +3,7 @@
 (menu-bar-mode -1)
 (setq straight-use-symlinks t)
 (setq package-user-dir (expand-file-name "packages" user-emacs-directory))
+(setq straight-check-for-modifications '(check-on-save))
 (with-no-warnings
   (require 'cl))
 (setq vc-follow-symlinks t)

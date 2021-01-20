@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 let vimariPrefs = pkgs.writeText "vimariPrefs" ''
 {
   "excludedUrls": "",
@@ -47,12 +47,9 @@ let vimariPrefs = pkgs.writeText "vimariPrefs" ''
       brew bundle cleanup --global --force 2>/dev/null &>/dev/null
           '';
   };
-  home.file.vimariPrefs = {
-    source = "${vimariPrefs}/vimariPrefs";
-    target = "Library/Containers/net.televator.Vimari.SafariExtension/Data/Library/Application Support/userSettings.json.symlink";
-    onChange = ''
-    '';
-  };
+home.activation.linkMyStuff = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+  cp "${vimariPrefs}" "Library/Containers/net.televator.Vimari.SafariExtension/Data/Library/Application Support/userSettings.json";
+'';
   home.packages = [
     (pkgs.writeScriptBin
     "sync_brew"
