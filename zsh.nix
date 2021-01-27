@@ -26,7 +26,6 @@
     dotDir = ".config/zsh";
     envExtra = ''
       export PATH=$HOME/.local/share/brew/sbin:$HOME/.local/share/brew/bin:$PATH
-      export ARCHFLAGS='-arch arm64'
       source $HOME/.cargo/env 2>/dev/null
     '';
     shellAliases = {
