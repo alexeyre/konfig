@@ -17,6 +17,9 @@
     (pkgs.writeScriptBin "youtube-dl_wav" ''
 ${pkgs.youtube-dl}/bin/youtube-dl --ffmpeg-location=${pkgs.ffmpeg}/bin/ffmpeg -x --audio-format=wav $1
 '')
+(pkgs.writeScriptBin "download_wallpaper" ''
+${pkgs.curl}/bin/curl -l $1 -o ~/Pictures/papes/$(${pkgs.coreutils}/bin/basename $1)
+'')
   ];
   programs.git = {
     enable = true;
