@@ -19,7 +19,9 @@
      #+end_src
 **** font
      #+begin_src emacs-lisp
-       (add-to-list 'default-frame-alist '(font . "SF Mono-14" ))
+       (add-to-list 'default-frame-alist '(font . "Terminus (TTF)-16:antialias=false" ))
+       (set-face-italic-p 'italic nil)
+       (set-face-bold-p 'bold nil)
      #+end_src
 **** garbage collection magic hack
      does magic on the GC values to make start-up fast but the GC values
