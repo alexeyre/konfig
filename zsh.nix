@@ -3,7 +3,7 @@
     enable = true;
     defaultKeymap = "viins";
     prezto = {
-      enable = true;
+      enable = false;
       editor.keymap = "vi";
       prompt.theme = "off";
       pmodules = [
@@ -27,6 +27,7 @@
     envExtra = ''
       export PATH=$HOME/.local/share/brew/sbin:$HOME/.local/share/brew/bin:$PATH
       source $HOME/.cargo/env 2>/dev/null
+      source $HOME/.nix-profile/etc/profile.d/nix.sh
     '';
     shellAliases = {
       "hm" = "home-manager";
