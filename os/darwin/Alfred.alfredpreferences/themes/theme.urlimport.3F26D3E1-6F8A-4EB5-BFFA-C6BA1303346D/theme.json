@@ -3,7 +3,7 @@
     "result" : {
       "textSpacing" : 5,
       "subtext" : {
-        "size" : 10,
+        "size" : 8,
         "colorSelected" : "#BCBCBC65",
         "font" : "System",
         "color" : "#BCBCBC65"
@@ -16,7 +16,7 @@
       },
       "backgroundSelected" : "#5658584C",
       "text" : {
-        "size" : 15,
+        "size" : 14,
         "colorSelected" : "#FDFCFFFF",
         "font" : "System",
         "color" : "#FDFCFFFF"
@@ -44,14 +44,13 @@
       "color" : "#2626267F",
       "paddingHorizontal" : 6,
       "width" : 468,
-      "borderPadding" : 0,
+      "borderPadding" : 2,
       "borderColor" : "#1C1C1C7F",
-      "blur" : 0,
+      "blur" : 40,
       "roundness" : 10,
       "paddingVertical" : 8
     },
     "credit" : "mayuzumi",
-    "visualEffectMode" : 2,
     "separator" : {
       "color" : "#CBCBCBF3",
       "thickness" : 0
