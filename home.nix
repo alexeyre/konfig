@@ -9,11 +9,10 @@
   # ];
   imports = [ ./zsh.nix ./emacs ];
   programs.home-manager.enable = true;
+  xdg.enable = true;
   home.packages = with pkgs; [
-    (haskellPackages.ghcWithPackages (pkgs: [ pkgs.QuickCheck pkgs.brittany ]))
     gopass
     nixfmt
-    (texlive.combine { inherit (texlive) scheme-minimal dvipng; })
     (pkgs.writeScriptBin "youtube-dl_wav" ''
 ${pkgs.youtube-dl}/bin/youtube-dl --ffmpeg-location=${pkgs.ffmpeg}/bin/ffmpeg -x --audio-format=wav $1
 '')
