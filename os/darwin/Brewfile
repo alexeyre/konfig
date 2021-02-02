@@ -20,8 +20,10 @@ cask "alfred"
 cask "anki"
 cask "mullvadvpn"
 cask "iterm2"
+cask "homebrew/cask-versions/tor-browser-alpha"
+cask "electrum"
 
 brew "openjdk"
-
+brew "gh"
 brew "gradle"
 brew "rustup"
