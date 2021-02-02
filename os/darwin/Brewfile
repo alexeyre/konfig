@@ -20,9 +20,8 @@ cask "alfred"
 cask "anki"
 cask "mullvadvpn"
 cask "iterm2"
-
 brew "openjdk"
 cask "jetbrains-toolbox"
-
 brew "gradle"
 brew "rustup"
+cask "font-terminus"
