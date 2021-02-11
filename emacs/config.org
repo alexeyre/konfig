@@ -11,6 +11,11 @@
 			 ;; (add-to-list 'exec-path "~/.local/share/brew/bin")
 			 ;; (add-to-list 'exec-path "~/.nix-profile/bin")
      #+end_src
+**** fullscreen on mac
+		 #+begin_src emacs-lisp
+			 (when (memq window-system '(mac))
+         (toggle-frame-fullscreen))
+		 #+end_src
 **** load theme
      #+begin_src emacs-lisp
        (use-package cyberpunk-theme
@@ -19,9 +24,10 @@
      #+end_src
 **** font
      #+begin_src emacs-lisp
-       (add-to-list 'default-frame-alist '(font . "Terminus (TTF)-16:antialias=false" ))
-       (set-face-italic-p 'italic nil)
-       (set-face-bold-p 'bold nil)
+			 (add-to-list 'default-frame-alist '(font . "Terminus (TTF)-16:antialias=false" ))
+			 (set-face-italic-p 'italic nil)
+			 (set-face-bold-p 'bold nil)
+			 (set-face-italic 'font-lock-comment-face nil)
      #+end_src
 **** garbage collection magic hack
      does magic on the GC values to make start-up fast but the GC values
@@ -447,3 +453,13 @@ oi oi mate i'm english innit
 
 		 #+RESULTS:
 
+
+**** direnv
+		 #+begin_src emacs-lisp
+(use-package direnv
+ :config
+ (direnv-mode))
+		 #+end_src
+
+		 #+RESULTS:
+		 : t

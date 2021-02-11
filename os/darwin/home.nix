@@ -32,7 +32,7 @@ let vimariPrefs = pkgs.writeText "vimariPrefs" ''
   }
 }
 ''; in {
-  imports = [ ../../home.nix ];
+  imports = [ ../../home.nix ./zsh.nix ];
   home.username = "alex";
   home.homeDirectory = "/Users/alex";
   home.file.karabiner = {
