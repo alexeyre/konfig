@@ -175,6 +175,14 @@ management rn, feels very clunky. I'm hoping that hydra can help.
 	 (prog-mode . display-line-numbers-mode)
 	 (org-mode . (lambda () (display-line-numbers-mode -1))))
      #+end_src
+**** erc
+	 #+begin_src emacs-lisp
+(bind-key "C-c e" 'erc)
+	 #+end_src
+
+	 #+RESULTS:
+	 : erc
+
 **** pdf
      #+begin_src emacs-lisp
        (use-package pdf-tools
@@ -405,7 +413,7 @@ oi oi mate i'm english innit
 
 **** tabs
      #+begin_src emacs-lisp
-(setq-default tab-width 2)
+(setq-default tab-width 4)
      #+end_src
 
      #+RESULTS:
@@ -453,7 +461,6 @@ oi oi mate i'm english innit
 
 		 #+RESULTS:
 
-
 **** direnv
 		 #+begin_src emacs-lisp
 (use-package direnv
@@ -463,3 +470,11 @@ oi oi mate i'm english innit
 
 		 #+RESULTS:
 		 : t
+
+**** use nix
+	 #+begin_src emacs-lisp
+(setq system-packages-package-manager 'nix)
+	 #+end_src
+
+	 #+RESULTS:
+	 : nix
