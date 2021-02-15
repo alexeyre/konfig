@@ -4,5 +4,9 @@
 <dict>
 	<key>fallbacksMode</key>
 	<integer>1</integer>
+	<key>showUserDefined</key>
+	<array>
+		<string>public.symlink</string>
+	</array>
 </dict>
 </plist>

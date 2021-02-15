@@ -3,31 +3,10 @@ tap "homebrew/cask"
 tap "homebrew/core"
 tap "d12frosted/emacs-plus"
 
-brew "mas"
-# mas "Dark Mode for Safari", id: 1397180934
-mas "Userscripts", id: 1463298887
-mas "Vimari", id: 1480933944
-mas "Xcode", id: 497799835
-
 brew "youtube-dl"
 brew "d12frosted/emacs-plus/emacs-plus@28", args: ['without-imagemagick']
 cask "homebrew/cask/programmer-dvorak"
-cask "telegram"
-cask "syncthing"
-cask "karabiner-elements"
 cask "alfred"
 cask "anki"
-cask "iterm2"
-cask "homebrew/cask-versions/tor-browser-alpha"
-cask "electrum"
-brew "openjdk"
-brew "openjdk"
-cask "jetbrains-toolbox"
-brew "gradle"
-brew "rustup"
-cask "homebrew/cask-fonts/font-terminus"
-brew "iproute2mac"
 cask "veracrypt"
 cask "macfuse"
-cask "monero-wallet"
-brew "spotify-tui"

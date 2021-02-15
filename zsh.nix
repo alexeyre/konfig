@@ -25,6 +25,7 @@
     };
     dotDir = ".config/zsh";
     envExtra = ''
+      export HOMEBREW_NO_ANALYTICS=1
       export PATH=$HOME/.local/share/brew/sbin:$HOME/.local/share/brew/bin:$PATH
       source $HOME/.cargo/env 2>/dev/null
       SPACESHIP_CHAR_SYMBOL="$ "

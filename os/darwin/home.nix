@@ -1,41 +1,10 @@
-{ pkgs, lib, ... }:
-let
-  vimariPrefs = pkgs.writeText "vimariPrefs" ''
-    {
-      "excludedUrls": "",
-      "linkHintCharacters": "aoeuihtns",
-      "detectByCursorStyle": false,
-      "scrollSize": 150,
-      "openTabUrl": "https://google.co.uk/",
-      "modifier": "",
-      "smoothScroll": false,
-      "scrollDuration": 25,
-      "transparentBindings": true,
-      "bindings": {
-          "hintToggle": "a",
-          "newTabHintToggle": "shift+a",
-          "scrollUp": "k",
-          "scrollDown": "j",
-          "scrollLeft": "h",
-          "scrollRight": "l",
-          "scrollUpHalfPage": "u",
-          "scrollDownHalfPage": "d",
-          "goToPageTop": "g g",
-          "goToPageBottom": "shift+g",
-          "goToFirstInput": "g i",
-          "goBack": "shift+h",
-          "goForward": "shift+l",
-          "reload": "r",
-          "tabForward": "shift+k",
-          "tabBack": "shift+j",
-          "closeTab": "x",
-          "openTab": "t"
-      }
-    }
-  '';
-in {
+{ pkgs, lib, ... }: {
   imports = [ ../../home.nix ./zsh.nix ];
   home.username = "alex";
+  programs.chromium.extensions = [{
+    id = "pdnojahnhpgmdhjdhgphgdcecehkbhfo";
+  } # open in iina
+    ];
   home.homeDirectory = "/Users/alex";
   home.file.karabiner = {
     source = ./karabiner.json;
@@ -49,10 +18,9 @@ in {
       brew bundle cleanup --global --force 2>/dev/null &>/dev/null
           '';
   };
-  home.activation.linkMyStuff = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    cp "${vimariPrefs}" "Library/Containers/net.televator.Vimari.SafariExtension/Data/Library/Application Support/userSettings.json";
-  '';
-  home.packages = [
+  programs.git.package = pkgs.hello;
+  home.packages = with pkgs; [
+    # emacsMacport # on hold until emacsMacport supports aarch64
     (pkgs.writeScriptBin "sync_brew" ''
       #!${pkgs.stdenv.shell}
       brew bundle install --global --verbose --no-upgrade

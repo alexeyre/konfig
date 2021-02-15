@@ -1,8 +1,17 @@
 { config, pkgs, ... }: {
   imports = [ ./zsh.nix ./emacs ];
-  programs.home-manager.enable = true;
   xdg.enable = true;
+  programs.chromium = {
+    enable = true;
+    package = pkgs.ungoogled-chromium;
+    extensions = [
+      { id = "cgbcahbpdhpcegmbfconppldiemgcoii"; } # ublock dev
+      { id = "eckgcipdkhcfghnmincccnhpdmnbefki"; } # umatrix dev
+      { id = "kkhfnlkhiapbiehimabddjbimfaijdhk"; } # gopass bridge
+    ];
+  };
   home.packages = with pkgs; [
+    niv
     gopass
     nixfmt
     (pkgs.writeScriptBin "youtube-dl_wav" ''
@@ -15,12 +24,10 @@
   programs.git = {
     enable = true;
     userName = "Alex Eyre";
-    userEmail = "hi@alexey.re";
-    extraConfig.http.sslVerify = false;
+    userEmail = "alexeeyre@gmail.com";
+    # extraConfig.http.sslVerify = false;
   };
   programs.tmux = {
-    enable = true;
-    package = pkgs.hello;
     keyMode = "vi";
     newSession = true;
     prefix = "C-a";

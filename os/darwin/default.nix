@@ -1,6 +1,7 @@
 { config, pkgs, ... }:
 
 {
+  imports = [ ../../main.nix ];
   system.defaults.NSGlobalDomain.InitialKeyRepeat = 10;
   system.defaults.NSGlobalDomain.KeyRepeat = 1;
   system.defaults.dock.autohide = true;
@@ -14,4 +15,6 @@
   home-manager.users.alex = (import ./home.nix);
   programs.zsh.enable = true; # default shell on catalina
   system.stateVersion = 4;
+  home-manager.useGlobalPkgs = true;
+  # home-manager.useUserPackages = true;
 }
