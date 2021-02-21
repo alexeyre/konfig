@@ -1,6 +1,8 @@
+cask_args appdir: "/Applications"
 tap "homebrew/bundle"
 tap "homebrew/cask"
 tap "homebrew/core"
+tap "homebrew/services"
 tap "d12frosted/emacs-plus"
 
 brew "youtube-dl"
@@ -10,3 +12,12 @@ cask "alfred"
 cask "anki"
 cask "veracrypt"
 cask "macfuse"
+cask "telegram"
+
+cask "setapp"
+
+brew "blueutil"
+brew "libvterm"
+brew "node"
+cask "intellij-idea"
+cask "syncthing"

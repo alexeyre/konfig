@@ -12,9 +12,13 @@
   time.timeZone = "Europe/London";
   environment.darwinConfig = "$HOME/.config/nixpkgs/configuration.nix";
   users.users.alex.home = pkgs.lib.mkForce "/Users/alex";
+
   home-manager.users.alex = (import ./home.nix);
+
   programs.zsh.enable = true; # default shell on catalina
   system.stateVersion = 4;
+
   home-manager.useGlobalPkgs = true;
+
   # home-manager.useUserPackages = true;
 }

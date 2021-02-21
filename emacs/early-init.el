@@ -20,7 +20,5 @@
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
-(straight-use-package 'org)
-(straight-use-package 'org-plus-contrib)
 ;; enable use-package macro
 (straight-use-package 'use-package)

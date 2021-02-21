@@ -1,23 +1,25 @@
 { config, pkgs, ... }: {
-  imports = [ ./zsh.nix ./emacs ];
+  imports = [ ./shell.nix ./emacs ./email.nix ];
   xdg.enable = true;
   programs.chromium = {
-    enable = true;
+    enable = false;
     package = pkgs.ungoogled-chromium;
     extensions = [
       { id = "cgbcahbpdhpcegmbfconppldiemgcoii"; } # ublock dev
       { id = "eckgcipdkhcfghnmincccnhpdmnbefki"; } # umatrix dev
       { id = "kkhfnlkhiapbiehimabddjbimfaijdhk"; } # gopass bridge
+      { id = "ohnjgmpcibpbafdlkimncjhflgedgpam"; } # 4chanX
     ];
   };
   home.packages = with pkgs; [
+    (texlive.combine { inherit (texlive) scheme-medium wrapfig ulem amsmath capt-of hyperref; } )
     niv
     gopass
     nixfmt
-    (pkgs.writeScriptBin "youtube-dl_wav" ''
+    (writeScriptBin "youtube-dl_wav" ''
       ${pkgs.youtube-dl}/bin/youtube-dl --ffmpeg-location=${pkgs.ffmpeg}/bin/ffmpeg -x --audio-format=wav $1
     '')
-    (pkgs.writeScriptBin "download_wallpaper" ''
+    (writeScriptBin "download_wallpaper" ''
       ${pkgs.curl}/bin/curl -l $1 -o ~/Pictures/papes/$(${pkgs.coreutils}/bin/basename $1)
     '')
   ];

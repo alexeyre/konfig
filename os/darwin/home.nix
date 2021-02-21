@@ -1,5 +1,5 @@
 { pkgs, lib, ... }: {
-  imports = [ ../../home.nix ./zsh.nix ];
+  imports = [ ../../home.nix ./shell.nix ];
   home.username = "alex";
   programs.chromium.extensions = [{
     id = "pdnojahnhpgmdhjdhgphgdcecehkbhfo";
@@ -14,17 +14,11 @@
     source = ./Brewfile;
     target = ".Brewfile";
     onChange = ''
-      brew bundle install --global --verbose --no-upgrade
-      brew bundle cleanup --global --force 2>/dev/null &>/dev/null
+      #!/bin/zsh arch -arm64e
+      export HOMEBREW_NO_AUTO_UPDATE="yes"
+      arch -arm64e ~/.local/share/brew/bin/brew bundle install --global --verbose --no-upgrade -q
+      arch -arm64e ~/.local/share/brew/bin/brew bundle cleanup --global --zap --force -q
           '';
   };
   programs.git.package = pkgs.hello;
-  home.packages = with pkgs; [
-    # emacsMacport # on hold until emacsMacport supports aarch64
-    (pkgs.writeScriptBin "sync_brew" ''
-      #!${pkgs.stdenv.shell}
-      brew bundle install --global --verbose --no-upgrade
-      brew bundle cleanup --global --force 2>/dev/null &>/dev/null
-        '')
-  ];
 }
