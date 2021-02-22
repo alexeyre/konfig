@@ -1,11 +1,9 @@
 { pkgs, lib, ... }: {
   imports = [ ../../home.nix ./shell.nix ];
-  home.username = "alex";
   programs.chromium.extensions = [{
     id = "pdnojahnhpgmdhjdhgphgdcecehkbhfo";
   } # open in iina
     ];
-  home.homeDirectory = "/Users/alex";
   home.file.karabiner = {
     source = ./karabiner.json;
     target = ".config/karabiner/karabiner.json";

@@ -2,8 +2,7 @@
   imports = [ ./shell.nix ./emacs ./email.nix ];
   xdg.enable = true;
   programs.chromium = {
-    enable = false;
-    package = pkgs.ungoogled-chromium;
+    enable = true;
     extensions = [
       { id = "cgbcahbpdhpcegmbfconppldiemgcoii"; } # ublock dev
       { id = "eckgcipdkhcfghnmincccnhpdmnbefki"; } # umatrix dev
@@ -16,6 +15,10 @@
     niv
     gopass
     nixfmt
+    (writeScriptBin "strip_exif" ''
+      #!${pkgs.stdenv.shell}
+      ${pkgs.exiftool}/bin/exiftool -all= "$@"
+    '')
     (writeScriptBin "youtube-dl_wav" ''
       ${pkgs.youtube-dl}/bin/youtube-dl --ffmpeg-location=${pkgs.ffmpeg}/bin/ffmpeg -x --audio-format=wav $1
     '')
