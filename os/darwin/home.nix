@@ -10,6 +10,10 @@
     source = ./karabiner.json;
     target = ".config/karabiner/karabiner.json";
   };
+  home.file.bartenderPreferences = {
+    source = ./com.surteesstudios.Bartender-setapp.plist;
+    target = "Library/Preferences/com.surteesstudios.Bartender-setapp.plist";
+  };
   home.file.brewfile = {
     source = ./Brewfile;
     target = ".Brewfile";
