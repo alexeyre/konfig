@@ -1,4 +1,5 @@
 { pkgs, ... }: {
+
   home.packages = [ pkgs.fasd ];
   programs.zsh = {
     enable = true;
@@ -6,7 +7,6 @@
     prezto = {
       enable = true;
       editor.keymap = "vi";
-      theme = "off";
       pmodules = [
         "fasd"
         "syntax-highlighting"
