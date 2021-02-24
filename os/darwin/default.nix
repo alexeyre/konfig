@@ -19,6 +19,7 @@
   system.stateVersion = 4;
 
   home-manager.useGlobalPkgs = true;
+  home-manager.backupFileExtension = ".backup";
 
   # home-manager.useUserPackages = true;
 }

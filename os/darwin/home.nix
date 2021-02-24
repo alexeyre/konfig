@@ -1,5 +1,6 @@
 { pkgs, lib, ... }: {
   imports = [ ../../home.nix ./shell.nix ];
+  programs.chromium.package = pkgs.chromium-dummy;
   programs.chromium.extensions = [{
     id = "pdnojahnhpgmdhjdhgphgdcecehkbhfo";
   } # open in iina
@@ -16,10 +17,10 @@
     source = ./Brewfile;
     target = ".Brewfile";
     onChange = ''
-      #!/bin/zsh arch -arm64e
+      #!/bin/zsh
       export HOMEBREW_NO_AUTO_UPDATE="yes"
-      arch -arm64e ~/.local/share/brew/bin/brew bundle install --global --verbose --no-upgrade -q
-      arch -arm64e ~/.local/share/brew/bin/brew bundle cleanup --global --zap --force -q
+      ~/.local/share/brew/bin/brew bundle install --global --verbose --no-upgrade -q
+      ~/.local/share/brew/bin/brew bundle cleanup --global --zap --force -q
           '';
   };
   programs.git.package = pkgs.hello;

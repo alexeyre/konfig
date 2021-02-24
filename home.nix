@@ -11,9 +11,12 @@
     ];
   };
   home.packages = with pkgs; [
-    (texlive.combine { inherit (texlive) scheme-medium wrapfig ulem amsmath capt-of hyperref; } )
+    (texlive.combine {
+      inherit (texlive) scheme-medium wrapfig ulem amsmath capt-of hyperref;
+    })
     niv
     gopass
+    neovim
     nixfmt
     (writeScriptBin "strip_exif" ''
       #!${pkgs.stdenv.shell}

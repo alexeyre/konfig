@@ -1,5 +1,5 @@
 self: super: {
-  ungoogled-chromium =
-    super.lib.mkIf (super.lib.hasSuffix "darwin" builtins.currentSystem)
+  ungoogled-chromium-mac =
     (super.callPackage ./ungoogled-chromium-mac.nix.old { });
+  chromium-dummy = (super.callPackage ./chromium-dummy.nix { });
 }

@@ -1,10 +1,9 @@
-{ pkgs, stdenv, fetchurl, unzip }: stdenv.mkDerivation rec {
+{ pkgs, stdenv, fetchurl, undmg }: stdenv.mkDerivation rec {
   name = "ungoogled-chromium";
   pname = "ungoogled-chromium";
-  version = "88.0.4324.96";
-
-  buildInputs = [ unzip ];
+  version = "88.0.4324.150-1.1";
   sourceRoot = ".";
+  buildInputs = [ undmg ];
   phases = [ "unpackPhase" "installPhase" ];
   installPhase = ''
     mkdir -p "$out/Applications"
@@ -12,10 +11,8 @@
   '';
 
   src = fetchurl {
-    name = "Chromium-${version}.app.zip";
-    url =
-      "https://github.com/macchrome/macstable/releases/download/v${version}-r827102-macOS/Chromium.${version}.sync.arm64.app.zip";
-    sha256 = "0islnrw6q8iz47nd2wfxv7z807kg0fvq7zagvp22yqh5jalz0n16";
+	url = "https://github.com/kramred/ungoogled-chromium-macos/releases/download/${version}_x86-64/ungoogled-chromium_${version}_x86-64-macos.dmg";
+	sha256 = "523e18e1b0f523f2bcb655808933df2411ec1ef779eb392f77e93d57725cbe4d";
   };
 
   meta = with pkgs.lib; {
