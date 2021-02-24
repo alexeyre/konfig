@@ -16,7 +16,6 @@
     })
     niv
     gopass
-    neovim
     nixfmt
     (writeScriptBin "strip_exif" ''
       #!${pkgs.stdenv.shell}

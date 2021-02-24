@@ -52,6 +52,10 @@
       "dr" = "darwin-rebuild";
       "ecn" = "emacsclient -nc";
       "ec" = "emacsclient -n";
+      # use emacs more
+      "vi" = "emacclient -n";
+      "vim" = "emacclient -n";
+      "nvim" = "emacclient -n";
     };
   };
   programs.direnv = {

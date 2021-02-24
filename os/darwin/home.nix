@@ -1,5 +1,5 @@
 { pkgs, lib, ... }: {
-  imports = [ ../../home.nix ./shell.nix ];
+  imports = [ ../../home.nix ./shell.nix ./iterm ];
   programs.chromium.package = pkgs.chromium-dummy;
   programs.chromium.extensions = [{
     id = "pdnojahnhpgmdhjdhgphgdcecehkbhfo";
