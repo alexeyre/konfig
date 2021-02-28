@@ -24,3 +24,8 @@ brew "node"
 cask "intellij-idea"
 cask "syncthing"
 cask "toggl-track"
+cask "homebrew/cask-versions/docker-edge"
+cask "adobe-creative-cloud"
+cask "iina"
+
+cask "iterm2"
