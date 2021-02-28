@@ -14,7 +14,6 @@ cask "veracrypt"
 cask "macfuse"
 cask "telegram"
 
-cask "eloston-chromium"
 cask "transmission"
 
 cask "setapp"

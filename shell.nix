@@ -53,9 +53,9 @@
       "ecn" = "emacsclient -nc";
       "ec" = "emacsclient -n";
       # use emacs more
-      "vi" = "emacclient -n";
-      "vim" = "emacclient -n";
-      "nvim" = "emacclient -n";
+      "vi" = "emacsclient -n";
+      "vim" = "emacsclient -n";
+      "nvim" = "emacsclient -n";
     };
   };
   programs.direnv = {
