@@ -121,46 +121,54 @@
      #+end_src
 **** evil
      #+begin_src emacs-lisp
-		(use-package undo-tree
-	   :init(global-undo-tree-mode 1))
-		  (use-package evil
-		:demand t
-		:config
-		(setq evil-auto-indent t
-			  evil-ex-complete-emacs-commands t
-			  evil-undo-system 'undo-tree
-			  evil-undo-function 'undo-tree-undo
-			  evil-redo-function 'undo-tree-redo
-			  evil-magic 'very-magic
-			  evil-search-module 'evil-search
-			  evil-shift-width 2
-			  evil-toggle-key "C-M-z"
-			  evil-want-C-w-delete nil
-		  evil-want-C-w-in-emacs-state nil
-       evil-normal-state-cursor '("#8a8a8a" box)
-       evil-operator-state-cursor '("#8a8a8a" evil-half-cursor)
-       evil-replace-state-cursor '("#884444" box)
-       evil-insert-state-cursor `("#8a8a8a" bar)
-       evil-emacs-state-cursor `("#5f8700" bar)
-			  evil-want-fine-undo t)
-		:init
-		(setq evil-want-keybinding nil)
-		(evil-mode 1))
-		  (use-package evil-collection
-		:requires evil
-		:config(setq evil-collection-setup-minibuffer t
-		evil-magit-state 'normal)
-		:init(evil-collection-init))
+	   (use-package evil-org
+		 :after org
+		 :hook(org-mode . evil-org-mode)
+		 :config
+		 (require 'evil-org-agenda)
+		 (evil-org-agenda-set-keys)
+		 (evil-org-set-key-theme '(textobjects insert navigation additional shift todo heading)))
+	   (use-package undo-tree
+		 :init(global-undo-tree-mode 1))
+	   (use-package evil
+		 :demand t
+		 :config
+		 (setq evil-auto-indent t
+			   evil-ex-complete-emacs-commands t
+			   evil-undo-system 'undo-tree
+			   evil-undo-function 'undo-tree-undo
+			   evil-redo-function 'undo-tree-redo
+			   evil-magic 'very-magic
+			   evil-search-module 'evil-search
+			   evil-shift-width 2
+			   evil-toggle-key "C-M-z"
+			   evil-want-C-w-delete nil
+			   evil-want-C-i-jump nil
+			   evil-want-C-w-in-emacs-state nil
+			   evil-normal-state-cursor '("#8a8a8a" box)
+			   evil-operator-state-cursor '("#8a8a8a" evil-half-cursor)
+			   evil-replace-state-cursor '("#884444" box)
+			   evil-insert-state-cursor `("#8a8a8a" bar)
+			   evil-emacs-state-cursor `("#5f8700" bar)
+			   evil-want-fine-undo t)
+		 :init
+		 (setq evil-want-keybinding nil)
+		 (evil-mode 1))
+	   (use-package evil-collection
+		 :requires evil
+		 :config(setq evil-collection-setup-minibuffer t
+					  evil-magit-state 'normal)
+		 :init(evil-collection-init))
 
-		  (use-package evil-snipe
-		:diminish evil-snipe-mode
-		:diminish evil-snipe-override-mode
-		:diminish evil-snipe-local-mode
-		:requires evil
-		:hook(magit-mode . turn-off-evil-snipe-override-mode)
-		:init
-		(evil-snipe-mode +1)
-		(evil-snipe-override-mode +1))
+	   (use-package evil-snipe
+		 :diminish evil-snipe-mode
+		 :diminish evil-snipe-override-mode
+		 :diminish evil-snipe-local-mode
+		 :requires evil
+		 :hook(magit-mode . turn-off-evil-snipe-override-mode)
+		 :init
+		 (evil-snipe-mode +1)
+		 (evil-snipe-override-mode +1))
      #+end_src
 
 	 #+RESULTS:
@@ -194,47 +202,51 @@ management rn, feels very clunky. I'm hoping that hydra can help.
      #+begin_src emacs-lisp
 (setq python-shell-interpreter "ipython")
      #+end_src
-**** org roam
-     #+begin_src emacs-lisp
-       (use-package org-roam
-	 :ensure t
-	 :hook
-	 (after-init . org-roam-mode)
-	 :custom
-	 (org-roam-directory "~/Documents/notes/")
-	 :config
-	 (setq org-roam-dailies-directory "daily"
-	       org-roam-dailies-capture-templates
-	       '(("d" "default" entry
-		  #'org-roam-capture--get-point
-		  "* %?"
-		  :file-name "daily/%<%Y-%m-%d>"
-		  :head "#+title: %<%Y-%m-%d>\n\n")))
-	 :bind (("C-c c" . org-roam-dailies-capture-today)
-		 ("C-c n f" . org-roam-find-file)
-		:map org-roam-mode-map
-		(("C-c n l" . org-roam)
-		 ("C-c n g" . org-roam-graph))
-		:map org-mode-map
-		(("C-c n i" . org-roam-insert))
-		(("C-c n I" . org-roam-insert-immediate))))
-       (use-package deft
-	 :after org
-	 :bind("C-c n d" . deft)
-	 :custom
-	 (deft-recursive t)
-	 (deft-use-filter-string-for-filename t)
-	 (deft-default-extension "org")
-	 (deft-directory "~/Documents/Notes"))
+**** org
+	 #+begin_src emacs-lisp
+	   (setq org-image-actual-width (/ (display-pixel-width) 3))
+			  (use-package org-download
+				:config(setq org-download-method 'attach)
+				:hook(dired-mode . org-download-enable))
+			  (use-package org-roam
+				:ensure t
+				:hook
+				(after-init . org-roam-mode)
+				:custom
+				(org-roam-directory "~/Documents/notes/")
+				:config
+				(setq org-roam-dailies-directory "daily"
+					  org-roam-dailies-capture-templates
+					  '(("d" "default" entry
+						 #'org-roam-capture--get-point
+						 "* %?"
+						 :file-name "daily/%<%Y-%m-%d>"
+						 :head "#+title: %<%Y-%m-%d>\n\n")))
+				:bind (("C-c c" . org-roam-dailies-capture-today)
+					   ("C-c n f" . org-roam-find-file)
+					   :map org-roam-mode-map
+					   (("C-c n l" . org-roam)
+						("C-c n g" . org-roam-graph))
+					   :map org-mode-map
+					   (("C-c n i" . org-roam-insert))
+					   (("C-c n I" . org-roam-insert-immediate))))
+			  (use-package deft
+				:after org
+				:bind("C-c n d" . deft)
+				:custom
+				(deft-recursive t)
+				(deft-use-filter-string-for-filename t)
+				(deft-default-extension "org")
+				(deft-directory "~/Documents/Notes"))
 
-     #+end_src
+	 #+end_src
 
-     #+RESULTS:
-     : deft
+	 #+RESULTS:
+	 : deft
 
 **** misc utils.
 ***** restart emacs
-      #+begin_src emacs-lisp
+	  #+begin_src emacs-lisp
 	(use-package restart-emacs
 	  :commands(restart-emacs))
       #+end_src

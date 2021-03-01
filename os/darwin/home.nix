@@ -13,6 +13,10 @@
     source = ./com.surteesstudios.Bartender-setapp.plist;
     target = "Library/Preferences/com.surteesstudios.Bartender-setapp.plist";
   };
+  home.packages = [ (pkgs.writeScriptBin "sync_brew" ''
+      brew bundle install --global --verbose --no-upgrade -q
+      brew bundle cleanup --global --zap --force -q
+  '') ];
   home.file.brewfile = {
     source = ./Brewfile;
     target = ".Brewfile";

@@ -5,27 +5,27 @@ tap "homebrew/core"
 tap "homebrew/services"
 tap "d12frosted/emacs-plus"
 
-brew "youtube-dl"
 brew "d12frosted/emacs-plus/emacs-plus@28", args: ['without-imagemagick']
 cask "homebrew/cask/programmer-dvorak"
 cask "alfred"
 cask "anki"
-cask "veracrypt"
-cask "macfuse"
 cask "telegram"
 
 cask "transmission"
 
 cask "setapp"
 
-brew "blueutil"
-brew "libvterm"
-brew "node"
-cask "intellij-idea"
-cask "syncthing"
-cask "toggl-track"
-cask "homebrew/cask-versions/docker-edge"
-cask "adobe-creative-cloud"
-cask "iina"
+# monero
+cask "monero-wallet"
 
+brew "libvterm"
+cask "syncthing"
+# cask "iina"
 cask "iterm2"
+
+# veracrypt
+cask "veracrypt"
+cask "macfuse"
+
+# pocketcasts
+cask "pocket-casts"
