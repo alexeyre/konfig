@@ -1,0 +1,22 @@
+#+TITLE:-.git --- Documentation
+#+AUTHOR:Alex Eyre <alexeeyre@gmail.com>
+
+* Keybinds
+  Below is a table of the keybinds I try and maintain, note that a
+  "H-" prefix indicates the hyper key.
+
+  | Key Sequence | Action                                     |
+  |--------------+--------------------------------------------|
+  | H-a          | Tile to the left half of the screen        |
+  | H-o          | Maximise window under cursor               |
+  | H-e          | Tile to the right half of the screen       |
+  | H-;          | Tile to the left two-thirds of the screen  |
+  | H-,          | Tile to the right two-thirds of the screen |
+  | H-.          | Tile to the leftmost third of the screen   |
+  | H-p          | Tile the the middle third of the screen    |
+  | H-y          | Tile to the rightmost third of the screen  |
+  | H-<RET>      | Fullscreen window under cursor             |
+  | M-<RET>      | Open a terminal                            |
+  |--------------+--------------------------------------------|
+Note that these are global-bindings not application-specific bindings,
+application specific bindings may vary.
