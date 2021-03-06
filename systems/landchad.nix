@@ -57,7 +57,6 @@ imports = [
     ATTR{address}=="be:d0:4f:91:ab:4f", NAME="eth0"
     ATTR{address}=="3e:91:10:39:7b:3f", NAME="eth1"
   '';
-  imports = [  ];
   boot.loader.grub.device = "/dev/vda";
   fileSystems."/" = { device = "/dev/vda1"; fsType = "ext4"; };
 }
