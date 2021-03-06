@@ -1,4 +1,4 @@
-{ ... }: {
+{ lib, modulesPath, ... }: {
   boot.cleanTmpDir = true;
   networking.hostName = "landchad";
   networking.firewall.allowPing = true;
