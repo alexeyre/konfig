@@ -2,12 +2,11 @@
 
 let
   ipAddress = "138.68.137.228";
-  ipv6Address = "2a03:b0c0:1:d0::cfc:f001"; in {
+  ipv6Address = "2a03:b0c0:1:d0::cfc:f001";
+in {
 imports = [
   (builtins.fetchTarball "https://github.com/nixcloud/nixcloud-webservices/archive/7e421fed1cb6dc460468d5917bb93b559606c7b6.tar.gz")
-(modulesPath + "/profiles/qemu-guest.nix")
-  ];
-in {
+  (modulesPath + "/profiles/qemu-guest.nix") ];
   nixcloud.email= {
     enable = true;
     domains = [ "alexey.re" ];
