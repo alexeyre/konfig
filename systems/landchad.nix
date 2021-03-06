@@ -1,4 +1,29 @@
 { lib, modulesPath, ... }: {
+imports = [
+    (builtins.fetchTarball "https://github.com/r-raymond/nixos-mailserver/archive/v2.1.4.tar.gz")
+  ];
+
+  mailserver = {
+    enable = true;
+    fqdn = "mail.alexey.re";
+    domains = [ "alexey.re" ];
+    loginAccounts = {
+        "a@alexey.re" = {
+            hashedPassword = "643746f8428dddc271bf753089e199fc2f308104348f149f2b7a8db7a7c0dda3f27e25ae73c46dd171ecf2dc5b4e539201668af57d4263cecb9409abc92dd8d8";
+
+            aliases = [
+                "alex@alexey.re",
+                "postmaster@alexey.re"
+            ];
+        };
+    };
+ # Enable IMAP and POP3
+    enableImap = true;
+    enablePop3 = true;
+    enableImapSsl = true;
+    enablePop3Ssl = true;
+  };
+
   boot.cleanTmpDir = true;
   networking.hostName = "landchad";
   networking.firewall.allowPing = true;
