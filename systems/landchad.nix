@@ -1,27 +1,23 @@
-{ lib, modulesPath, ... }: {
+{ lib, modulesPath, ... }:
+
+let
+  ipAddress = "138.68.137.228";
+  ipv6Address = "2a03:b0c0:1:d0::cfc:f001"; in {
 imports = [
-    (builtins.fetchTarball "https://github.com/r-raymond/nixos-mailserver/archive/v2.1.4.tar.gz")
+  (builtins.fetchTarball "https://github.com/nixcloud/nixcloud-webservices/archive/7e421fed1cb6dc460468d5917bb93b559606c7b6.tar.gz")
+(modulesPath + "/profiles/qemu-guest.nix")
   ];
-
-  mailserver = {
+in {
+  nixcloud.email= {
     enable = true;
-    fqdn = "mail.alexey.re";
     domains = [ "alexey.re" ];
-    loginAccounts = {
-        "a@alexey.re" = {
-            hashedPassword = "643746f8428dddc271bf753089e199fc2f308104348f149f2b7a8db7a7c0dda3f27e25ae73c46dd171ecf2dc5b4e539201668af57d4263cecb9409abc92dd8d8";
-
-            aliases = [
-                "alex@alexey.re",
-                "postmaster@alexey.re"
-            ];
-        };
-    };
- # Enable IMAP and POP3
-    enableImap = true;
-    enablePop3 = true;
-    enableImapSsl = true;
-    enablePop3Ssl = true;
+    ipAddress = ipAddress;
+    ip6Address = ipv6Address;
+    fqdn = "mail.alexey.re";
+    users = [
+      # see https://wiki.dovecot.org/Authentication/PasswordSchemes
+      { name = "a"; domain = "alexey.re"; password = "{SHA512-CRYPT}$6$643746f8428dddc271bf753089e199fc2f308104348f149f2b7a8db7a7c0dda3f27e25ae73c46dd171ecf2dc5b4e539201668af57d4263cecb9409abc92dd8d8"; }
+    ];
   };
 
   boot.cleanTmpDir = true;
@@ -62,7 +58,7 @@ imports = [
     ATTR{address}=="be:d0:4f:91:ab:4f", NAME="eth0"
     ATTR{address}=="3e:91:10:39:7b:3f", NAME="eth1"
   '';
-  imports = [ (modulesPath + "/profiles/qemu-guest.nix") ];
+  imports = [  ];
   boot.loader.grub.device = "/dev/vda";
   fileSystems."/" = { device = "/dev/vda1"; fsType = "ext4"; };
 }
