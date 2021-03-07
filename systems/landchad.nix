@@ -1,29 +1,19 @@
 { lib, modulesPath, ... }:
 
-let
-  ipAddress = "138.68.137.228";
-  ipv6Address = "2a03:b0c0:1:d0::cfc:f001";
-in {
+{
   imports = [
-    (builtins.fetchTarball
-      "https://github.com/nixcloud/nixcloud-webservices/archive/7e421fed1cb6dc460468d5917bb93b559606c7b6.tar.gz")
+    (builtins.fetchTarball "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver/-/archive/326766126cea11ed94b772bdc79d8b5ccb228957/nixos-mailserver-326766126cea11ed94b772bdc79d8b5ccb228957.tar.gz")
     (modulesPath + "/profiles/qemu-guest.nix")
   ];
-  nixcloud.email = {
+  mailserver = {
     enable = true;
     domains = [ "alexey.re" ];
-    ipAddress = ipAddress;
-    ip6Address = ipv6Address;
     fqdn = "mail.alexey.re";
-    users = [
-      # see https://wiki.dovecot.org/Authentication/PasswordSchemes
-      {
-        name = "a";
-        domain = "alexey.re";
-        password =
-          "{SHA512-CRYPT}$6$643746f8428dddc271bf753089e199fc2f308104348f149f2b7a8db7a7c0dda3f27e25ae73c46dd171ecf2dc5b4e539201668af57d4263cecb9409abc92dd8d8";
-      }
-    ];
+    loginAccounts = {
+     "a@alexey.re" = {
+       hashedPasswordFile = "/root/a.sha512";
+      };
+    };
   };
 
   boot.cleanTmpDir = true;
