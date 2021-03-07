@@ -5,6 +5,7 @@
     (builtins.fetchTarball "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver/-/archive/326766126cea11ed94b772bdc79d8b5ccb228957/nixos-mailserver-326766126cea11ed94b772bdc79d8b5ccb228957.tar.gz")
     (modulesPath + "/profiles/qemu-guest.nix")
   ];
+  security.acme.email = "alexeeyre@gmail.com";
   mailserver = {
     enable = true;
     domains = [ "alexey.re" ];
@@ -15,6 +16,7 @@
        catchAll = [ "alexey.re" ];
       };
     };
+
     certificateScheme = 3;
     # Enable IMAP and POP3
     enableImap = true;
