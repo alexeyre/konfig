@@ -6,6 +6,7 @@
     (modulesPath + "/profiles/qemu-guest.nix")
   ];
   security.acme.email = "alexeeyre@gmail.com";
+  security.acme.acceptTerms = true;
   mailserver = {
     enable = true;
     domains = [ "alexey.re" ];
