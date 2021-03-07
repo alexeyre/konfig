@@ -12,8 +12,16 @@
     loginAccounts = {
      "a@alexey.re" = {
        hashedPasswordFile = "/root/a.sha512";
+       catchAll = [ "alexey.re" ];
       };
     };
+    certificateScheme = 3;
+    # Enable IMAP and POP3
+    enableImap = true;
+    enablePop3 = true;
+    enableImapSsl = true;
+    enablePop3Ssl = true;
+    virusScanning = false;
   };
 
   boot.cleanTmpDir = true;
