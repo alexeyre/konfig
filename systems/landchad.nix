@@ -30,6 +30,13 @@
     virusScanning = false;
   };
 
+  services.nginx.enable = true;
+services.nginx.virtualHosts."alexey.re" = {
+    forceSSL = true;
+    enableACME = true;
+    root = "/var/www/blog";
+};
+
   boot.cleanTmpDir = true;
   networking.hostName = "landchad";
   networking.firewall.allowPing = true;
