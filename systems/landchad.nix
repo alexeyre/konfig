@@ -2,8 +2,11 @@
 
 {
   imports = [
-    (builtins.fetchTarball "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver/-/archive/326766126cea11ed94b772bdc79d8b5ccb228957/nixos-mailserver-326766126cea11ed94b772bdc79d8b5ccb228957.tar.gz")
+    (builtins.fetchTarball
+      "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver/-/archive/326766126cea11ed94b772bdc79d8b5ccb228957/nixos-mailserver-326766126cea11ed94b772bdc79d8b5ccb228957.tar.gz")
     (modulesPath + "/profiles/qemu-guest.nix")
+    ../main.nix
+    ../os/linux
   ];
   security.acme.email = "alexeeyre@gmail.com";
   security.acme.acceptTerms = true;
@@ -12,9 +15,9 @@
     domains = [ "alexey.re" ];
     fqdn = "mail.alexey.re";
     loginAccounts = {
-     "a@alexey.re" = {
-       hashedPasswordFile = "/root/a.sha512";
-       catchAll = [ "alexey.re" ];
+      "a@alexey.re" = {
+        hashedPasswordFile = "/root/a.sha512";
+        catchAll = [ "alexey.re" ];
       };
     };
 

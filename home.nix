@@ -1,5 +1,5 @@
 { config, pkgs, ... }: {
-  imports = [ ./shell.nix ./emacs ./email.nix ];
+  imports = [ ./shell.nix ./email.nix ./vi.nix ];
   xdg.enable = true;
   programs.chromium = {
     enable = true;
@@ -12,7 +12,8 @@
   };
   home.packages = with pkgs; [
     (texlive.combine {
-      inherit (texlive) scheme-medium wrapfig ulem amsmath capt-of hyperref;
+      inherit (texlive)
+        minted fvextra scheme-full wrapfig ulem amsmath capt-of hyperref;
     })
     niv
     gopass
@@ -35,8 +36,10 @@
     # extraConfig.http.sslVerify = false;
   };
   programs.tmux = {
+    enable = true;
     keyMode = "vi";
     newSession = true;
     prefix = "C-a";
+    package = pkgs.hello;
   };
 }

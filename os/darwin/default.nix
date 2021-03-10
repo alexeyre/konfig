@@ -1,6 +1,4 @@
-{ config, pkgs, ... }:
-
-{
+{ config, pkgs, ... }: {
   imports = [ ../../main.nix ];
   system.defaults.NSGlobalDomain.InitialKeyRepeat = 10;
   system.defaults.NSGlobalDomain.KeyRepeat = 1;
@@ -11,9 +9,11 @@
   system.defaults.dock.tilesize = 32;
   time.timeZone = "Europe/London";
   environment.darwinConfig = "$HOME/.config/nixpkgs/configuration.nix";
-  users.users.alex.home = pkgs.lib.mkForce "/Users/alex";
 
+  users.users.alex.home = "/Users/alex";
   home-manager.users.alex = (import ./home.nix);
+  environment.pathsToLink =
+    [ "/share/zsh" "/Users/alex/.local/share/brew/share/zsh" ];
 
   programs.zsh.enable = true; # default shell on catalina
   system.stateVersion = 4;
