@@ -1,7 +1,11 @@
-#+startup: overview
+#+startup: overview 
 **** server
 #+begin_src emacs-lisp
 (server-start)
+#+end_src
+**** elpatch
+#+begin_src emacs-lisp
+(straight-use-package 'el-patch)
 #+end_src
 **** exec path
      brew installs it's binaries to a non-standard path, emacs needs
@@ -19,13 +23,13 @@
 	 | ~/.local/share/brew/bin | /usr/local/bin/ | /usr/local/sbin/ | /Users/alex/.nix-profile/bin/ | /run/current-system/sw/bin/ | /nix/var/nix/profiles/default/bin/ | /usr/bin/ | /usr/sbin/ | /bin/ | /sbin/ | /Users/alex/.local/share/brew/Cellar/emacs-plus@28/28.0.50/libexec/emacs/28.0.50/aarch64-apple-darwin20.4.0/ |
 
 **** fullscreen on mac
-		 #+begin_src emacs-lisp
+		 #+begin_src emacs-lisp :tangle no
 			   (when (eq window-system 'ns)
 		   (toggle-frame-fullscreen))
 		 #+end_src
 **** load theme
      #+begin_src emacs-lisp
-					 (use-package cyberpunk-theme)
+					 ;; (use-package cyberpunk-theme) ;; not in use <2021-03-10 Wed 03:31>
 					 (use-package modus-themes
 					   :config(setq modus-themes-mode-line '3d
 									modus-themes-org-blocks 'rainbow
@@ -38,12 +42,12 @@
 													  (mapc #'disable-theme custom-enabled-themes)
 													  (pcase appearance
 														('light (load-theme 'modus-operandi t))
-														('dark (load-theme 'cyberpunk t))))
+														('dark (load-theme 'modus-vivendi t))))
 
 													(add-hook 'ns-system-appearance-change-functions #'my/apply-theme))
 						   (my/apply-theme ns-system-appearance))
 					 (when (not (eq window-system 'ns))
-					   (load-theme 'cyberpunk t))
+					   (load-theme 'modus-vivendi t))
 					 (fringe-mode 0)
      #+end_src
 
@@ -119,7 +123,6 @@
 	 :diminish gcmh-mode
 	 :init(gcmh-mode +1))
      #+end_src
-**** evil
      #+begin_src emacs-lisp
 	   (use-package evil-org
 		 :after org
@@ -127,7 +130,7 @@
 		 :config
 		 (require 'evil-org-agenda)
 		 (evil-org-agenda-set-keys)
-		 (evil-org-set-key-theme '(textobjects insert navigation additional shift todo heading)))
+		 (evil-org-set-key-theme '(textobjects insert navigation additional shift heading)))
 	   (use-package undo-tree
 		 :init(global-undo-tree-mode 1))
 	   (use-package evil
@@ -154,24 +157,22 @@
 		 :init
 		 (setq evil-want-keybinding nil)
 		 (evil-mode 1))
-	   (use-package evil-collection
-		 :requires evil
-		 :config(setq evil-collection-setup-minibuffer t
-					  evil-magit-state 'normal)
-		 :init(evil-collection-init))
-
-	   (use-package evil-snipe
-		 :diminish evil-snipe-mode
-		 :diminish evil-snipe-override-mode
-		 :diminish evil-snipe-local-mode
-		 :requires evil
-		 :hook(magit-mode . turn-off-evil-snipe-override-mode)
-		 :init
-		 (evil-snipe-mode +1)
-		 (evil-snipe-override-mode +1))
      #+end_src
 
 	 #+RESULTS:
+	 | turn-off-evil-snipe-override-mode |
+	 |                                   |
+***** evil collection
+	  #+begin_src emacs-lisp
+		(use-package evil-collection
+		  :config
+		  (setq evil-collection-setup-minibuffer t
+				evil-magit-state 'normal)
+		  :init(evil-collection-init))
+#+end_src
+
+#+RESULTS:
+| dvp-hjkl-rotation |
 
 **** hydra
 I'm not doing a great deal with hydra rn but I want to do more with it
@@ -181,8 +182,15 @@ management rn, feels very clunky. I'm hoping that hydra can help.
 (use-package hydra)
 #+end_src
 
+**** dvp
+#+begin_src emacs-lisp
+(setq enable-recursive-minibuffers t)
+(use-package programmer-dvorak
+  :hook((after-change-major-mode dashboard-mode) . (lambda () (set-input-method "programmer-dvorak"))))
+#+end_src
+
 #+RESULTS:
-: hydra-ivy/body
+| (lambda nil (set-input-method programmer-dvorak)) | global-evil-collection-unimpaired-mode-enable-in-buffers | evil-mode-enable-in-buffers | global-undo-tree-mode-enable-in-buffers | global-eldoc-mode-enable-in-buffers | global-font-lock-mode-enable-in-buffers |
 
 **** disable splash screen
      #+begin_src emacs-lisp
@@ -203,47 +211,97 @@ management rn, feels very clunky. I'm hoping that hydra can help.
 (setq python-shell-interpreter "ipython")
      #+end_src
 **** org
+***** main
 	 #+begin_src emacs-lisp
 	   (setq org-image-actual-width (/ (display-pixel-width) 3))
-			  (use-package org-download
-				:config(setq org-download-method 'attach)
-				:hook(dired-mode . org-download-enable))
-			  (use-package org-roam
-				:ensure t
-				:hook
-				(after-init . org-roam-mode)
-				:custom
-				(org-roam-directory "~/Documents/notes/")
-				:config
-				(setq org-roam-dailies-directory "daily"
-					  org-roam-dailies-capture-templates
-					  '(("d" "default" entry
-						 #'org-roam-capture--get-point
-						 "* %?"
-						 :file-name "daily/%<%Y-%m-%d>"
-						 :head "#+title: %<%Y-%m-%d>\n\n")))
-				:bind (("C-c c" . org-roam-dailies-capture-today)
-					   ("C-c n f" . org-roam-find-file)
-					   :map org-roam-mode-map
-					   (("C-c n l" . org-roam)
-						("C-c n g" . org-roam-graph))
-					   :map org-mode-map
-					   (("C-c n i" . org-roam-insert))
-					   (("C-c n I" . org-roam-insert-immediate))))
-			  (use-package deft
-				:after org
-				:bind("C-c n d" . deft)
-				:custom
-				(deft-recursive t)
-				(deft-use-filter-string-for-filename t)
-				(deft-default-extension "org")
-				(deft-directory "~/Documents/Notes"))
+	   (use-package org-download
+		 :after org
+		 :bind(:map org-mode-map
+					(("s-Y" . org-download-screenshot)
+					 ("s-y" . org-download-yank)))
+		 :config(setq org-download-method 'attach)
+		 :hook(dired-mode . org-download-enable))
+	   (use-package org-roam
+		 :ensure t
+		 :hook
+		 (after-init . org-roam-mode)
+		 (org-capture-mode . evil-insert-state)
+		 :custom
+		 (org-roam-directory "~/Documents/notes/")
+		 :config
+		 (require 'org-roam-protocol)
+  
+		 (setq
 
+		  org-roam-capture-templates '(("d" "default" plain #'org-roam-capture--get-point "%?" :file-name "%<%Y%m%d%H%M%S>-${slug}" :head "#+title: ${title}\n#+created: <%<%Y-%m-%d %a %H:%M>>\n" :unnarrowed t))
+
+		  org-roam-capture-ref-templates '(("w" "website" plain (function org-roam--capture-get-point)
+											"%?"
+											:file-name "%(format-time-string \"%Y-%m-%d--%H-%M-%SZ--${slug}\" (current-time) t)"
+											:head "#+title: ${title}\n#+roam_key: ${ref}\n#+created: %(format-time-string \"<%Y-%m-%d %a %H:%M>\")\n"))
+		  org-roam-dailies-directory "daily"
+		  org-roam-dailies-capture-templates '(("d" "default" entry
+												#'org-roam-capture--get-point
+												"* <%<%Y-%m-%d %a %H:%M>>\n%?"
+												:file-name "daily/%<%Y-%m-%d>"
+												:head "#+title: %<%Y-%m-%d>\n\n")))
+		 :bind (("C-c c" . org-roam-dailies-capture-today)
+				("C-c n f" . org-roam-find-file)
+				:map org-roam-mode-map
+				(("C-c n l" . org-roam)
+				 ("C-c n g" . org-roam-graph))
+				:map org-mode-map
+				(("C-c n i" . org-roam-insert))
+				(("C-c n I" . org-roam-insert-immediate))))
 	 #+end_src
 
 	 #+RESULTS:
 	 : deft
+***** capture window
+	  stolen from [[https://gist.github.com/progfolio/af627354f87542879de3ddc30a31adc1]]
+#+begin_src emacs-lisp
+(defun my/delete-capture-frame (&rest _)
+  "Delete frame with its name frame-parameter set to \"capture\"."
+  (if (equal "capture" (frame-parameter nil 'name))
+      (delete-frame)))
+(advice-add 'org-capture-finalize :after #'my/delete-capture-frame)
+(defun my/org-capture-frame ()
+  "Run org-capture in its own frame."
+  (interactive)
+  (require 'cl-lib)
+  (select-frame-by-name "capture")
+  (delete-other-windows)
+  (cl-letf (((symbol-function 'switch-to-buffer-other-window) #'switch-to-buffer))
+    (condition-case err
+        (org-roam-dailies-capture-today)
+      ;; "q" signals (error "Abort") in `org-capture'
+      ;; delete the newly created frame in this scenario.
+      (user-error (when (string= (cadr err) "Abort")
+                    (delete-frame))))))
+#+end_src
 
+#+RESULTS:
+: my/org-capture-frame
+***** bullets
+	  #+begin_src emacs-lisp
+	  (use-package org-bullets
+:hook(org-mode . org-bullets-mode))
+	  #+end_src
+
+	  #+RESULTS:
+	  | org-bullets-mode | yas-minor-mode | flyspell-mode | (lambda nil (display-line-numbers-mode -1)) | org-tempo-setup | auto-fill-mode | evil-org-mode | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes |
+***** headers
+	  #+begin_src emacs-lisp
+    (custom-theme-set-faces
+     'user
+     `(org-level-4 ((t (:height 1.1))))
+     `(org-level-3 ((t (:height 1.25))))
+     `(org-level-2 ((t (:height 1.5))))
+     `(org-level-1 ((t (:height 1.75))))
+     `(org-document-title ((t (:height 2.0 :underline nil)))))
+	  #+end_src
+
+	  #+RESULTS:
 **** misc utils.
 ***** restart emacs
 	  #+begin_src emacs-lisp
@@ -252,22 +310,25 @@ management rn, feels very clunky. I'm hoping that hydra can help.
       #+end_src
 **** line numbers
      #+begin_src emacs-lisp
-       (defun display-line-numbers/relative ()
-	 "Relative"
-	 (interactive)
-	 (menu-bar--display-line-numbers-mode-relative))
+	   (defun display-line-numbers/relative ()
+		 "Relative"
+		 (interactive)
+		 (when (not (eq 'major-mode 'org-mode))
+		   (menu-bar--display-line-numbers-mode-relative)))
 
-       (defun display-line-numbers/absolute ()
-	 "Absolute"
-	 (interactive)
-	 (menu-bar--display-line-numbers-mode-absolute))
-       (use-package display-line-numbers
-	 :hook
-	 (evil-insert-state-exit . (lambda () (display-line-numbers/relative)))
-	 (evil-insert-state-entry . (lambda () (display-line-numbers/absolute)))
-	 (prog-mode . display-line-numbers-mode)
-	 (org-mode . (lambda () (display-line-numbers-mode -1))))
+	   (defun display-line-numbers/absolute ()
+		 "Absolute line numbers"
+		 (interactive)
+		 (when (not (eq 'major-mode 'org-mode))
+		   (menu-bar--display-line-numbers-mode-absolute)))
+	   (use-package display-line-numbers
+		 :hook
+		 (evil-insert-state-exit . (lambda () (display-line-numbers/relative)))
+		 (evil-insert-state-entry . (lambda () (display-line-numbers/absolute)))
+		 (prog-mode . display-line-numbers-mode)
+		 (org-mode . (lambda () (display-line-numbers-mode -1))))
      #+end_src
+
 **** erc
 	 #+begin_src emacs-lisp
 (bind-key "C-c e" 'erc)
@@ -330,7 +391,7 @@ management rn, feels very clunky. I'm hoping that hydra can help.
 		  :config(push 'company-lsp company-backends))
 (use-package dap-mode :after lsp-mode :config (dap-auto-configure-mode))
       #+end_src
-
+	  
       #+RESULTS:
 ***** java
       #+begin_src emacs-lisp
@@ -378,6 +439,7 @@ management rn, feels very clunky. I'm hoping that hydra can help.
      #+begin_src emacs-lisp
 			  (use-package ivy
 			:bind(:map ivy-minibuffer-map
+			("C-M-a" . ivy-immediate-done)
 				   ("C-k" . ivy-previous-line)
 				   ("C-j" . ivy-next-line)))
 			  (use-package counsel
@@ -393,6 +455,9 @@ management rn, feels very clunky. I'm hoping that hydra can help.
 			:requires ivy
 		   :init(ivy-prescient-mode 1))
      #+end_src
+
+	 #+RESULTS:
+
 **** ace window
      #+begin_src emacs-lisp
        (use-package ace-window
@@ -413,10 +478,10 @@ management rn, feels very clunky. I'm hoping that hydra can help.
 **** zygospore
 	 #+begin_src emacs-lisp
        (use-package zygospore
-	 :bind(("C-x &" . zygospore-toggle-delete-other-windows)))
+	 :bind(("C-x 1" . zygospore-toggle-delete-other-windows)))
      #+end_src
 **** window management
-     #+begin_src emacs-lisp
+     #+begin_src emacs-lisp :tangle no
        (global-set-key (kbd "C-x [") 'split-window-below)
        (global-set-key (kbd "C-x {") 'split-window-right)
      #+end_src
@@ -516,7 +581,7 @@ oi oi mate i'm english innit
      #+RESULTS:
 
 **** eww
-		 #+begin_src emacs-lisp
+		 #+begin_src emacs-lisp :tangle no
 (defun my/eww-toggle-images ()
   "Toggle whether images are loaded and reload the current page fro cache."
   (interactive)
@@ -535,16 +600,17 @@ oi oi mate i'm english innit
 
 **** yasnippet
 		 #+begin_src emacs-lisp
-			 (use-package yasnippet
-				 :demand t
-				 :config
-				 (yas-reload-all)
-				 :hook(prog-mode . yas-minor-mode))
-			 (straight-use-package 'yasnippet-snippets)
+		   (use-package yasnippet
+			 :hook
+			 (org-mode . yas-minor-mode)
+			 (prog-mode . yas-minor-mode))
+		   (use-package yasnippet-snippets)
+		   (use-package ivy-yasnippet
+			 :bind("C-c s" . ivy-yasnippet))
 		 #+end_src
 
 		 #+RESULTS:
-		 : t
+		 : ivy-yasnippet
 
 **** projectile
 		 #+begin_src emacs-lisp
@@ -615,3 +681,135 @@ oi oi mate i'm english innit
 	 #+end_src
 
 	 #+RESULTS:
+**** magit
+#+begin_src emacs-lisp
+(use-package magit
+  :commands(magit))
+#+end_src
+
+#+RESULTS:
+**** ref
+#+begin_src emacs-lisp
+  (use-package org-ref
+	;; :straight(org-ref :type git :host github :repo "yyadavalli/org-ref-ivy")
+	:bind(:map org-mode-map
+("C-c ]" . org-ref-ivy-insert-cite-link))
+	:config(setq reftex-default-bibliography '("~/Documents/notes/bibtex/references.bib"))
+	org-ref-bibliography-notes "~/Documents/notes/bibtex/notes.org"
+	org-ref-default-bibliography '("~/Documents/notes/bibtex/references.bib")
+	org-ref-pdf-directory "~/Documents/notes/bibtex/bibtex-pdfs/")
+#+end_src
+
+#+RESULTS:
+: org-ref-ivy-insert-cite-link
+
+**** defuns
+#+begin_src emacs-lisp
+  (defun my/iterate-generation ()
+  "Iterate the nix-darwin generation"
+  (interactive)
+(shell-command "darwin-rebuild switch"))
+(defun my/iterate-generation-and-restart ()
+"Iterate the nix-darwin generation and restart"
+(interactive)
+(my/iterate-generation)
+(require 'restart-emacs)
+(restart-emacs))
+(provide 'my/iterate-generation)
+(provide 'my/iterate-generation-and-restart)
+#+end_src
+
+#+RESULTS:
+: my/iterate-generation-and-restart
+
+**** meow
+#+begin_src emacs-lisp
+(defun meow-setup ()
+  (setq meow-cheatsheet-layout meow-cheatsheet-layout-dvp)
+  (meow-normal-define-key
+   '("*" . meow-expand-0)
+   '("=" . meow-expand-9)
+   '("!" . meow-expand-8)
+   '("[" . meow-expand-7)
+   '("]" . meow-expand-6)
+   '("{" . meow-expand-5)
+   '("+" . meow-expand-4)
+   '("}" . meow-expand-3)
+   '(")" . meow-expand-2)
+   '("(" . meow-expand-1)
+   '("1" . digit-argument)
+   '("2" . digit-argument)
+   '("3" . digit-argument)
+   '("4" . digit-argument)
+   '("5" . digit-argument)
+   '("6" . digit-argument)
+   '("7" . digit-argument)
+   '("8" . digit-argument)
+   '("9" . digit-argument)
+   '("0" . digit-argument)
+   '("-" . negative-argument)
+   '(";" . meow-reverse)
+   '("," . meow-inner-of-thing)
+   '("." . meow-bounds-of-thing)
+   '("<" . meow-beginning-of-thing)
+   '(">" . meow-end-of-thing)
+   '("a" . meow-append)
+   '("A" . meow-open-below)
+   '("b" . meow-back-word)
+   '("B" . meow-back-symbol)
+   '("c" . meow-change)
+   '("C" . meow-change-save)
+   '("d" . meow-delete)
+   '("e" . meow-line)
+   '("f" . meow-find)
+   '("F" . meow-find-expand)
+   '("g" . meow-keyboard-quit)
+   '("G" . meow-goto-line)
+   '("h" . meow-left)
+   '("H" . meow-left-expand)
+   '("i" . meow-insert)
+   '("I" . meow-open-above)
+   '("j" . meow-join)
+   '("J" . delete-indentation)
+   '("k" . meow-kill)
+   '("l" . meow-till)
+   '("L" . meow-till-expand)
+   '("m" . meow-mark-word)
+   '("M" . meow-mark-symbol)
+   '("n" . meow-next)
+   '("N" . meow-next-expand)
+   '("o" . meow-block)
+   '("O" . meow-block-expand)
+   '("p" . meow-prev)
+   '("P" . meow-prev-expand)
+   '("q" . meow-quit)
+   '("r" . meow-replace)
+   '("R" . meow-replace-save)
+   '("s" . meow-search)
+   '("S" . meow-pop-search)
+   '("t" . meow-right)
+   '("T" . meow-right-expand)
+   '("u" . undo)
+   '("v" . meow-visit)
+   '("w" . meow-next-word)
+   '("W" . meow-next-symbol)
+   '("x" . meow-save)
+   '("y" . meow-yank)
+   '("z" . meow-pop-selection)
+   '("Z" . meow-pop-all-selection)
+   '("&" . meow-query-replace)
+   '("%" . meow-query-replace-regexp)
+   '("<escape>" . meow-last-buffer)))
+(use-package meow
+  :demand t
+  :init
+  (meow-global-mode 1)
+  :config
+  ;; meow-setup is your custom function, see below
+  (meow-setup)
+  ;; If you want relative line number in NORMAL state(for display-line-numbers-mode)
+  (meow-setup-line-number)
+  ;; If you need setup indicator, see `meow-indicator' for customizing by hand.
+  (meow-setup-indicator))
+#+end_src
+
