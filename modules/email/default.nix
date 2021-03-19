@@ -41,44 +41,44 @@ with lib; {
     programs.neomutt = lib.mkIf config.alex.email.useMutt {
       enable = true;
       extraConfig = lib.mkIf (config.alex.keyboardLayout == "dvp") ''
-          #------------------------------------------------------------
-          # Vi Key Bindings
-          #------------------------------------------------------------
+        #------------------------------------------------------------
+        # Vi Key Bindings
+        #------------------------------------------------------------
 
-          # Moving around
-          bind attach,browser,index       i   noop
-          bind attach,browser,index       ii  first-entry
-          bind attach,browser,index       I   last-entry
-          bind pager                      i  noop
-          bind pager                      i  top
-          bind pager                      I   bottom
-          bind pager                      t   previous-line
-          bind pager                      h   next-line
+        # Moving around
+        bind attach,browser,index       i   noop
+        bind attach,browser,index       ii  first-entry
+        bind attach,browser,index       I   last-entry
+        bind pager                      i  noop
+        bind pager                      i  top
+        bind pager                      I   bottom
+        bind pager                      t   previous-line
+        bind pager                      h   next-line
 
-          # Scrolling
-          bind attach,browser,pager,index \CU next-page
-          bind attach,browser,pager,index \CX previous-page
-          bind attach,browser,pager,index \Cg half-up
-          bind attach,browser,pager,index \Ce half-down
-          bind browser,pager              \C\056 next-line
-          bind browser,pager              \Cf previous-line
-          bind index                      \C\056 next-line
-          bind index                      \Cf previous-line
+        # Scrolling
+        bind attach,browser,pager,index \CU next-page
+        bind attach,browser,pager,index \CX previous-page
+        bind attach,browser,pager,index \Cg half-up
+        bind attach,browser,pager,index \Ce half-down
+        bind browser,pager              \C\056 next-line
+        bind browser,pager              \Cf previous-line
+        bind index                      \C\056 next-line
+        bind index                      \Cf previous-line
 
-          bind pager,index                e   noop
-          bind pager,index                ee  delete-message
+        bind pager,index                e   noop
+        bind pager,index                ee  delete-message
 
-          # Mail & Reply
-          bind index                      \Cm list-reply # Doesn't work currently
+        # Mail & Reply
+        bind index                      \Cm list-reply # Doesn't work currently
 
-          # Threads
-          bind browser,pager,index        N   search-opposite
-          bind pager,index                eY  delete-thread
-          bind pager,index                ey  delete-subthread
-          bind pager,index                iy  next-thread
-          bind pager,index                iY  previous-thread
-          bind index                      \047a  collapse-thread
-          bind index                      \047A  collapse-all # Missing :folddisable/foldenable
+        # Threads
+        bind browser,pager,index        N   search-opposite
+        bind pager,index                eY  delete-thread
+        bind pager,index                ey  delete-subthread
+        bind pager,index                iy  next-thread
+        bind pager,index                iY  previous-thread
+        bind index                      \047a  collapse-thread
+        bind index                      \047A  collapse-all # Missing :folddisable/foldenable
       '';
     };
   };

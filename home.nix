@@ -1,8 +1,9 @@
 { config, pkgs, ... }: {
-  imports = [ ./shell.nix ./modules ];
+  imports = [ ./modules ];
   xdg.enable = true;
   alex.vi = true;
   alex.chromium.enable = false;
+  alex.shell.enable = true;
   home.packages = with pkgs; [
     niv
     gopass
@@ -23,12 +24,5 @@
     userName = "Alex Eyre";
     userEmail = "alexeeyre@gmail.com";
     # extraConfig.http.sslVerify = false;
-  };
-  programs.tmux = {
-    enable = true;
-    keyMode = "vi";
-    newSession = true;
-    prefix = "C-a";
-    package = pkgs.hello;
   };
 }

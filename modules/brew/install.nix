@@ -1,6 +1,5 @@
 { config, lib, pkgs, ... }:
-with lib;
-{
+with lib; {
   config = {
     home.file.brew-tarball = lib.mkIf config.alex.brew.enable {
       source = pkgs.fetchFromGitHub {

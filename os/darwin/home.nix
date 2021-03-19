@@ -1,14 +1,10 @@
 { pkgs, lib, ... }: {
-  imports = [
-    ../../home.nix
-    ./shell.nix
-    ./iterm
-    ./vimari.nix
-    ./bartender.nix
-    ./git.nix
-    ./brew.nix
-  ];
+  imports = [ ../../home.nix ];
   alex.brew.enable = true;
+  alex.tmux.enable = true;
+  alex.keyboard.karabiner.enable = true;
+  alex.bartender.enable = true;
+  alex.iterm.enable = true;
   alex.brew.casks = [
     "homebrew/cask/programmer-dvorak"
     "alfred"
@@ -18,12 +14,9 @@
     "setapp"
     "monero-wallet"
     "syncthing"
-    "iterm2"
     "veracrypt"
     "macfuse"
   ];
-  alex.brew.formulae = [
-    "libvterm"
-    "fabianishere/personal/pam_reattach"
-  ];
+  alex.vimari.enable = true;
+  alex.brew.taps = [ "homebrew/bundle" "homebrew/core" "homebrew/cask" ];
 }
