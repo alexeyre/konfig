@@ -1,0 +1,40 @@
+cask_args appdir: "/Applications"
+tap "homebrew/bundle"
+tap "homebrew/cask"
+tap "homebrew/core"
+tap "homebrew/services"
+tap "d12frosted/emacs-plus"
+
+# brew "d12frosted/emacs-plus/emacs-plus", args: ['without-imagemagick']
+cask "homebrew/cask/programmer-dvorak"
+cask "alfred"
+cask "anki"
+cask "telegram"
+
+cask "transmission"
+
+cask "setapp"
+
+# monero
+cask "monero-wallet"
+
+brew "libvterm"
+cask "syncthing"
+cask "iina"
+cask "iterm2"
+
+# veracrypt
+cask "veracrypt"
+cask "macfuse"
+
+# pocketcasts
+cask "pocket-casts"
+
+# to use touchid inside tmux
+brew "fabianishere/personal/pam_reattach"
+
+# youtube-dl
+brew "youtube-dl"
+
+# chromium
+cask "chromium"

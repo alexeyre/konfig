@@ -9,5 +9,5 @@
     "dr" = "darwin-rebuild";
     "drs" = "darwin-rebuild switch 2>/dev/null";
     "drsd" = "darwin-rebuild switch";
-    };
+  };
 }

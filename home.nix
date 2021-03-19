@@ -1,20 +1,9 @@
 { config, pkgs, ... }: {
-  imports = [ ./shell.nix ./email.nix ./vi.nix ];
+  imports = [ ./shell.nix ./modules ];
   xdg.enable = true;
-  programs.chromium = {
-    enable = true;
-    extensions = [
-      { id = "cgbcahbpdhpcegmbfconppldiemgcoii"; } # ublock dev
-      { id = "eckgcipdkhcfghnmincccnhpdmnbefki"; } # umatrix dev
-      { id = "kkhfnlkhiapbiehimabddjbimfaijdhk"; } # gopass bridge
-      { id = "ohnjgmpcibpbafdlkimncjhflgedgpam"; } # 4chanX
-    ];
-  };
+  alex.vi = true;
+  alex.chromium.enable = false;
   home.packages = with pkgs; [
-    (texlive.combine {
-      inherit (texlive)
-        minted fvextra scheme-full wrapfig ulem amsmath capt-of hyperref;
-    })
     niv
     gopass
     nixfmt
