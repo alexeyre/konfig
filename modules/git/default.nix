@@ -1,7 +1,6 @@
 { config, lib, pkgs, ... }:
 with lib;
-let isMac = lib.hasSuffix "darwin" pkgs.system;
-in {
+{
   options.alex.git.enable = mkOption {
     type = types.bool;
     default = false;
@@ -13,7 +12,7 @@ in {
       userName = "Alex Eyre";
       userEmail = "alexeeyre@gmail.com";
     };
-    programs.git.package = mkIf isMac pkgs.hello;
-    alex.brew.formulae = mkIf isMac [ "git" ];
+    programs.git.package = mkIf config.alex.is-mac pkgs.hello;
+    alex.brew.formulae = mkIf config.alex.is-mac [ "git" ];
   };
 }

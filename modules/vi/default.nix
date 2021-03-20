@@ -1,11 +1,11 @@
 { config, lib, pkgs, ... }:
 with lib; {
-  options.alex.vi = mkOption {
+  options.alex.vi.enable = mkOption {
     type = types.bool;
     default = false;
     description = "Whether to configure vi.";
   };
-  config = mkIf config.alex.vi {
+  config = mkIf config.alex.vi.enable {
     programs.neovim = {
       enable = true;
       extraConfig = builtins.readFile ./init.vim;

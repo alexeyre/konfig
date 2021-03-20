@@ -1,8 +1,7 @@
 { config, lib, pkgs, ... }:
 with lib;
-let isMac = lib.hasSuffix "darwin" pkgs.system;
-in {
-  config = mkIf (config.alex.shell.enable && isMac) {
+{
+  config = mkIf (config.alex.shell.enable && config.alex.is-mac) {
     home.file.hushenv = {
       text = "thisisempty";
       target = ".hushlogin";

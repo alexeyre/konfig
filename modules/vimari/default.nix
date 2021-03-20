@@ -6,7 +6,7 @@ with lib; {
     description = "Whether to configure vimari";
   };
   config = mkIf (config.alex.vimari.enable && config.alex.is-mac) {
-    alex.brew.mas = [ "Vimari\", id: 1480933944" ];
+    alex.brew.mas = [ ''Vimari", id: 1480933944'' ];
     home.file.vimariPreferences = {
       text = ''
         {

@@ -35,16 +35,20 @@ with lib; {
         brew bundle cleanup --global --zap --force -q
       '')
     ];
-    alex.brew.formulae = mkIf (config.alex.brew.mas != []) [ "mas" ];
+    alex.brew.formulae = mkIf (config.alex.brew.mas != [ ]) [ "mas" ];
     home.file.brewfile = {
       target = ".Brewfile";
-      text = (concatMapStrings (x: "tap \"" + x + "\"\n") config.alex.brew.taps)
-        +
-        (concatMapStrings (x: "brew \"" + x + "\"\n") config.alex.brew.formulae)
-        +
-        (concatMapStrings (x: "cask \"" + x + "\"\n") config.alex.brew.casks)
-        +
-        (concatMapStrings (x: "mas \"" + x + "\n") config.alex.brew.mas);
+      text = (concatMapStrings (x:
+        ''tap "'' + x + ''
+          "
+        '') config.alex.brew.taps) + (concatMapStrings (x:
+          ''brew "'' + x + ''
+            "
+          '') config.alex.brew.formulae) + (concatMapStrings (x:
+            ''cask "'' + x + ''
+              "
+            '') config.alex.brew.casks)
+        + (concatMapStrings (x: ''mas "'' + x + "\n") config.alex.brew.mas);
 
       onChange = ''
         PATH=$PATH:$HOME/.local/share/brew/bin
