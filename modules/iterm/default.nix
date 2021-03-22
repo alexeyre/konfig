@@ -5,7 +5,7 @@ with lib; {
     default = false;
     description = "Whether to configure iTerm2";
   };
-  config = mkIf config.alex.iterm.enable {
+  config = mkIf (config.alex.iterm.enable && config.alex.is-mac) {
     home.file.itermThemeScript = {
       source = ./theme.py;
       target = "Library/Application Support/iTerm2/Scripts/theme.py";

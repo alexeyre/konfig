@@ -6,4 +6,6 @@
   alex.shell.enable = true;
   alex.git.enable = true;
   home.packages = with pkgs; [ niv gopass nixfmt ];
+  programs.gh.enable = true;
+  programs.git.lfs.enable = true;
 }

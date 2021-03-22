@@ -30,7 +30,7 @@ with lib; {
   config = mkIf (config.alex.brew.enable && config.alex.is-mac) {
     home.packages = [
       (pkgs.writeScriptBin "sync_brew" ''
-        PATH=$PATH:$HOME/.local/share/brew/bin
+        PATH=$PATH:/opt/homebrew/bin
         brew bundle install --global --verbose --no-upgrade -q &&
         brew bundle cleanup --global --zap --force -q
       '')
@@ -51,7 +51,7 @@ with lib; {
         + (concatMapStrings (x: ''mas "'' + x + "\n") config.alex.brew.mas);
 
       onChange = ''
-        PATH=$PATH:$HOME/.local/share/brew/bin
+        PATH=$PATH:/opt/homebrew/bin
         brew bundle install --global --verbose --no-upgrade -q &&
         brew bundle cleanup --global --zap --force -q
       '';

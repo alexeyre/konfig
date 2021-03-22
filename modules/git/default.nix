@@ -13,6 +13,6 @@ with lib;
       userEmail = "alexeeyre@gmail.com";
     };
     programs.git.package = mkIf config.alex.is-mac pkgs.hello;
-    alex.brew.formulae = mkIf config.alex.is-mac [ "git" ];
+    # alex.brew.formulae = mkIf config.alex.is-mac [ "git" ];
   };
 }

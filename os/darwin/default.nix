@@ -13,7 +13,7 @@
   users.users.alex.home = "/Users/alex";
   home-manager.users.alex = (import ./home.nix);
   environment.pathsToLink =
-    [ "/share/zsh" "/Users/alex/.local/share/brew/share/zsh" ];
+    [ "/share/zsh" "/opt/homebrew/share/brew/share/zsh" ];
 
   programs.zsh.enable = true; # default shell on catalina
   system.stateVersion = 4;

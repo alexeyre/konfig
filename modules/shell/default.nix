@@ -8,13 +8,15 @@ with lib; {
   };
   config = mkIf config.alex.shell.enable {
     programs.fzf.enable = true;
-    home.packages = [ pkgs.fasd ];
     programs.zsh = {
       enable = true;
       defaultKeymap = "viins";
       dotDir = ".config/zsh";
-      sessionVariables = { EDITOR = "vi"; };
+      sessionVariables.EDITOR = "vi";
       initExtra = builtins.readFile ./zshrc;
+      dirHashes.dot = "$HOME/.local/dot";
+      shellAliases.ls = "ls -G";
+      shellAliases.l = "ls -alG";
     };
     programs.direnv = {
       enable = true;

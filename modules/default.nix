@@ -17,5 +17,6 @@
     ./vi
     ./video-processing
     ./vimari
+    ./gh
   ];
 }
