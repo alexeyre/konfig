@@ -1,6 +1,5 @@
 { config, lib, pkgs, ... }:
-with lib;
-{
+with lib; {
   options.alex.git.enable = mkOption {
     type = types.bool;
     default = false;

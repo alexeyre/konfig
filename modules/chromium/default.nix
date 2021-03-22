@@ -1,6 +1,5 @@
 { config, lib, pkgs, ... }:
-with lib;
-{
+with lib; {
   options.alex.chromium.enable = mkOption {
     type = types.bool;
     default = false;

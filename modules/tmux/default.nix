@@ -1,6 +1,5 @@
 { config, lib, pkgs, ... }:
-with lib;
-{
+with lib; {
   options.alex.tmux.enable = mkOption {
     type = types.bool;
     default = false;
@@ -16,10 +15,12 @@ with lib;
       prefix = "C-a";
       escapeTime = 0;
       disableConfirmationPrompt = true;
-      shell = let zsh_arm = (pkgs.writeScriptBin "zsh_arm" ''
-        #!${pkgs.stdenv.shell}
-        arch -arm64e /bin/zsh
-      ''); in mkIf config.alex.is-mac "${zsh_arm}/bin/zsh_arm";
+      shell = let
+        zsh_arm = (pkgs.writeScriptBin "zsh_arm" ''
+          #!${pkgs.stdenv.shell}
+          arch -arm64e /bin/zsh
+        '');
+      in mkIf config.alex.is-mac "${zsh_arm}/bin/zsh_arm";
       extraConfig = ''
         set -g status-bg colour234
         set -g status-fg colour137

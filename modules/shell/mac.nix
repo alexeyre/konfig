@@ -1,6 +1,5 @@
 { config, lib, pkgs, ... }:
-with lib;
-{
+with lib; {
   config = mkIf (config.alex.shell.enable && config.alex.is-mac) {
     home.file.hushenv = {
       text = "thisisempty";

@@ -22,5 +22,7 @@
   alex.brew.formulae = [ "jupyterlab" ];
   alex.vimari.enable = true;
   alex.brew.taps = [ "homebrew/bundle" "homebrew/core" "homebrew/cask" ];
-  programs.zsh.dirHashes = { artifacts = "$HOME/.CMVolumes/University/Artifacts"; };
+  programs.zsh.dirHashes = {
+    artifacts = "$HOME/.CMVolumes/University/Artifacts";
+  };
 }
