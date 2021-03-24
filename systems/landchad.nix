@@ -9,6 +9,7 @@
     ../os/linux
   ];
   security.acme.email = "alexeeyre@gmail.com";
+  security.acme.certs."alexey.re".email = "alexeeyre@gmail.com";
   security.acme.acceptTerms = true;
   mailserver = {
     enable = true;
@@ -30,16 +31,36 @@
     virusScanning = false;
   };
 
-  services.nginx.enable = true;
-  services.nginx.virtualHosts."alexey.re" = {
-    forceSSL = true;
+  services.nginx = {
+	enable = true;
+    recommendedGzipSettings = true;
+     recommendedOptimisation = true;
+     recommendedProxySettings = true;
+     recommendedTlsSettings = true;
+     sslCiphers = "EECDH+aRSA+AESGCM:EDH+aRSA:EECDH+aRSA:+AES256:+AES128:+SHA1:!CAMELLIA:!SEED:!3DES:!DES:!RC4:!eNULL";
+     sslProtocols = "TLSv1.3 TLSv1.2";
+     commonHttpConfig = ''
+       map $scheme $hsts_header {
+           https   "max-age=31536000; includeSubdomains; preload";
+       }
+       add_header Strict-Transport-Security $hsts_header;
+       add_header 'Referrer-Policy' 'origin-when-cross-origin';
+       add_header X-Frame-Options DENY;
+       add_header X-Content-Type-Options nosniff;
+       add_header X-XSS-Protection "1; mode=block";
+     '';
+  };
+services.nginx.virtualHosts."alexey.re" = {
     enableACME = true;
     root = "/var/www/blog";
-  };
+    forceSSL = true;
+    # useACMEHost = "alexey.re";
+};
 
   boot.cleanTmpDir = true;
   networking.hostName = "landchad";
   networking.firewall.allowPing = true;
+  networking.firewall.allowedTCPPorts = [ 80 443 ];
   services.openssh.enable = true;
   users.users.root.openssh.authorizedKeys.keys = [
     "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDDXEFJysbsRZbZFtgKbdAr/Gagp2fI09hN5pGbLPQcdP5hUuuj5++ZjOXcf6XE001tZOFato7dIV7vYZqHpzgzFg9quqkhYABBmhS36XNFp6A7L/n80FkzIjnaYJSzErilipi2CCRJNevkfgVQCFozRX6MKUQzkkEAvZTuHoL/i8e03BNmnOsCOhv8QhdQeU2x6063iQUa+LUwQa5dSB0Hl+ZB5geHC7GphQ3P01E3UQ8H2nznklP3o95ksAM3Ophz0qPVOhQvq+PLw8zrFzIAkFBRm4uV6RFtOtQrHeOESpvGbbEYuiFawoDiZD1LF5kWYLJ5PQfR/9WfbcG6bEm74KvDvkhlAtyxVav/CUCWJDIzZf9rVQbSTlnuIIB2usk48w7RV+p/UvZ09rdNTadBBXx8udYm+Yl5f6kevS/qnGC4FketHOy3MPYqkZSki0U64jjzXky+sR+FrfNSkvlmj24oJQjXxA6Vh/NCAE1GodbehJJSyvLPfTUbnP60uh8= u0_a319@localhost"
