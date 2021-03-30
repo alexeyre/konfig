@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>re.alexey.quick-capture</string>
+	<key>connections</key>
+	<dict>
+		<key>162E44F5-13C6-4AF3-83E7-2EA5B7410663</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>DBB9EF3F-DEB5-49EF-BA96-AC2257FA3339</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>3E986101-639D-43D9-9BC0-439829798AD8</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>DBB9EF3F-DEB5-49EF-BA96-AC2257FA3339</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Alex Eyre</string>
+	<key>description</key>
+	<string></string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>notion.so quick-capture</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>json</key>
+				<string>{
+  "alfredworkflow" : {
+    "arg" : "{query}",
+    "config" : {
+    },
+    "variables" : {
+      "TOKEN_V2" : "b852dab5657654d0a9a8f1bff9a72addc7ee238e3f940dc09e9d33c89ce6b65c49432c136f2c9421deb79ee1a02ce64bd8a91ee91e04470833e3dd9f2fb1af779a2d44b2996bfd2e34622bfab5a4"
+    }
+  }
+}</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.json</string>
+			<key>uid</key>
+			<string>162E44F5-13C6-4AF3-83E7-2EA5B7410663</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>keyword</key>
+				<string>n</string>
+				<key>subtext</key>
+				<string>Capture text input into notion</string>
+				<key>text</key>
+				<string>Quick Capture</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>3E986101-639D-43D9-9BC0-439829798AD8</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>4</integer>
+				<key>script</key>
+				<string>print("hello")</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>3</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>DBB9EF3F-DEB5-49EF-BA96-AC2257FA3339</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string></string>
+	<key>uidata</key>
+	<dict>
+		<key>162E44F5-13C6-4AF3-83E7-2EA5B7410663</key>
+		<dict>
+			<key>xpos</key>
+			<integer>310</integer>
+			<key>ypos</key>
+			<integer>125</integer>
+		</dict>
+		<key>3E986101-639D-43D9-9BC0-439829798AD8</key>
+		<dict>
+			<key>xpos</key>
+			<integer>115</integer>
+			<key>ypos</key>
+			<integer>220</integer>
+		</dict>
+		<key>DBB9EF3F-DEB5-49EF-BA96-AC2257FA3339</key>
+		<dict>
+			<key>xpos</key>
+			<integer>480</integer>
+			<key>ypos</key>
+			<integer>230</integer>
+		</dict>
+	</dict>
+	<key>variables</key>
+	<dict>
+		<key>token_v2</key>
+		<string>b852dab5657654d0a9a8f1bff9a72addc7ee238e3f940dc09e9d33c89ce6b65c49432c136f2c9421deb79ee1a02ce64bd8a91ee91e04470833e3dd9f2fb1af779a2d44b2996bfd2e34622bfab5a4</string>
+	</dict>
+	<key>variablesdontexport</key>
+	<array>
+		<string>token_v2</string>
+	</array>
+	<key>version</key>
+	<string></string>
+	<key>webaddress</key>
+	<string>alexey.re</string>
+</dict>
+</plist>
