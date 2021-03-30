@@ -7,7 +7,6 @@ with lib; {
     description = "Whether to configure the z shell";
   };
   config = mkIf config.alex.shell.enable {
-    programs.fzf.enable = true;
     programs.zsh = {
       enable = true;
       defaultKeymap = "viins";
@@ -15,13 +14,18 @@ with lib; {
       sessionVariables.EDITOR = "vi";
       initExtra = builtins.readFile ./zshrc;
       dirHashes.dot = "$HOME/.local/dot";
-      shellAliases.ls = "ls -G";
-      shellAliases.l = "ls -alG";
+      dirHashes.cls = "$HOME/Projects/classes";
+      shellAliases = {
+      ls = "ls -G";
+      l = "ls -alG";
+      cdl = "cd $(dirname $_)";
+      };
     };
     programs.direnv = {
       enable = true;
       enableNixDirenvIntegration = true;
       enableZshIntegration = true;
     };
+    programs.dircolors.enable = true;
   };
 }

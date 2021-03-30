@@ -27,6 +27,11 @@ with lib; {
       [ "homebrew/bundle" "homebrew/cask" "homebrew/core" "homebrew/services" ];
     description = "The brew tap commands to pass to the home Brewfile";
   };
+  options.alex.brew.directory = mkOption {
+    type = types.string;
+    default = "/opt/homebrew";
+    description = "Homebrew install directory";
+  };
   config = mkIf (config.alex.brew.enable && config.alex.is-mac) {
     home.packages = [
       (pkgs.writeScriptBin "sync_brew" ''
@@ -52,8 +57,8 @@ with lib; {
 
       onChange = ''
         PATH=$PATH:/opt/homebrew/bin
-        brew bundle install --global --verbose --no-upgrade -q &&
-        brew bundle cleanup --global --zap --force -q
+        arch -arm64e brew bundle install --global --verbose --no-upgrade -q &&
+        arch -arm64e brew bundle cleanup --global --zap --force -q
       '';
     };
   };

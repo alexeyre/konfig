@@ -11,7 +11,7 @@ with lib; {
       [
         (texlive.combine {
           inherit (texlive)
-            minted fvextra scheme-full wrapfig ulem amsmath capt-of hyperref;
+            plantuml minted fvextra scheme-full wrapfig ulem amsmath capt-of hyperref;
         })
       ];
   };

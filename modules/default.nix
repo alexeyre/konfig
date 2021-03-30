@@ -11,12 +11,16 @@
     ./keyboard
     ./music
     ./newsboat
+    ./vars
     ./shell
     ./tex
     ./tmux
     ./vi
     ./video-processing
+    ./setapp
     ./vimari
     ./gh
+    ./java
+    ./fzf
   ];
 }

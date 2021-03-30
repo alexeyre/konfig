@@ -10,15 +10,14 @@
     "alfred"
     "anki"
     "telegram"
-    "transmission"
-    "setapp"
-    "syncthing"
     "veracrypt"
     "macfuse"
     "iina"
+    "radio-silence"
     "notion"
     "toggl-track"
   ];
+  alex.setapp.enable = true;
   alex.brew.formulae = [ "jupyterlab" ];
   alex.vimari.enable = true;
   alex.brew.taps = [ "homebrew/bundle" "homebrew/core" "homebrew/cask" ];
