@@ -7,6 +7,7 @@ with lib; {
   };
   config = lib.mkIf config.alex.tmux.enable {
     alex.brew.formulae = lib.mkIf config.alex.is-mac [ "tmux" ];
+    programs.tmux.tmuxp.enable = true;
     programs.tmux = {
       enable = true;
       package = lib.mkIf config.alex.is-mac pkgs.hello;
@@ -21,11 +22,11 @@ with lib; {
           arch -arm64e /bin/zsh
         '');
       in mkIf config.alex.is-mac "${zsh_arm}/bin/zsh_arm";
+      plugins = with pkgs.tmuxPlugins; [
+        nord
+        prefix-highlight
+      ];
       extraConfig = ''
-        set -g status-right '%d/%m %H:%M:%S '
-        set -g status-left ' '
-        set -g status-right-length 50
-        set -g status-left-length 20
         setw -g window-status-current-format ' #I:#W#F '
         setw -g window-status-format ' #I:#W#F '
         setw -g mode-keys vi

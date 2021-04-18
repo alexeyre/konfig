@@ -21,8 +21,8 @@ with lib; {
         vim-airline
         vim-commentary
         vim-css-color
-        base16-vim
         vim-markdown
+        nord-vim
         (mkIf config.alex.fzf.enable fzf-vim)
       ];
     };

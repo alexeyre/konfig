@@ -13,4 +13,5 @@ with lib;
   alex.newsboat.enable = true;
   alex.fzf.enable = true;
   alex.tex.enable = true;
+  alex.fasd.enable = true;
 }

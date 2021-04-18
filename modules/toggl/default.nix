@@ -8,6 +8,5 @@ with lib;
   };
 
   config = mkIf config.alex.toggl.enable {
-
   };
 }

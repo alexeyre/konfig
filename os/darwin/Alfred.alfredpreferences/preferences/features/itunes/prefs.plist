@@ -11,6 +11,10 @@
 		<key>string</key>
 		<string> </string>
 	</dict>
+	<key>includePodcasts</key>
+	<false/>
+	<key>indexUntickedTracks</key>
+	<false/>
 	<key>keyword</key>
 	<string>music</string>
 </dict>

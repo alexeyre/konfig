@@ -22,5 +22,6 @@
     ./gh
     ./java
     ./fzf
+    ./fasd
   ];
 }

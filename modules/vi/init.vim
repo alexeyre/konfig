@@ -11,6 +11,9 @@ set noshowmode
 set noruler
 set laststatus=0
 set noshowcmd
+set autochdir
+
+colorscheme nord
 
 " Some basics:
 nnoremap c "_c
