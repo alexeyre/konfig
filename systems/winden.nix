@@ -19,8 +19,4 @@
     "homebrew/cask-versions/discord-canary"
   ];
 
-  # for inf1b
-  home-manager.users.alex.alex.java.enable = true;
-  home-manager.users.alex.alex.java.bloat = true;
-
 }
