@@ -32,30 +32,31 @@
   };
 
   services.nginx = {
-	enable = true;
+    enable = true;
     recommendedGzipSettings = true;
-     recommendedOptimisation = true;
-     recommendedProxySettings = true;
-     recommendedTlsSettings = true;
-     sslCiphers = "EECDH+aRSA+AESGCM:EDH+aRSA:EECDH+aRSA:+AES256:+AES128:+SHA1:!CAMELLIA:!SEED:!3DES:!DES:!RC4:!eNULL";
-     sslProtocols = "TLSv1.3 TLSv1.2";
-     commonHttpConfig = ''
-       map $scheme $hsts_header {
-           https   "max-age=31536000; includeSubdomains; preload";
-       }
-       add_header Strict-Transport-Security $hsts_header;
-       add_header 'Referrer-Policy' 'origin-when-cross-origin';
-       add_header X-Frame-Options DENY;
-       add_header X-Content-Type-Options nosniff;
-       add_header X-XSS-Protection "1; mode=block";
-     '';
+    recommendedOptimisation = true;
+    recommendedProxySettings = true;
+    recommendedTlsSettings = true;
+    sslCiphers =
+      "EECDH+aRSA+AESGCM:EDH+aRSA:EECDH+aRSA:+AES256:+AES128:+SHA1:!CAMELLIA:!SEED:!3DES:!DES:!RC4:!eNULL";
+    sslProtocols = "TLSv1.3 TLSv1.2";
+    commonHttpConfig = ''
+      map $scheme $hsts_header {
+          https   "max-age=31536000; includeSubdomains; preload";
+      }
+      add_header Strict-Transport-Security $hsts_header;
+      add_header 'Referrer-Policy' 'origin-when-cross-origin';
+      add_header X-Frame-Options DENY;
+      add_header X-Content-Type-Options nosniff;
+      add_header X-XSS-Protection "1; mode=block";
+    '';
   };
-services.nginx.virtualHosts."alexey.re" = {
+  services.nginx.virtualHosts."alexey.re" = {
     enableACME = true;
     root = "/var/www/blog";
     forceSSL = true;
     # useACMEHost = "alexey.re";
-};
+  };
 
   boot.cleanTmpDir = true;
   networking.hostName = "landchad";

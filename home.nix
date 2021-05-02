@@ -1,6 +1,5 @@
 { config, lib, pkgs, ... }:
-with lib;
-{
+with lib; {
   imports = [ ./modules ];
   xdg.enable = true;
   alex.vi.enable = true;

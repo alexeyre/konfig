@@ -22,10 +22,7 @@ with lib; {
           arch -arm64e /bin/zsh
         '');
       in mkIf config.alex.is-mac "${zsh_arm}/bin/zsh_arm";
-      plugins = with pkgs.tmuxPlugins; [
-        nord
-        prefix-highlight
-      ];
+      plugins = with pkgs.tmuxPlugins; [ nord prefix-highlight ];
       extraConfig = ''
         setw -g window-status-current-format ' #I:#W#F '
         setw -g window-status-format ' #I:#W#F '

@@ -1,6 +1,5 @@
 { config, lib, pkgs, ... }:
-with lib;
-{
+with lib; {
   options.alex.dots = mkOption {
     type = types.path;
     default = builtins.toPath "${config.home.homeDirectory}/.local/dot";

@@ -1,2 +1,2 @@
 format:
-	nix run nixpkgs.nixfmt nixpkgs.findutils -c find . -type f -name "*.nix" -exec nixfmt {} \;
+	nix-shell -p nixfmt findutils --command 'find . -type f -name "*.nix" -exec nixfmt {} \;'

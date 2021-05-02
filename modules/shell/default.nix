@@ -16,9 +16,9 @@ with lib; {
       dirHashes.dot = "$HOME/.local/dot";
       dirHashes.cls = "$HOME/Projects/classes";
       shellAliases = {
-      ls = "ls -G";
-      l = "ls -alG";
-      cdl = "cd $(dirname $_)";
+        ls = "ls -G";
+        l = "ls -alG";
+        cdl = "cd $(dirname $_)";
       };
     };
     programs.direnv = {

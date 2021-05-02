@@ -1,4 +1,4 @@
-{ pkgs ? import <nixpkgs> {} }:
+{ pkgs ? import <nixpkgs> { } }:
 with pkgs.python3Packages;
 pkgs.mkShell {
   buildInputs = with pkgs; [
@@ -7,7 +7,8 @@ pkgs.mkShell {
       version = "0.0.28";
       src = fetchPypi {
         inherit pname version;
-        sha256 = "08fdd5ef7c96480ad11c12d472de21acd32359996f69a5259299b540feba4560";
+        sha256 =
+          "08fdd5ef7c96480ad11c12d472de21acd32359996f69a5259299b540feba4560";
       };
       progagatedBuildInputs = [ setuptools ];
     })

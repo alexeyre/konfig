@@ -1,6 +1,5 @@
 { config, lib, pkgs, ... }:
-with lib;
-{
+with lib; {
   options.alex.fzf.enable = mkOption {
     type = types.bool;
     default = false;
@@ -13,7 +12,8 @@ with lib;
   };
   options.alex.fzf.directory = mkOption {
     type = types.path;
-    default = if config.alex.is-mac then "/opt/homebrew/opt/fzf" else "${pkgs.fzf}";
+    default =
+      if config.alex.is-mac then "/opt/homebrew/opt/fzf" else "${pkgs.fzf}";
     readOnly = true;
     description = "FZF installation directory";
   };
