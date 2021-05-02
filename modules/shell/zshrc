@@ -1,3 +1,5 @@
+# disable bell
+unsetopt BEEP
 # 10ms for key sequences
 KEYTIMEOUT=1
 # Basic auto/tab complete:

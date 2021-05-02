@@ -10,8 +10,13 @@ with lib;
   home.packages = with pkgs; [ niv gopass nixfmt ];
   programs.gh.enable = true;
   programs.git.lfs.enable = true;
-  alex.newsboat.enable = true;
+  alex.newsboat.enable = false;
   alex.fzf.enable = true;
-  alex.tex.enable = true;
+  alex.tex.enable = false;
   alex.fasd.enable = true;
+
+  programs.readline = {
+    enable = true;
+    variables."bell-style" = "none";
+  };
 }

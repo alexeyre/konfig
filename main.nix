@@ -1,1 +1,3 @@
-{ ... }: { nixpkgs.overlays = [ (import ./packages) ]; }
+{ pkgs, ... }: { nixpkgs.overlays = [ (import ./packages) ];
+nix.package = pkgs.nixUnstable;
+}
