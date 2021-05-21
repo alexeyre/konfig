@@ -16,6 +16,7 @@ with lib; {
       prefix = "C-a";
       escapeTime = 0;
       disableConfirmationPrompt = true;
+      terminal = "screen-256color";
       shell = let
         zsh_arm = (pkgs.writeScriptBin "zsh_arm" ''
           #!${pkgs.stdenv.shell}

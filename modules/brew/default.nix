@@ -1,6 +1,5 @@
 { config, lib, pkgs, ... }:
 with lib; {
-  imports = [ ./install.nix ];
   options.alex.brew.enable = mkOption {
     type = types.bool;
     default = false;
@@ -33,13 +32,8 @@ with lib; {
     description = "Homebrew install directory";
   };
   config = mkIf (config.alex.brew.enable && config.alex.is-mac) {
-    home.packages = [
-      (pkgs.writeScriptBin "sync_brew" ''
-        PATH=$PATH:/opt/homebrew/bin
-        brew bundle install --global --verbose --no-upgrade -q &&
-        brew bundle cleanup --global --zap --force -q
-      '')
-    ];
+    home.packages =
+      [ (pkgs.writeScriptBin "sync_brew" config.home.file.brewfile.onChange) ];
     alex.brew.formulae = mkIf (config.alex.brew.mas != [ ]) [ "mas" ];
     home.file.brewfile = {
       target = ".Brewfile";
@@ -57,7 +51,7 @@ with lib; {
 
       onChange = ''
         PATH=$PATH:/opt/homebrew/bin
-        arch -arm64e brew bundle install --global --verbose --no-upgrade -q &&
+        arch -arm64e brew bundle install --force --global --verbose --no-upgrade -q &&
         arch -arm64e brew bundle cleanup --global --zap --force -q
       '';
     };

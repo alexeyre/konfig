@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 with lib; {
   options.alex.keyboard.layout = mkOption {
-    type = types.string;
+    type = types.str;
     default = "dvp";
     description = "Keyboard layout to use for module configuration";
   };

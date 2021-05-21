@@ -1,4 +1,4 @@
-set langmap='z,\\,w,.e,pr,yt,fy,gu,ci,ro,lp,/[,=],aa,os,ed,uf,ig,dh,hj,tk,nl,sq,\\;q,-',qx,jc,kv,xb,bn,mm,w\\,,v.,z/,[-,#=,\"Z,<W,>E,PR,YT,FY,GU,CI,RO,LP,?{,+},AA,OS,ED,UF,IG,DH,HJ,TK,NL,SQ,_\",QX,JC,KV,XB,BN,MM,W<,V>,Z?
+set langmap='z,\\,w,.e,pr,yt,fy,gu,ci,ro,lp,/[,=],aa,os,ed,uf,ig,dh,hj,tk,nl,sq,\\;q,-',qx,jc,kv,xb,bn,mm,w\\,,v.,z/,[-,#=,\"Z,<W,>E,PR,YT,FY,GU,CI,RO,LP,?{,+},AA,OS,ED,UF,IG,DH,HJ,TK,NL,SQ,_\",QX,JC,KV,XB,BN,MM,W<,V>,Z?,sq
 
 let mapleader =","
 set title
@@ -12,8 +12,6 @@ set noruler
 set laststatus=0
 set noshowcmd
 set autochdir
-
-colorscheme nord
 
 " Some basics:
 nnoremap c "_c

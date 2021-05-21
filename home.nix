@@ -13,6 +13,10 @@ with lib; {
   alex.fzf.enable = true;
   alex.tex.enable = false;
   alex.fasd.enable = true;
+  alex.less.enable = true;
+
+  alex.games.enable = true;
+  alex.games.battleNet = true;
 
   programs.readline = {
     enable = true;

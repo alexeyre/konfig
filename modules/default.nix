@@ -23,5 +23,7 @@
     ./java
     ./fzf
     ./fasd
+    ./less
+    ./games
   ];
 }

@@ -1,22 +1,13 @@
 { pkgs, config, ... }: {
   imports = [ ../os/darwin <home-manager/nix-darwin> ];
-  networking.hostName = "macbook";
+  networking.hostName = "winden";
   nix.trustedUsers = [ "alex" ];
   services.nix-daemon.enable = false;
 
-  # touch ID
-  home-manager.users.alex.alex.brew.taps = [ "fabianishere/personal" ];
-  home-manager.users.alex.alex.brew.formulae = [ "pam_reattach" ];
+  home-manager.users.alex = (import ../os/darwin/home.nix);
 
-  home-manager.users.alex.alex.brew.casks = [
-    # photoshop
-    "adobe-creative-cloud"
-
-    # calibre
-    "calibre"
-
-    # discord
-    "homebrew/cask-versions/discord-canary"
-  ];
-
+  #nix.extraOptions = ''
+  #  extra-platforms = x86_64-darwin aarch64-darwin
+  #  system = aarch64-darwin
+  #'';
 }

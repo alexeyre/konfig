@@ -8,18 +8,13 @@
   system.defaults.dock.show-recents = false;
   system.defaults.dock.tilesize = 32;
   time.timeZone = "Europe/London";
-  environment.darwinConfig = "$HOME/.config/nixpkgs/configuration.nix";
-
+  environment.darwinConfig = "$HOME/.config/nix/configuration.nix";
   users.users.alex.home = "/Users/alex";
-  home-manager.users.alex = (import ./home.nix);
-  environment.pathsToLink =
-    [ "/share/zsh" "/opt/homebrew/share/brew/share/zsh" ];
-
-  programs.zsh.enable = true; # default shell on catalina
-  system.stateVersion = 4;
-
+  environment.pathsToLink = [ "/share/zsh" "/opt/homebrew/share/zsh" ];
   home-manager.useGlobalPkgs = true;
   home-manager.backupFileExtension = ".backup";
+  # touch ID in tmux
+  home-manager.users.alex.alex.brew.taps = [ "fabianishere/personal" ];
+  home-manager.users.alex.alex.brew.formulae = [ "pam_reattach" ];
 
-  # home-manager.useUserPackages = true;
 }

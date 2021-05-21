@@ -40,7 +40,7 @@ with lib; {
 
     programs.neomutt = lib.mkIf config.alex.email.useMutt {
       enable = true;
-      extraConfig = lib.mkIf (config.alex.keyboardLayout == "dvp") ''
+      extraConfig = lib.mkIf (config.alex.keyboard.layout == "dvp") ''
         #------------------------------------------------------------
         # Vi Key Bindings
         #------------------------------------------------------------

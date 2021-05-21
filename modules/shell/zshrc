@@ -1,12 +1,13 @@
+# magic bracketed pasting
+autoload -Uz bracketed-paste-magic
+zle -N bracketed-paste bracketed-paste-magic
 # disable bell
 unsetopt BEEP
 # 10ms for key sequences
 KEYTIMEOUT=1
 # Basic auto/tab complete:
-autoload -U compinit
 zstyle ':completion:*' menu select
 zmodload zsh/complist
-compinit
 _comp_options+=(globdots)		# Include hidden files
 autoload -U colors && colors	# Load colors
 setopt autocd		# Automatically cd into typed directory.
