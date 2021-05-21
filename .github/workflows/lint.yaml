@@ -17,5 +17,7 @@ jobs:
         packages: nixfmt
         script: |
           for changed_file in ${{ steps.files.outputs.all }}; do
-            nixfmt --check "${changed_file}";
+            if [ "${changed_file: -4}" == ".nix" ]; then
+              nixfmt --check "${changed_file}";
+            fi
           done
