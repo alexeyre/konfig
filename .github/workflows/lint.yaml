@@ -9,4 +9,4 @@ jobs:
     - uses: actions/checkout@v2
     - uses: cachix/install-nix-action@v13
     - name: global nixfmt
-      run: nix-shell -p nixfmt findutils --run 'find . -name "*.nix" -exec nixfmt --check {} \;'
+      run: nix-shell -p nixfmt findutils --run "nixfmt --check $(find . -name '*.nix' -print)"
