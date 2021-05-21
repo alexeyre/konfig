@@ -8,8 +8,5 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: cachix/install-nix-action@v13
-    - uses: workflow/nix-shell-action@v1
-      with:
-        packages: nixfmt findutils
-        script: |
-          find . -name "*.nix" -exec nixfmt --check {} \;
+    - name: global nixfmt
+      run: nix-shell -p nixfmt findutils --run 'find . -name "*.nix" -exec nixfmt --check {} \;'
