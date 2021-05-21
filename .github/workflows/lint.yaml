@@ -13,7 +13,6 @@ jobs:
     - uses: jitterbit/get-changed-files@v1
       id: files
     - uses: workflow/nix-shell-action@v1
-      name: global changed files nixfmt
       with:
         packages: nixfmt
         script: |
