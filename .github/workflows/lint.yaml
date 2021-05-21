@@ -14,6 +14,7 @@ jobs:
       id: files
     - name: global changed files nixfmt
       run: |
+        nix-shell -p nixfmt
         for changed_file in ${{ steps.files.outputs.all }}; do
           nixfmt --check "${changed_file}";
         done
