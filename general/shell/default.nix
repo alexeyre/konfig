@@ -6,7 +6,13 @@ with lib; {
     defaultKeymap = "viins";
     dotDir = ".config/zsh";
     sessionVariables.EDITOR = "vi";
-    initExtra = builtins.readFile ./zshrc;
+    initExtra = builtins.readFile ./zshrc +
+      # Set up fzf bindings
+      ''
+        source ${pkgs.fzf}/share/fzf/key-bindings.zsh
+        bindkey -r "^T"
+        bindkey '^O' fzf-file-widget
+      '';
     dirHashes.dot = "$HOME/.local/dot";
     dirHashes.cls = "$HOME/Projects/classes";
     enableAutosuggestions = true;

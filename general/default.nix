@@ -23,10 +23,11 @@ with lib; {
 
   # Enter home-configuration
   main-user = { ... }: {
-    imports = [ ./shell # Set up the interactive shell
-    ./vi # Set up (n)vi(m)
-    ./newsboat # Set up newsboat
-  ];
+    imports = [
+      ./shell # Set up the interactive shell
+      ./vi # Set up (n)vi(m)
+      ./newsboat # Set up newsboat
+    ];
 
     # Enable the use of XDG directories, see https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
     xdg.enable = true;
@@ -42,7 +43,6 @@ with lib; {
       userName = "Alex Eyre";
       userEmail = "alexeeyre@gmail.com";
     };
-
 
     programs.readline = {
       enable = true;
@@ -86,7 +86,8 @@ with lib; {
 
     programs.mbsync.enable = true; # Enable MBSync to grab email from the server
     programs.mu.enable = true; # Enable the mu email indexing program
-    accounts.email.maildirBasePath = ".local/share/maildir"; # Force the use of an XDG directory
+    accounts.email.maildirBasePath =
+      ".local/share/maildir"; # Force the use of an XDG directory
 
     # Set up UoE email
     accounts.email.accounts.edinburgh = {
@@ -166,7 +167,6 @@ with lib; {
       # TODO: add qwerty config
     };
 
-
     home.file.lessKeyConfig = mkIf (system.keyboard.layout == "dvp") {
       text = ''
         #command
@@ -188,37 +188,37 @@ with lib; {
       newSession = true; # Create a new session by default
       prefix = "C-a"; # Set the prefix to something that doesn't collide with vi
       escapeTime = 0; # Disable built-in delay on prefix key
-      disableConfirmationPrompt = true; # Don't ask for confirmation when killing a pane
+      disableConfirmationPrompt =
+        true; # Don't ask for confirmation when killing a pane
       terminal = "screen-256color"; # Use 256colors
-      plugins = with pkgs.tmuxPlugins; [ nord # Nice colorscheme I use sometimes
-      prefix-highlight # Adds a small indicator at the bottom when the prefix key is pressed
-    ];
+      plugins = with pkgs.tmuxPlugins; [
+        nord # Nice colorscheme I use sometimes
+        prefix-highlight # Adds a small indicator at the bottom when the prefix key is pressed
+      ];
 
-    extraConfig =
-    # Configure the status format
-      ''
-        setw -g window-status-current-format ' #I:#W#F '
-        setw -g window-status-format ' #I:#W#F '
+      extraConfig =
+        # Configure the status format
         ''
-        +
+          setw -g window-status-current-format ' #I:#W#F '
+          setw -g window-status-format ' #I:#W#F '
+        '' +
         # Make new tumx panes automatically be in the same directory as your active pane
         ''
-        bind c new-window -c "#{pane_current_path}"
-        bind '"' split-window -c "#{pane_current_path}"
-        bind % split-window -h -c "#{pane_current_path}"
-        ''
-        +
+          bind c new-window -c "#{pane_current_path}"
+          bind '"' split-window -c "#{pane_current_path}"
+          bind % split-window -h -c "#{pane_current_path}"
+        '' +
         # Configure dvorak select-pane bindings
         optionalString (system.keyboard.layout == "dvp") ''
-        unbind-key j
-        bind-key t select-pane -D
-        unbind-key k
-        bind-key n select-pane -U
-        unbind-key h
-        bind-key h select-pane -L
-        unbind-key l
-        bind-key s select-pane -R
-          '';
+          unbind-key j
+          bind-key t select-pane -D
+          unbind-key k
+          bind-key n select-pane -U
+          unbind-key h
+          bind-key h select-pane -L
+          unbind-key l
+          bind-key s select-pane -R
+            '';
     };
   };
 }
