@@ -1,6 +1,34 @@
 { config, lib, pkgs, ... }:
 with lib; {
+
+  imports = [ ../options.nix ];
+  nix.package = pkgs.nixUnstable;
+  nixpkgs.config.allowUnfree = true;
+
+  programs.fish.enable = true;
+
+  nix.buildMachines = [{
+    hostName = "builder";
+    system = "x86_64-linux";
+    maxJobs = 1;
+    speedFactor = 2;
+    supportedFeatures = [ "nixos-test" "benchmark" "big-parallel" "kvm" ];
+    mandatoryFeatures = [ ];
+  }];
+  nix.distributedBuilds = true;
+  # optional, useful when the builder has a faster internet connection than yours
+  nix.extraOptions = ''
+    builders-use-substitutes = true
+  '';
   main-user = { ... }: {
+    xdg.enable = true;
+    home.packages = with pkgs; [ niv gopass nixfmt ];
+    programs.gh.enable = true;
+    programs.git.lfs.enable = true;
+    programs.readline = {
+      enable = true;
+      variables."bell-style" = "none";
+    };
 
     home.packages = with pkgs; [
       fasd

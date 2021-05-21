@@ -1,6 +1,5 @@
 { config, lib, pkgs, ... }:
 with lib; {
-  config = mkIf (config.alex.shell.enable && config.alex.is-mac) {
     home.file.hushenv = {
       text = "thisisempty";
       target = ".hushlogin";
@@ -21,5 +20,4 @@ with lib; {
       "drs" = "darwin-rebuild switch 2>/dev/null";
       "drsd" = "darwin-rebuild switch";
     };
-  };
 }
