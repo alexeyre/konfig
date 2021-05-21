@@ -1,8 +1,6 @@
 { ... }: {
   imports = [
     ./mac
-    ./bartender
-    ./brew
     ./chromium
     ./email
     ./git
@@ -18,7 +16,6 @@
     ./vi
     ./video-processing
     ./setapp
-    ./vimari
     ./gh
     ./java
     ./fzf
