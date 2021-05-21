@@ -8,7 +8,6 @@ with lib; {
   config = mkIf config.alex.vi.enable {
     programs.neovim = {
       enable = true;
-      # package = mkIf config.alex.is-mac pkgs.hello;
       extraConfig = builtins.readFile ./init.vim;
       viAlias = true;
       vimAlias = true;
