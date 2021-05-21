@@ -3,15 +3,16 @@
 import asyncio
 import iterm2
 
-async def changeTheme(connection,parts):
-    theme_dark = "moe-dark"
-    theme_light = "moe-light"
-    print(parts)
-    
+async def changeTheme(connection,parts,tmux_connections=[]):
+    theme_dark = "Wombat"
+    theme_light = "papercolor-light";
+
     if "dark" in parts:
         preset = await iterm2.ColorPreset.async_get(connection, theme_dark)
+        [await c.async_send_command("set-option status-fg black") for c in tmux_connections]
     else:
         preset = await iterm2.ColorPreset.async_get(connection, theme_light)
+        [await c.async_send_command("set-option status-fg white") for c in tmux_connections]
 
     # Update the list of all profiles and iterate over them.
     profiles=await iterm2.PartialProfile.async_query(connection)
@@ -25,7 +26,8 @@ async def main(connection):
     app = await iterm2.async_get_app(connection)
     window = app.current_window
     initial_theme = await app.async_get_theme()
-    await changeTheme(connection,initial_theme)
+    tmux_connections = await iterm2.async_get_tmux_connections(connection)
+    await changeTheme(connection,initial_theme,tmux_connections)
 
     async with iterm2.VariableMonitor(connection, iterm2.VariableScopes.APP, "effectiveTheme", None) as mon:
         while True:
@@ -33,8 +35,8 @@ async def main(connection):
             theme = await mon.async_get()
             # Themes have space-delimited attributes, one of which will be light or dark.
             parts = theme.split(" ")
-    
+
             await changeTheme(connection,parts)
-            
+
 
 iterm2.run_forever(main)
