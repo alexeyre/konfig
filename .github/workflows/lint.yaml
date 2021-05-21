@@ -11,4 +11,4 @@ jobs:
       with:
         nix_path: nixpkgs=channel:nixos-unstable
     - name: global nixfmt
-      run: nix run nixpkgs.nixfmt nixpkgs.findutils "nixfmt --check $(find $GITHUB_WORKSPACE -name '*.nix' -print)"
+      run: nix-shell -p nixfmt findutils --run "nixfmt --check $(find $GITHUB_WORKSPACE -name '*.nix' -print)"
