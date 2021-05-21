@@ -33,7 +33,7 @@ with lib; {
     xdg.enable = true;
 
     ###########
-    ### git ###
+    ### Git ###
     ###########
     programs.gh.enable = true; # Enable GitHub specific tooling
     programs.git.lfs.enable = true; # Enable Git LFS
