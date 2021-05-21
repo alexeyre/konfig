@@ -1,5 +1,6 @@
-{ config, pkgs, ... }: {
-  imports = [ ../.. ];
+{ config, lib, pkgs, ... }:
+with lib; {
+  imports = [ ../../general ./keyboard ];
 
   system.defaults.NSGlobalDomain.InitialKeyRepeat = 10;
   system.defaults.NSGlobalDomain.KeyRepeat = 1;
@@ -23,20 +24,14 @@
   users.users.alex.home = "/Users/alex";
 
   main-user = { ... }: {
-    imports = [ ./modules ];
+    imports = [ ./modules ./brew ];
     programs.tmux.shell = let
       zsh_arm = (pkgs.writeScriptBin "zsh_arm" ''
         #!${pkgs.stdenv.shell}
           arch -arm64e /bin/zsh
       '');
     in mkIf config.alex.is-mac "${zsh_arm}/bin/zsh_arm";
-    alex.brew.enable = true;
-    alex.tmux.enable = true;
-    alex.brew.casks = [ "battle-net" ];
     alex.brew.formulae = [ "gh" ];
-    alex.keyboard.karabiner.enable = true;
-    alex.bartender.enable = true;
-    alex.iterm.enable = true;
     alex.brew.casks = [
       "homebrew/cask/programmer-dvorak"
       "alfred"
@@ -49,9 +44,9 @@
       "notion"
       "toggl-track"
       "spotify"
+
+      "battle-net"
     ];
-    alex.setapp.enable = true;
-    alex.vimari.enable = true;
     alex.brew.taps = [ "homebrew/bundle" "homebrew/core" "homebrew/cask" ];
     programs.zsh.dirHashes = {
       artifacts = "$HOME/.CMVolumes/University/Artifacts";

@@ -21,8 +21,8 @@ with lib; {
     builders-use-substitutes = true
   '';
   main-user = { ... }: {
+    imports = [ ./shell ./vi ./newsboat ];
     xdg.enable = true;
-    home.packages = with pkgs; [ niv gopass nixfmt ];
     programs.gh.enable = true;
     programs.git.lfs.enable = true;
     programs.readline = {
@@ -31,8 +31,10 @@ with lib; {
     };
 
     home.packages = with pkgs; [
+      niv
+      gopass
+      nixfmt
       fasd
-      fzf
       (writeScriptBin { nativeBuildInputs = with pkgs; [ exiftool ]; }
         "strip_exif" ''
           #!${pkgs.stdenv.shell}
@@ -132,54 +134,54 @@ with lib; {
           bind index                      \047A  collapse-all # Missing :folddisable/foldenable
       '';
     };
-  };
-  programs.zsh.initExtra = ''
-    source ${config.alex.fzf.directory}/shell/key-bindings.zsh
-    bindkey -r "^T"
-    bindkey '^O' fzf-file-widget
-  '';
-  programs.gh.gitProtocol = "ssh";
-  programs.git = {
-    enable = true;
-    userName = "Alex Eyre";
-    userEmail = "alexeeyre@gmail.com";
-  };
-  home.file.lessKeyConfig = {
-    text = ''
-      #command
-      d left-scroll
-      h forw-line
-      t back-line
-      n right-scroll
+    programs.zsh.initExtra = ''
+      source ${pkgs.fzf}/share/fzf/key-bindings.zsh
+      bindkey -r "^T"
+      bindkey '^O' fzf-file-widget
     '';
-    target = ".lesskey";
-    onChange = "${pkgs.less}/bin/lesskey";
-  };
-  programs.tmux.tmuxp.enable = true;
-  programs.tmux = {
-    enable = true;
-    keyMode = "vi";
-    newSession = true;
-    prefix = "C-a";
-    escapeTime = 0;
-    disableConfirmationPrompt = true;
-    terminal = "screen-256color";
-    plugins = with pkgs.tmuxPlugins; [ nord prefix-highlight ];
-    extraConfig = ''
-      setw -g window-status-current-format ' #I:#W#F '
-      setw -g window-status-format ' #I:#W#F '
-      setw -g mode-keys vi
-      unbind-key j
-      bind-key t select-pane -D
-      unbind-key k
-      bind-key n select-pane -U
-      unbind-key h
-      bind-key h select-pane -L
-      unbind-key l
-      bind-key s select-pane -R
-      bind c new-window -c "#{pane_current_path}"
-      bind '"' split-window -c "#{pane_current_path}"
-      bind % split-window -h -c "#{pane_current_path}"
-    '';
+    programs.gh.gitProtocol = "ssh";
+    programs.git = {
+      enable = true;
+      userName = "Alex Eyre";
+      userEmail = "alexeeyre@gmail.com";
+    };
+    home.file.lessKeyConfig = {
+      text = ''
+        #command
+        d left-scroll
+        h forw-line
+        t back-line
+        n right-scroll
+      '';
+      target = ".lesskey";
+      onChange = "${pkgs.less}/bin/lesskey";
+    };
+    programs.tmux.tmuxp.enable = true;
+    programs.tmux = {
+      enable = true;
+      keyMode = "vi";
+      newSession = true;
+      prefix = "C-a";
+      escapeTime = 0;
+      disableConfirmationPrompt = true;
+      terminal = "screen-256color";
+      plugins = with pkgs.tmuxPlugins; [ nord prefix-highlight ];
+      extraConfig = ''
+        setw -g window-status-current-format ' #I:#W#F '
+        setw -g window-status-format ' #I:#W#F '
+        setw -g mode-keys vi
+        unbind-key j
+        bind-key t select-pane -D
+        unbind-key k
+        bind-key n select-pane -U
+        unbind-key h
+        bind-key h select-pane -L
+        unbind-key l
+        bind-key s select-pane -R
+        bind c new-window -c "#{pane_current_path}"
+        bind '"' split-window -c "#{pane_current_path}"
+        bind % split-window -h -c "#{pane_current_path}"
+      '';
+    };
   };
 }
