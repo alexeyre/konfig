@@ -10,7 +10,5 @@ jobs:
     - uses: cachix/install-nix-action@v13
       with:
         nix_path: nixpkgs=channel:nixos-unstable
-    - name: fix permissions
-      run: nix run nixpkgs.findutils nixpkgs.coreutils "chmod 644 $(find . -type f) && chmod 755 $(find . -type d)"
     - name: global nixfmt
-      run: nix run nixpkgs.nixfmt nixpkgs.findutils "ls -al $(find . -name '*.nix' -print)"
+      run: nix run nixpkgs.nixfmt nixpkgs.findutils "nixfmt --check $(find $GITHUB_WORKSPACE -name '*.nix' -print)"
