@@ -12,9 +12,11 @@ jobs:
         nix_path: nixpkgs=channel:nixos-unstable
     - uses: jitterbit/get-changed-files@v1
       id: files
-    - name: global changed files nixfmt
-      run: |
-        nix-shell -p nixfmt
-        for changed_file in ${{ steps.files.outputs.all }}; do
-          nixfmt --check "${changed_file}";
-        done
+    - uses: workflow/nix-shell-action@v1
+      name: global changed files nixfmt
+      with:
+        packages: nixfmt
+        script: |
+          for changed_file in ${{ steps.files.outputs.all }}; do
+            nixfmt --check "${changed_file}";
+          done
