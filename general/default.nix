@@ -1,12 +1,13 @@
 { config, lib, pkgs, ... }:
 with lib; {
+  # setup system-wide options
+  imports = [ ../options.nix ./keyboard.nix ];
 
-  imports = [ ../options.nix ];
-  nix.package = pkgs.nixUnstable;
-  nixpkgs.config.allowUnfree = true;
+  # Nix tooling options
+  nix.package = pkgs.nixUnstable; # Needed for nix flakes
+  nixpkgs.config.allowUnfree = true; # Allow the installation of unfree packages
 
-  programs.fish.enable = true;
-
+  # Set up remote builder
   nix.buildMachines = [{
     hostName = "builder";
     system = "x86_64-linux";
@@ -16,25 +17,41 @@ with lib; {
     mandatoryFeatures = [ ];
   }];
   nix.distributedBuilds = true;
-  # optional, useful when the builder has a faster internet connection than yours
   nix.extraOptions = ''
     builders-use-substitutes = true
   '';
+
+  # Enter home-configuration
   main-user = { ... }: {
-    imports = [ ./shell ./vi ./newsboat ];
+    imports = [ ./shell # Set up the interactive shell
+    ./vi # Set up (n)vi(m)
+    ./newsboat # Set up newsboat
+  ];
+
+    # Enable the use of XDG directories, see https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
     xdg.enable = true;
-    programs.gh.enable = true;
-    programs.git.lfs.enable = true;
+
+    ###########
+    ### git ###
+    ###########
+    programs.gh.enable = true; # Enable GitHub specific tooling
+    programs.git.lfs.enable = true; # Enable Git LFS
+    programs.gh.gitProtocol = "ssh";
+    programs.git = {
+      enable = true;
+      userName = "Alex Eyre";
+      userEmail = "alexeeyre@gmail.com";
+    };
+
+
     programs.readline = {
       enable = true;
       variables."bell-style" = "none";
     };
 
     home.packages = with pkgs; [
-      niv
       gopass
       nixfmt
-      fasd
       (writeScriptBin { nativeBuildInputs = with pkgs; [ exiftool ]; }
         "strip_exif" ''
           #!${pkgs.stdenv.shell}
@@ -63,37 +80,50 @@ with lib; {
           '')
     ];
 
-    # email
-    programs.mbsync.enable = true;
-    programs.mu.enable = true;
-    accounts.email.maildirBasePath = ".local/share/maildir";
+    #############
+    ### Email ###
+    #############
+
+    programs.mbsync.enable = true; # Enable MBSync to grab email from the server
+    programs.mu.enable = true; # Enable the mu email indexing program
+    accounts.email.maildirBasePath = ".local/share/maildir"; # Force the use of an XDG directory
+
+    # Set up UoE email
     accounts.email.accounts.edinburgh = {
+      # Account settings
       primary = true;
       realName = "Alex Eyre";
       address = "s2031787@ed.ac.uk";
       userName = "s2031787@ed.ac.uk";
       aliases = [ "A.Eyre@sms.ed.ac.uk" ];
+
+      # Server settings
       imap = { host = "outlook.office365.com"; };
       smtp = {
         host = "smtp.office365.com";
         tls.useStartTls = true;
       };
 
+      # Account access
       passwordCommand =
         "${pkgs.gopass}/bin/gopass show -o websites/www.ed.ac.uk/s2031787@ed.ac.uk";
 
+      # Configure mu and msmtp
       mu.enable = true;
       msmtp.enable = true;
 
+      # Enable creation of MBSync config
       mbsync = {
         enable = true;
         create = "maildir";
       };
     };
 
+    # Set up the NeoMutt email reader
     programs.neomutt = {
       enable = true;
-      extraConfig = ''
+      # Shamelessly stolen (I think) and modified from https://github.com/Lukesmithxyz/voidrice
+      extraConfig = mkIf (system.keyboard.layout == "dvp") ''
         #------------------------------------------------------------
         # Vi Key Bindings
         #------------------------------------------------------------
@@ -133,19 +163,11 @@ with lib; {
           bind index                      \047a  collapse-thread
           bind index                      \047A  collapse-all # Missing :folddisable/foldenable
       '';
+      # TODO: add qwerty config
     };
-    programs.zsh.initExtra = ''
-      source ${pkgs.fzf}/share/fzf/key-bindings.zsh
-      bindkey -r "^T"
-      bindkey '^O' fzf-file-widget
-    '';
-    programs.gh.gitProtocol = "ssh";
-    programs.git = {
-      enable = true;
-      userName = "Alex Eyre";
-      userEmail = "alexeeyre@gmail.com";
-    };
-    home.file.lessKeyConfig = {
+
+
+    home.file.lessKeyConfig = mkIf (system.keyboard.layout == "dvp") {
       text = ''
         #command
         d left-scroll
@@ -156,20 +178,38 @@ with lib; {
       target = ".lesskey";
       onChange = "${pkgs.less}/bin/lesskey";
     };
-    programs.tmux.tmuxp.enable = true;
+
+    ############
+    ### tmux ###
+    ############
     programs.tmux = {
       enable = true;
-      keyMode = "vi";
-      newSession = true;
-      prefix = "C-a";
-      escapeTime = 0;
-      disableConfirmationPrompt = true;
-      terminal = "screen-256color";
-      plugins = with pkgs.tmuxPlugins; [ nord prefix-highlight ];
-      extraConfig = ''
+      keyMode = "vi"; # Use vi bindings inside tmux
+      newSession = true; # Create a new session by default
+      prefix = "C-a"; # Set the prefix to something that doesn't collide with vi
+      escapeTime = 0; # Disable built-in delay on prefix key
+      disableConfirmationPrompt = true; # Don't ask for confirmation when killing a pane
+      terminal = "screen-256color"; # Use 256colors
+      plugins = with pkgs.tmuxPlugins; [ nord # Nice colorscheme I use sometimes
+      prefix-highlight # Adds a small indicator at the bottom when the prefix key is pressed
+    ];
+
+    extraConfig =
+    # Configure the status format
+      ''
         setw -g window-status-current-format ' #I:#W#F '
         setw -g window-status-format ' #I:#W#F '
-        setw -g mode-keys vi
+        ''
+        +
+        # Make new tumx panes automatically be in the same directory as your active pane
+        ''
+        bind c new-window -c "#{pane_current_path}"
+        bind '"' split-window -c "#{pane_current_path}"
+        bind % split-window -h -c "#{pane_current_path}"
+        ''
+        +
+        # Configure dvorak select-pane bindings
+        optionalString (system.keyboard.layout == "dvp") ''
         unbind-key j
         bind-key t select-pane -D
         unbind-key k
@@ -178,10 +218,7 @@ with lib; {
         bind-key h select-pane -L
         unbind-key l
         bind-key s select-pane -R
-        bind c new-window -c "#{pane_current_path}"
-        bind '"' split-window -c "#{pane_current_path}"
-        bind % split-window -h -c "#{pane_current_path}"
-      '';
+          '';
     };
   };
 }
