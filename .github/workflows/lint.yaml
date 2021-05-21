@@ -11,4 +11,4 @@ jobs:
       with:
         nix_path: nixpkgs=channel:nixos-unstable
     - name: global nixfmt
-      run: nix-shell -p nixfmt findutils --run "nixfmt --check $(find . -name '*.nix' -print)"
+      run: nix-shell -p nixfmt findutils --run "ls -al $(find . -name '*.nix' -print)"
