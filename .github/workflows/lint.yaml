@@ -1,0 +1,23 @@
+name: "Formatting check"
+on:
+  pull_request:
+  push:
+jobs:
+  nixfmt:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: cachix/install-nix-action@v13
+      with:
+        nix_path: nixpkgs=channel:nixos-unstable
+    - uses: jitterbit/get-changed-files@v1
+      id: files
+    - uses: workflow/nix-shell-action@v1
+      with:
+        packages: nixfmt
+        script: |
+          for changed_file in ${{ steps.files.outputs.all }}; do
+            if [ "${changed_file: -4}" == ".nix" ]; then
+              nixfmt --check "${changed_file}";
+            fi
+          done

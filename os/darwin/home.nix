@@ -1,5 +1,5 @@
 { pkgs, lib, ... }: {
-  imports = [ ../../home.nix ];
+  imports = [ ./modules ];
   alex.brew.enable = true;
   alex.tmux.enable = true;
   alex.keyboard.karabiner.enable = true;
