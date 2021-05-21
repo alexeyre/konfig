@@ -1,0 +1,17 @@
+name: "Formatting check"
+on:
+  pull_request:
+  push:
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: cachix/install-nix-action@v10
+      with:
+        nix_path: nixpkgs=channel:nixos-unstable
+    - uses: workflow/nix-shell-action@v1
+      with:
+        packages: nixfmt findutils
+        script: |
+          find . -name "*.nix" -exec nixfmt --check {} \;
