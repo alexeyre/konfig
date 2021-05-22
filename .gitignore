@@ -30,5 +30,6 @@ Temporary Items
 **/*~
 
 # nix output
+result
 result/*
 result/
