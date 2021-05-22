@@ -1,5 +1,5 @@
-{ config, ... }: {
-  imports = [ ../os/darwin ];
+{ config, pkgs, dotfiles, ... }: {
+  imports = [ dotfiles/os/darwin ];
   networking.hostName = "winden";
   nix.trustedUsers = [ "alex" ];
   services.nix-daemon.enable = false;

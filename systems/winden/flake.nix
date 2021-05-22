@@ -8,6 +8,7 @@
   outputs = { self, darwin, nixpkgs }: {
     darwinConfigurations."winden" = darwin.lib.darwinSystem {
       modules = [ ./configuration.nix ];
+      inputs = { inherit nixpkgs self; };
     };
   };
 }
