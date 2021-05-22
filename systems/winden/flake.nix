@@ -2,21 +2,14 @@
   description = "winden";
   inputs = {
     darwin.url = "github:lnl7/nix-darwin/master";
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     home-manager.url = "github:nix-community/home-manager";
     darwin.inputs.nixpkgs.follows = "nixpkgs";
   };
   outputs = { self, darwin, nixpkgs, home-manager }: {
     darwinConfigurations."winden" = darwin.lib.darwinSystem {
-      modules = [
-        ./configuration.nix
-        home-manager.darwinModules.home-manager
-        {
-          home-manager.useGlobalPkgs = true;
-          home-manager.backupFileExtension = ".backup";
-	  home-manager.users.alex.home.homeDirectory = "/Users/alex";
-        }
-      ];
+      modules =
+        [ ./configuration.nix home-manager.darwinModules.home-manager { } ];
       inputs = { inherit self nixpkgs home-manager; };
     };
   };
