@@ -40,14 +40,14 @@ with lib; {
       text = (concatMapStrings (x:
         ''tap "'' + x + ''
           "
-        '') config.alex.brew.taps) + (concatMapStrings (x:
+        '') config.programs.brew.taps) + (concatMapStrings (x:
           ''brew "'' + x + ''
             "
-          '') config.alex.brew.formulae) + (concatMapStrings (x:
+          '') config.programs.brew.formulae) + (concatMapStrings (x:
             ''cask "'' + x + ''
               "
-            '') config.alex.brew.casks)
-        + (concatMapStrings (x: ''mas "'' + x + "\n") config.alex.brew.mas);
+            '') config.programs.brew.casks)
+        + (concatMapStrings (x: ''mas "'' + x + "\n") config.programs.brew.mas);
 
       onChange = ''
         PATH=$PATH:${config.programs.brew.directory}/bin

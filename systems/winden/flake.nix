@@ -1,18 +1,20 @@
 {
   description = "winden";
   inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/master";
     darwin.url = "github:lnl7/nix-darwin/master";
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    home-manager.url = "github:nix-community/home-manager";
+    home-manager.url = "github:nix-community/home-manager/master";
+
+
     darwin.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
   outputs = { self, darwin, nixpkgs, home-manager }: {
-    darwinConfigurations."winden" = let
-home-manager = home-manager.darwinModules.home-manager;
-in darwin.lib.darwinSystem {
-      modules =
-        [ ./configuration.nix ];
-      inputs = { inherit self nixpkgs home-manager; };
-    };
+    darwinConfigurations."winden" = darwin.lib.darwinSystem {
+        modules = [
+		(home-manager.darwinModules.home-manager)
+		./configuration.nix
+	];
+      };
   };
 }
