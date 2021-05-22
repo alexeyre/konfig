@@ -8,8 +8,15 @@
   };
   outputs = { self, darwin, nixpkgs, home-manager }: {
     darwinConfigurations."winden" = darwin.lib.darwinSystem {
-      modules = [ ./configuration.nix ];
-      inputs = { inherit self nixpkgs home-manager; };
-    };
+      modules = [
+      ./configuration.nix
+      home-manager.darwinModules.home-manager
+      {
+        home-manager.useGlobalPkgs = true;
+        home-manager.backupFileExtension = ".backup";
+      }
+    ];
+    inputs = { inherit self nixpkgs home-manager; };
+  };
   };
 }

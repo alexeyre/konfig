@@ -16,10 +16,6 @@ with lib; {
 
   environment.pathsToLink = [ "/share/zsh" "/opt/homebrew/share/zsh" ];
 
-  home-manager.useGlobalPkgs = true;
-
-  home-manager.backupFileExtension = ".backup";
-
   # ugly hack
   users.users.alex.home = "/Users/alex";
 
