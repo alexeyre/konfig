@@ -28,3 +28,7 @@ Temporary Items
 # Emacs files
 **/#*#
 **/*~
+
+# nix output
+result/*
+result/
