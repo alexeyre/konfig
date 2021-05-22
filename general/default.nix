@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, home-manager, ... }:
 with lib; {
   # setup system-wide options
   imports = [ ../options.nix ./keyboard.nix ];

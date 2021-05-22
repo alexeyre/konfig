@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, home-manager, ... }:
 with lib; {
   imports = [ ../../general ./keyboard ./bartender ./iterm ./vimari ];
 
@@ -15,10 +15,6 @@ with lib; {
   environment.darwinConfig = "$HOME/.config/nix/configuration.nix";
 
   environment.pathsToLink = [ "/share/zsh" "/opt/homebrew/share/zsh" ];
-
-  home-manager.useGlobalPkgs = true;
-
-  home-manager.backupFileExtension = ".backup";
 
   # ugly hack
   users.users.alex.home = "/Users/alex";
