@@ -7,9 +7,11 @@
     darwin.inputs.nixpkgs.follows = "nixpkgs";
   };
   outputs = { self, darwin, nixpkgs, home-manager }: {
-    darwinConfigurations."winden" = darwin.lib.darwinSystem {
+    darwinConfigurations."winden" = let
+home-manager = home-manager.darwinModules.home-manager;
+in darwin.lib.darwinSystem {
       modules =
-        [ ./configuration.nix home-manager.darwinModules.home-manager { } ];
+        [ ./configuration.nix ];
       inputs = { inherit self nixpkgs home-manager; };
     };
   };

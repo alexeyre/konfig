@@ -5,5 +5,5 @@
   services.nix-daemon.enable = false;
 
   # set the main user of the machine!
-  main-user = home-manager.users.alex;
+  # main-user = "alex"
 }

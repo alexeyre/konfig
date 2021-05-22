@@ -34,7 +34,7 @@ with lib; {
   config = {
     home.packages =
       [ (pkgs.writeScriptBin "sync_brew" config.home.file.brewfile.onChange) ];
-    alex.brew.formulae = mkIf (config.alex.brew.mas != [ ]) [ "mas" ];
+    programs.brew.formulae = mkIf (config.programs.brew.mas != [ ]) [ "mas" ];
     home.file.brewfile = {
       target = ".Brewfile";
       text = (concatMapStrings (x:

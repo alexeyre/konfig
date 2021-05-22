@@ -1,4 +1,4 @@
-{ config, lib, pkgs, home-manager, ... }:
+{ config, lib, pkgs, ... }:
 with lib; {
   imports = [ ../../general ./keyboard ./bartender ./iterm ./vimari ];
 
@@ -19,16 +19,16 @@ with lib; {
   # ugly hack
   users.users.alex.home = "/Users/alex";
 
-  main-user = { ... }: {
-    imports = [ ./modules ./brew ];
+  home-manager.users.alex = { ... }: {
+    imports = [ ./brew ];
     programs.tmux.shell = let
       zsh_arm = (pkgs.writeScriptBin "zsh_arm" ''
         #!${pkgs.stdenv.shell}
           arch -arm64e /bin/zsh
       '');
-    in mkIf config.alex.is-mac "${zsh_arm}/bin/zsh_arm";
-    alex.brew.formulae = [ "gh" ];
-    alex.brew.casks = [
+    in "${zsh_arm}/bin/zsh_arm";
+    programs.brew.formulae = [ "gh" ];
+    programs.brew.casks = [
       "homebrew/cask/programmer-dvorak"
       "alfred"
       "anki"
@@ -43,7 +43,7 @@ with lib; {
 
       "battle-net"
     ];
-    alex.brew.taps = [ "homebrew/bundle" "homebrew/core" "homebrew/cask" ];
+    programs.brew.taps = [ "homebrew/bundle" "homebrew/core" "homebrew/cask" ];
     programs.zsh.dirHashes = {
       artifacts = "$HOME/.CMVolumes/University/Artifacts";
     };
