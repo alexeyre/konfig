@@ -4,10 +4,6 @@
   nix.trustedUsers = [ "alex" ];
   services.nix-daemon.enable = false;
 
-  home-manager.users.alex = (import ../os/darwin/home.nix);
-
-  #nix.extraOptions = ''
-  #  extra-platforms = x86_64-darwin aarch64-darwin
-  #  system = aarch64-darwin
-  #'';
+  # set the main user of the machine!
+  main-user = config.home-manager.users.alex;
 }
