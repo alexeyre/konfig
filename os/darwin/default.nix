@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }:
 with lib; {
-  imports = [ ../../general ./keyboard ./bartender ];
+  imports = [ ../../general ./keyboard ./bartender ./iterm ./vimari ];
 
   system.defaults.NSGlobalDomain.InitialKeyRepeat = 10;
   system.defaults.NSGlobalDomain.KeyRepeat = 1;

@@ -1,12 +1,7 @@
 { config, lib, pkgs, ... }:
 with lib; {
-  options.alex.vimari.enable = mkOption {
-    type = types.bool;
-    default = false;
-    description = "Whether to configure vimari";
-  };
-  config = mkIf (config.alex.vimari.enable && config.alex.is-mac) {
-    alex.brew.mas = [ ''Vimari", id: 1480933944'' ];
+  main-user = {
+    brew.mas = [ ''Vimari", id: 1480933944'' ];
     home.file.vimariPreferences = {
       text = ''
         {
@@ -40,13 +35,13 @@ with lib; {
               "openTab": "y"
           }
         }
-            '';
+      '';
       target =
         "Library/Containers/net.televator.Vimari.SafariExtension/Data/Library/Application Support/userSettings.json.symlink";
       onChange = ''
         #!${pkgs.stdenv.shell}
               cp $(/usr/bin/readlink ~/Library/Containers/net.televator.Vimari.SafariExtension/Data/Library/Application\ Support/userSettings.json.symlink) ~/Library/Containers/net.televator.Vimari.SafariExtension/Data/Library/Application\ Support/userSettings.json
-            '';
+      '';
     };
   };
 }
