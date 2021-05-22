@@ -14,6 +14,7 @@
         {
           home-manager.useGlobalPkgs = true;
           home-manager.backupFileExtension = ".backup";
+	  home-manager.users.alex.home.homeDirectory = "/Users/alex";
         }
       ];
       inputs = { inherit self nixpkgs home-manager; };
