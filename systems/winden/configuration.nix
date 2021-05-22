@@ -1,4 +1,4 @@
-{ ... }: {
+{ config, ... }: {
   imports = [ ../os/darwin ];
   networking.hostName = "winden";
   nix.trustedUsers = [ "alex" ];
