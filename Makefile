@@ -5,6 +5,7 @@
 .PHONY: switch
 
 HOSTNAME := $(shell hostname)
+PWD := $(shell pwd)
 
 all: clean install switch
 
@@ -14,5 +15,5 @@ help:           ## Show this help.
 format:
 	nix-shell -p nixfmt findutils --command 'find . -type f -name "*.nix" -exec nixfmt {} \;'
 switch:
-	nix build ./systems/$(HOSTNAME)
+	nix build $(PWD)/systems/$(HOSTNAME)
 	./result/sw/bin/darwin-rebuild switch --flake ./systems/$(HOSTNAME)#darwinConfigurations.$(HOSTNAME).system
