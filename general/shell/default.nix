@@ -14,8 +14,8 @@
         } "${pkgs.babelfish}/bin/babelfish < ${path} > $out;");
     in {
       enable = true;
-      interactiveShellInit = ''
-        fenv source /etc/static/bashrc
+      loginShellInit = ''
+	fenv source /etc/static/bashrc
         [ -e $HOME/.iterm2_shell_integration.fish ] && source $HOME/.iterm2_shell_integration.fish
       '';
       plugins = [

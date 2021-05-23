@@ -4,6 +4,7 @@
 .PHONY: install
 .PHONY: switch
 
+.DEFAULT_GOAL := switch
 HOSTNAME := $(shell hostname)
 PWD := $(shell pwd)
 

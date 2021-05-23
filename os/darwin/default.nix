@@ -19,19 +19,16 @@ with lib; {
   # ugly hack
   users.users.alex.home = "/Users/alex";
 
+  environment.systemPath = let homebrew_directory =
+    config.home-manager.users."${config.main-user}".programs.brew.directory;
+  in [ "${homebrew_directory}/bin" ];
+
   home-manager.users."${config.main-user}" = { ... }: {
     imports = [ ./brew ];
 
     # install fish on macOS
     programs.brew.formulae = [ "gh" ]
       ++ optional config.programs.fish.enable "fish"; # install fish on macOS
-
-    programs.fish.shellInit = let
-      homebrew_directory =
-        config.home-manager.users."${config.main-user}".programs.brew.directory;
-    in ''
-      set -U fish_user_paths ${homebrew_directory} $fish_user_paths
-    '';
 
     # silence macOS MOTD message
     home.file.hushenv = {
