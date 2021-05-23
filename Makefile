@@ -15,5 +15,8 @@ help:           ## Show this help.
 format:
 	nix-shell -p nixfmt findutils --command 'find . -type f -name "*.nix" -exec nixfmt {} \;'
 switch:
-	nix build --impure "$(PWD)/systems/$(HOSTNAME)#darwinConfigurations.$(HOSTNAME).system"
-	./result/sw/bin/darwin-rebuild switch --impure --flake ./systems/$(HOSTNAME)
+	nix build "$(PWD)/systems/$(HOSTNAME)#darwinConfigurations.$(HOSTNAME).system"
+	./result/sw/bin/darwin-rebuild switch --flake ./systems/$(HOSTNAME)
+switch-debug:
+	nix build --show-trace -v "$(PWD)/systems/$(HOSTNAME)#darwinConfigurations.$(HOSTNAME).system"
+	./result/sw/bin/darwin-rebuild switch --show-trace -v --flake ./systems/$(HOSTNAME)

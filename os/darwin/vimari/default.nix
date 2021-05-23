@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 with lib; {
-  main-user = {
-    brew.mas = [ ''Vimari", id: 1480933944'' ];
+  home-manager.users."${config.main-user}" = {
+    programs.brew.mas = [ ''Vimari", id: 1480933944'' ];
     home.file.vimariPreferences = {
       text = ''
         {

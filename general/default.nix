@@ -1,4 +1,4 @@
-{ config, lib, pkgs, home-manager, ... }:
+{ config, lib, pkgs, ... }:
 with lib; {
   # setup system-wide options
   imports = [ ../options.nix ./keyboard.nix ];
@@ -22,7 +22,7 @@ with lib; {
   '';
 
   # Enter home-configuration
-  main-user = { ... }: {
+  home-manager.users."${config.main-user}" = { ... }: {
     imports = [
       ./shell # Set up the interactive shell
       ./vi # Set up (n)vi(m)

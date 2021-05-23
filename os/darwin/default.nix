@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }:
 with lib; {
-  imports = [ ../../general ./keyboard ./bartender ./iterm ./vimari ];
+  imports = [ ../../general ./alfred ./keyboard ./bartender ./iterm ./vimari ];
 
   system.defaults.NSGlobalDomain.InitialKeyRepeat = 10;
   system.defaults.NSGlobalDomain.KeyRepeat = 1;
@@ -19,7 +19,7 @@ with lib; {
   # ugly hack
   users.users.alex.home = "/Users/alex";
 
-  home-manager.users.alex = { ... }: {
+  home-manager.users."${config.main-user}" = { ... }: {
     imports = [ ./brew ];
     programs.tmux.shell = let
       zsh_arm = (pkgs.writeScriptBin "zsh_arm" ''
