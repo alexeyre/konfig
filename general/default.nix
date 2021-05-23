@@ -1,7 +1,11 @@
 { config, lib, pkgs, ... }:
 with lib; {
-  # setup system-wide options
-  imports = [ ../options.nix ./keyboard.nix ];
+  imports = [
+    ../options.nix # setup system-wide options
+    ./keyboard.nix # supplies the current keymap for easier keyboard switching if desired
+    ./shell # set up the shell environment
+    ./vi # Set up (n)vi(m)
+  ];
 
   # Nix tooling options
   nix.package = pkgs.nixUnstable; # Needed for nix flakes
@@ -23,12 +27,6 @@ with lib; {
 
   # Enter home-configuration
   home-manager.users."${config.main-user}" = { ... }: {
-    imports = [
-      ./shell # Set up the interactive shell
-      ./vi # Set up (n)vi(m)
-      ./newsboat # Set up newsboat
-    ];
-
     # Enable the use of XDG directories, see https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
     xdg.enable = true;
 
@@ -52,11 +50,10 @@ with lib; {
     home.packages = with pkgs; [
       gopass
       nixfmt
-      (writeScriptBin { nativeBuildInputs = with pkgs; [ exiftool ]; }
-        "strip_exif" ''
-          #!${pkgs.stdenv.shell}
-          exiftool -all= "$@"
-        '')
+      (writeScriptBin "strip_exif" ''
+        #!${pkgs.stdenv.shell}
+        ${pkgs.exiftool}/bin/exiftool -all= "$@"
+      '')
       less
       (writeScriptBin "youtube-dl_wav" ''
         ${pkgs.youtube-dl}/bin/youtube-dl --ffmpeg-location=${pkgs.ffmpeg}/bin/ffmpeg -x --audio-format=wav $1
@@ -64,11 +61,7 @@ with lib; {
       (writeScriptBin "download_wallpaper" ''
         ${pkgs.curl}/bin/curl -l $1 -o ~/Pictures/papes/$(${pkgs.coreutils}/bin/basename $1)
       '')
-      (texlive.combine {
-        inherit (texlive)
-          plantuml minted fvextra scheme-full wrapfig ulem amsmath capt-of
-          hyperref;
-      })
+      # (texlive.combine { inherit (texlive) plantuml minted fvextra scheme-full wrapfig ulem amsmath capt-of hyperref; })
       (pkgs.writeScriptBin "compress_video" ''
         #!${pkgs.stdenv.shell}
             file_name="''${1##*/}"
@@ -124,7 +117,7 @@ with lib; {
     programs.neomutt = {
       enable = true;
       # Shamelessly stolen (I think) and modified from https://github.com/Lukesmithxyz/voidrice
-      extraConfig = mkIf (system.keyboard.layout == "dvp") ''
+      extraConfig = mkIf (config.system.keyboard.layout == "dvp") ''
         #------------------------------------------------------------
         # Vi Key Bindings
         #------------------------------------------------------------
@@ -167,7 +160,7 @@ with lib; {
       # TODO: add qwerty config
     };
 
-    home.file.lessKeyConfig = mkIf (system.keyboard.layout == "dvp") {
+    home.file.lessKeyConfig = mkIf (config.system.keyboard.layout == "dvp") {
       text = ''
         #command
         d left-scroll
@@ -186,15 +179,15 @@ with lib; {
       enable = true;
       keyMode = "vi"; # Use vi bindings inside tmux
       newSession = true; # Create a new session by default
-      prefix = "C-a"; # Set the prefix to something that doesn't collide with vi
+      # prefix = "C-a"; # Set the prefix to something that doesn't collide with vi
       escapeTime = 0; # Disable built-in delay on prefix key
       disableConfirmationPrompt =
         true; # Don't ask for confirmation when killing a pane
       terminal = "screen-256color"; # Use 256colors
-      plugins = with pkgs.tmuxPlugins; [
-        nord # Nice colorscheme I use sometimes
-        prefix-highlight # Adds a small indicator at the bottom when the prefix key is pressed
-      ];
+      plugins = with pkgs.tmuxPlugins;
+        [
+          prefix-highlight # Adds a small indicator at the bottom when the prefix key is pressed
+        ];
 
       extraConfig =
         # Configure the status format
@@ -209,7 +202,7 @@ with lib; {
           bind % split-window -h -c "#{pane_current_path}"
         '' +
         # Configure dvorak select-pane bindings
-        optionalString (system.keyboard.layout == "dvp") ''
+        optionalString (config.system.keyboard.layout == "dvp") ''
           unbind-key j
           bind-key t select-pane -D
           unbind-key k

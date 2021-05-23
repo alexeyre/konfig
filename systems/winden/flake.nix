@@ -11,11 +11,11 @@
   outputs = { self, darwin, nixpkgs, home-manager }: {
     darwinConfigurations."winden" = darwin.lib.darwinSystem {
       inputs = { inherit nixpkgs; };
-      modules =
-        [ home-manager.darwinModules.home-manager {
-		home-manager.useGlobalPkgs = true;
-	}
-	./configuration.nix ];
+      modules = [
+        home-manager.darwinModules.home-manager
+        { home-manager.useGlobalPkgs = true; }
+        ./configuration.nix
+      ];
     };
   };
 }

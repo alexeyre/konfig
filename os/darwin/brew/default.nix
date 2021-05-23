@@ -50,9 +50,10 @@ with lib; {
         + (concatMapStrings (x: ''mas "'' + x + "\n") config.programs.brew.mas);
 
       onChange = ''
-        PATH=$PATH:${config.programs.brew.directory}/bin
-        arch -arm64e brew bundle install --force --global --verbose --no-upgrade -q &&
-        arch -arm64e brew bundle cleanup --global --zap --force -q
+        	#!${pkgs.stdenv.shell}
+          PATH=$PATH:${config.programs.brew.directory}/bin
+          arch -arm64e brew bundle install --force --global --verbose --no-upgrade -q &&
+          arch -arm64e brew bundle cleanup --global --zap --force -q
       '';
     };
   };

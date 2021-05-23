@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }:
 with lib; {
-  imports = [ ../../general ./alfred ./keyboard ./bartender ./iterm ./vimari ];
+  imports = [ ../../general ./alfred ./keyboard ./iterm ./vimari ];
 
   system.defaults.NSGlobalDomain.InitialKeyRepeat = 10;
   system.defaults.NSGlobalDomain.KeyRepeat = 1;
@@ -21,13 +21,24 @@ with lib; {
 
   home-manager.users."${config.main-user}" = { ... }: {
     imports = [ ./brew ];
-    programs.tmux.shell = let
-      zsh_arm = (pkgs.writeScriptBin "zsh_arm" ''
-        #!${pkgs.stdenv.shell}
-          arch -arm64e /bin/zsh
-      '');
-    in "${zsh_arm}/bin/zsh_arm";
-    programs.brew.formulae = [ "gh" ];
+
+    # install fish on macOS
+    programs.brew.formulae = [ "gh" ]
+      ++ optional config.programs.fish.enable "fish"; # install fish on macOS
+
+    programs.fish.shellInit = let
+      homebrew_directory =
+        config.home-manager.users."${config.main-user}".programs.brew.directory;
+    in ''
+      set -U fish_user_paths ${homebrew_directory} $fish_user_paths
+    '';
+
+    # silence macOS MOTD message
+    home.file.hushenv = {
+      text = "thisisempty";
+      target = ".hushlogin";
+    };
+
     programs.brew.casks = [
       "homebrew/cask/programmer-dvorak"
       "alfred"
@@ -37,15 +48,10 @@ with lib; {
       "macfuse"
       "iina"
       "radio-silence"
-      "notion"
-      "toggl-track"
       "spotify"
 
       "battle-net"
     ];
     programs.brew.taps = [ "homebrew/bundle" "homebrew/core" "homebrew/cask" ];
-    programs.zsh.dirHashes = {
-      artifacts = "$HOME/.CMVolumes/University/Artifacts";
-    };
   };
 }
