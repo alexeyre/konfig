@@ -683,6 +683,10 @@
 				<false/>
 				<key>focusedappvariablename</key>
 				<string></string>
+				<key>hotkey</key>
+				<integer>0</integer>
+				<key>hotmod</key>
+				<integer>0</integer>
 				<key>leftcursor</key>
 				<false/>
 				<key>modsmode</key>
@@ -1474,6 +1478,10 @@ Application('com.runningwithcrayons.Alfred').setConfiguration("dailytodaypath", 
 				<false/>
 				<key>focusedappvariablename</key>
 				<string></string>
+				<key>hotkey</key>
+				<integer>0</integer>
+				<key>hotmod</key>
+				<integer>0</integer>
 				<key>leftcursor</key>
 				<false/>
 				<key>modsmode</key>
@@ -2308,11 +2316,7 @@ JSON.stringify(jsonobj)</string>
 				<key>title</key>
 				<string>Search markdown files</string>
 				<key>types</key>
-				<array>
-					<string>net.daringfireball.markdown</string>
-					<string>net.ia.markdown</string>
-					<string>public.plain-text</string>
-				</array>
+				<array/>
 				<key>withspace</key>
 				<true/>
 			</dict>
@@ -2334,6 +2338,10 @@ JSON.stringify(jsonobj)</string>
 				<false/>
 				<key>focusedappvariablename</key>
 				<string></string>
+				<key>hotkey</key>
+				<integer>0</integer>
+				<key>hotmod</key>
+				<integer>0</integer>
 				<key>leftcursor</key>
 				<false/>
 				<key>modsmode</key>
@@ -2756,11 +2764,7 @@ JSON.stringify(jsonobj)</string>
 				<key>title</key>
 				<string>Search markdown files (modified last 3 days)</string>
 				<key>types</key>
-				<array>
-					<string>net.daringfireball.markdown</string>
-					<string>net.ia.markdown</string>
-					<string>public.plain-text</string>
-				</array>
+				<array/>
 				<key>withspace</key>
 				<true/>
 			</dict>
@@ -2782,6 +2786,10 @@ JSON.stringify(jsonobj)</string>
 				<false/>
 				<key>focusedappvariablename</key>
 				<string></string>
+				<key>hotkey</key>
+				<integer>0</integer>
+				<key>hotmod</key>
+				<integer>0</integer>
 				<key>leftcursor</key>
 				<false/>
 				<key>modsmode</key>
@@ -3104,11 +3112,7 @@ Application('com.runningwithcrayons.Alfred').setConfiguration("dailyabspath", {
 				<key>title</key>
 				<string>Search markdown files (modified today)</string>
 				<key>types</key>
-				<array>
-					<string>net.daringfireball.markdown</string>
-					<string>net.ia.markdown</string>
-					<string>public.plain-text</string>
-				</array>
+				<array/>
 				<key>withspace</key>
 				<true/>
 			</dict>
@@ -3188,6 +3192,10 @@ JSON.stringify(jsonobj)</string>
 				<false/>
 				<key>focusedappvariablename</key>
 				<string></string>
+				<key>hotkey</key>
+				<integer>0</integer>
+				<key>hotmod</key>
+				<integer>0</integer>
 				<key>leftcursor</key>
 				<false/>
 				<key>modsmode</key>
@@ -3812,6 +3820,10 @@ Application('com.runningwithcrayons.Alfred').setConfiguration("dailytodo", {
 				<false/>
 				<key>focusedappvariablename</key>
 				<string></string>
+				<key>hotkey</key>
+				<integer>0</integer>
+				<key>hotmod</key>
+				<integer>0</integer>
 				<key>leftcursor</key>
 				<false/>
 				<key>modsmode</key>
@@ -3946,6 +3958,10 @@ Application('com.runningwithcrayons.Alfred').setConfiguration("inbox_md", {
 				<false/>
 				<key>focusedappvariablename</key>
 				<string></string>
+				<key>hotkey</key>
+				<integer>0</integer>
+				<key>hotmod</key>
+				<integer>0</integer>
 				<key>leftcursor</key>
 				<false/>
 				<key>modsmode</key>
@@ -4899,13 +4915,13 @@ If the Obsidian app isn't already opened, this workflow will always open the las
 		<key>dailyabspath</key>
 		<string>/Users/alex/Library/Mobile Documents/iCloud~md~obsidian/Documents/Notes/Daily</string>
 		<key>dailyformat</key>
-		<string>YYYY-MM-DD</string>
+		<string>yyyy-mm-dd</string>
 		<key>dailyheader</key>
 		<string></string>
 		<key>dailytempabspath</key>
 		<string></string>
 		<key>dailytodaypath</key>
-		<string>/Users/alex/Library/Mobile Documents/iCloud~md~obsidian/Documents/Notes/Daily/2021-05-23.md</string>
+		<string>/Users/alex/Library/Mobile Documents/iCloud~md~obsidian/Documents/Notes/Daily/2021-05-24.md</string>
 		<key>dailytodo</key>
 		<string></string>
 		<key>dailyvault</key>
