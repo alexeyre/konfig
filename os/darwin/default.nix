@@ -9,6 +9,8 @@ with lib; {
   system.defaults.dock.minimize-to-application = true;
   system.defaults.dock.show-recents = false;
   system.defaults.dock.tilesize = 32;
+  system.defaults.dock.autohide-delay = "0.0";
+  system.defaults.dock.autohide-time-modifier = "0.4";
 
   time.timeZone = "Europe/London";
 
