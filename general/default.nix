@@ -41,8 +41,8 @@ with lib; {
       userName = "Alex Eyre";
       userEmail = "alexeeyre@gmail.com";
       signing = {
-      	signByDefault = true;
-	key = "129AF2BA18B482376DCB146D2CB89CB06891BB9D"; # main key
+        signByDefault = true;
+        key = "129AF2BA18B482376DCB146D2CB89CB06891BB9D"; # main key
       };
     };
 

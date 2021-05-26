@@ -21,8 +21,9 @@ with lib; {
   # ugly hack
   users.users.alex.home = "/Users/alex";
 
-  environment.systemPath = let homebrew_directory =
-    config.home-manager.users."${config.main-user}".programs.brew.directory;
+  environment.systemPath = let
+    homebrew_directory =
+      config.home-manager.users."${config.main-user}".programs.brew.directory;
   in [ "${homebrew_directory}/bin" ];
 
   home-manager.users."${config.main-user}" = { ... }: {

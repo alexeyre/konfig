@@ -1,6 +1,5 @@
 { config, lib, pkgs, ... }:
-with lib;
-{
+with lib; {
   home-manager.users."${config.main-user}" = {
     programs.brew.casks = [ "karabiner-elements" ];
     home.file.gokuConfig = {
