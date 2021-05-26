@@ -1,11 +1,14 @@
 { config, lib, pkgs, ... }:
-with lib; {
+with lib;
+{
   home-manager.users."${config.main-user}" = {
     programs.brew.casks = [ "karabiner-elements" ];
-
-    home.file.karabiner = mkIf (config.system.keyboard.layout == "dvp") {
-      source = ./karabiner.json;
-      target = ".config/karabiner/karabiner.json";
+    home.file.gokuConfig = {
+      source = ./karabiner.edn;
+      target = ".config/karabiner.edn";
+      onChange = ''
+        ${pkgs.goku}/bin/goku -c $HOME/.config/karabiner.edn
+      '';
     };
   };
 }
