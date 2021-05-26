@@ -15,8 +15,9 @@
     in {
       enable = true;
       loginShellInit = ''
-	fenv source /etc/static/bashrc
+        fenv source /etc/static/bashrc
         [ -e $HOME/.iterm2_shell_integration.fish ] && source $HOME/.iterm2_shell_integration.fish
+        fish_vi_key_bindings
       '';
       plugins = [
         {
