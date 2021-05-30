@@ -1,6 +1,11 @@
 { config, lib, pkgs, ... }: {
   programs.fish.enable = true;
   home-manager.users."${config.main-user}" = {
+    home.packages = with pkgs; [ (writeScriptBin "dot" ''
+      #!${pkgs.stdenv.shell}
+      file=$(${pkgs.findutils}/bin/find $HOME/.local/dot -type f | ${pkgs.fzf}/bin/fzf)
+      [ -f $file ] && vi $file
+    '') ];
     programs.direnv = {
       enable = true;
       enableNixDirenvIntegration = true;

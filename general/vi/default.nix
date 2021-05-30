@@ -1,5 +1,6 @@
 { config, lib, pkgs, ... }: {
   home-manager.users."${config.main-user}" = {
+    home.sessionVariables.EDITOR = "vi";
     programs.neovim = {
       enable = true;
       extraConfig = builtins.readFile ./init.vim;
