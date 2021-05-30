@@ -13,6 +13,13 @@
              :w-mode {:key :w}},
  :main [{:des "capskey",
          :rules [:caps_lock-mode
+                 [:##h :left_arrow] ; even with f, still do left arrow
+                 [:##k :up_arrow]
+                 [:##j :down_arrow]
+                 [:##l :right_arrow]
+                 [:##f :left_option]
+                 [:##d :left_shift]
+
                  [:open_bracket :!TOopen_bracket]
                  [:close_bracket :!TOclose_bracket]
                  [:semicolon :!TOsemicolon]
@@ -23,15 +30,9 @@
                  [:a :!TOa]
                  [:b :!TOb]
                  [:c :!TOc]
-                 [:d :!TOd]
                  [:e :!TOe]
-                 [:f :!TOf]
                  [:g :!TOg]
-                 [:h :left_arrow]
                  [:i :!TOi]
-                 [:j :down_arrow]
-                 [:k :up_arrow]
-                 [:l :right_arrow]
                  [:m :!TOm]
                  [:n :!TOn]
                  [:o :!TOo]

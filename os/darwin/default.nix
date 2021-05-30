@@ -24,7 +24,7 @@ with lib; {
   environment.systemPath = let
     homebrew_directory =
       config.home-manager.users."${config.main-user}".programs.brew.directory;
-  in [ "${homebrew_directory}/bin" ];
+  in [ "${homebrew_directory}/bin" "/opt/local/bin" ];
 
   home-manager.users."${config.main-user}" = { ... }: {
     imports = [ ./brew ];
@@ -50,7 +50,7 @@ with lib; {
       "radio-silence"
       "spotify"
 
-      "battle-net"
+      # "battle-net"
     ];
     programs.brew.taps = [ "homebrew/bundle" "homebrew/core" "homebrew/cask" ];
   };
