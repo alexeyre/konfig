@@ -5,6 +5,8 @@
       enable = true;
       extraConfig = builtins.readFile ./init.vim;
       viAlias = true;
+      withPython3 = false;
+      withRuby = false;
       vimAlias = true;
       plugins = with pkgs.vimPlugins; [
         vim-polyglot

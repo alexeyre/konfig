@@ -6,7 +6,7 @@ with lib; {
       source = ./karabiner.edn;
       target = ".config/karabiner.edn";
       onChange = ''
-        ${pkgs.goku}/bin/goku
+        goku 2> /dev/null || true
       '';
     };
   };

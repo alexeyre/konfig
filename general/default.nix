@@ -42,7 +42,7 @@ with lib; {
       userEmail = "alexeeyre@gmail.com";
       signing = {
         signByDefault = true;
-        key = "129AF2BA18B482376DCB146D2CB89CB06891BB9D"; # main key
+        key = "954EBF489FD70E2E4694082B3E1F5A8C0C4F9FB3";
       };
     };
 

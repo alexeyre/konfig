@@ -51,6 +51,9 @@ with lib; {
       "spotify"
 
       # "battle-net"
+
+      "monero-wallet"
+      "zotero"
     ];
     programs.brew.taps = [ "homebrew/bundle" "homebrew/core" "homebrew/cask" ];
   };

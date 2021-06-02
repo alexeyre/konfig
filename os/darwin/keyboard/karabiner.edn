@@ -59,6 +59,5 @@
                  [:0 :!TO0]]}
         {:des "w-mode",
          :rules [:w-mode
-                 [:q [:alfred "web search" "com.alexeyre.google-search"]]]}
-        ]
-}
+                 [:q [:alfred "google" "com.akikoz.alfred.websearchsuggest"]]
+                 [:e [:alfred "wikipedia" "com.akikoz.alfred.websearchsuggest" "en "]]]}]}
