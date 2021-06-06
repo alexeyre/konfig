@@ -4,8 +4,8 @@ import asyncio
 import iterm2
 
 async def changeTheme(connection,parts,tmux_connections=[]):
-    theme_dark = "Wombat"
-    theme_light = "papercolor-light";
+    theme_dark = "Tango Dark"
+    theme_light = "Tango Light";
 
     if "dark" in parts:
         preset = await iterm2.ColorPreset.async_get(connection, theme_dark)
