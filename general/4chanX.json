@@ -1,12 +1,12 @@
 {
   "version": "1.14.20.6",
-  "date": 1622654741562,
+  "date": 1622678001774,
   "Conf": {
     "Redirect to HTTPS": true,
     "JSON Index": true,
     "Use 4chan X Catalog": true,
     "Index Refresh Notifications": false,
-    "Follow Cursor": true,
+    "Follow Cursor": false,
     "Open Threads in New Tab": false,
     "External Catalog": false,
     "Catalog Links": false,
@@ -202,7 +202,7 @@
     "lastarchivecheck": 1622653426718,
     "archiveAutoUpdate": true,
     "externalCatalogURLs": "//catalog.neet.tv/%board/;boards:4chan.org:3,a,adv,an,asp,biz,c,cgl,ck,cm,co,diy,f,fa,fit,g,gd,his,i,int,jp,k,lgbt,lit,m,mlp,mu,n,news,o,out,p,po,pol,s4s,sci,sp,tg,toy,trv,tv,v,vg,vip,vp,vr,w,wg,wsg,wsr,x",
-    "boardnav": "[ toggle-all ]\nsci-catalog / fit-catalog / lit-catalog",
+    "boardnav": "[ toggle-all ]\nsci-catalog / fit-catalog / lit-catalog / fa-catalog",
     "QR.personas": "",
     "sjisPreview": false,
     "jsWhitelist": "http://s.4cdn.org\nhttps://s.4cdn.org\nhttp://www.google.com\nhttps://www.google.com\nhttps://www.gstatic.com\nhttp://cdn.mathjax.org\nhttps://cdn.mathjax.org\nhttps://cdnjs.cloudflare.com\nhttps://hcaptcha.com\nhttps://*.hcaptcha.com\n'self'\n'unsafe-inline'\n'unsafe-eval'",
@@ -303,13 +303,13 @@
     "hiddenThreads": {
       "4chan.org": {
         "boards": {},
-        "lastChecked": 1622654723543
+        "lastChecked": 1622677717480
       }
     },
     "hiddenPosts": {
       "4chan.org": {
         "boards": {},
-        "lastChecked": 1622654723543
+        "lastChecked": 1622677717480
       }
     },
     "lastReadPosts": {
@@ -318,15 +318,18 @@
           "sci": {
             "13213583": 13213598,
             "13220588": 13220593,
-            "13221620": 13226204,
+            "13221620": 13227284,
             "13221768": 13221806,
-            "13222718": 13222798,
-            "13226159": 13226253
+            "13222718": 13222798
+          },
+          "fa": {
+            "16263788": 16271310,
+            "16270961": 16270966
           }
         },
-        "lastChecked": 1622653455170
+        "lastChecked": 1622670843688
       },
-      "version": 24
+      "version": 43
     },
     "yourPosts": {
       "4chan.org": {
@@ -335,11 +338,16 @@
             "13221620": {
               "13226204": true
             }
+          },
+          "fa": {
+            "16263788": {
+              "16271266": true
+            }
           }
         },
-        "lastChecked": 1622653542376
+        "lastChecked": 1622670843686
       },
-      "version": 1
+      "version": 2
     },
     "watchedThreads": {
       "4chan.org": {
@@ -349,30 +357,47 @@
               "excerpt": "/sci/ - I'm going to fill my own cavity with a 'temporary' filling kit...",
               "page": 2,
               "lastPage": false,
-              "last": 13226204,
-              "replies": 98,
+              "last": 13227627,
+              "replies": 107,
+              "isDead": false,
+              "isArchived": false,
+              "unread": 1,
+              "quotingYou": 0,
+              "modified": 1622677096
+            }
+          },
+          "fa": {
+            "16263788": {
+              "excerpt": "/fa/ - Grid Thread",
+              "page": 1,
+              "lastPage": false,
+              "modified": 1622675307,
+              "last": 16271310,
+              "replies": 92,
               "isDead": false,
               "isArchived": false,
               "unread": 0,
-              "quotingYou": 0,
-              "modified": 1622653581
+              "quotingYou": 0
             }
           }
         }
       },
-      "lastChecked": 1622654573977,
-      "lastChecked2": 1622653426523,
-      "version": 10
+      "lastChecked": 1622677704965,
+      "lastChecked2": 1622672028421,
+      "version": 34
     },
     "watcherLastModified": {
       "4chan.org": {
         "boards": {
           "sci": {
-            "https://a.4cdn.org/sci/threads.json": "Wed, 02 Jun 2021 17:22:39 GMT"
+            "https://a.4cdn.org/sci/threads.json": "Wed, 02 Jun 2021 23:48:02 GMT"
+          },
+          "fa": {
+            "https://a.4cdn.org/fa/threads.json": "Wed, 02 Jun 2021 23:47:16 GMT"
           }
         }
       },
-      "version": 4
+      "version": 13
     },
     "customTitles": {
       "4chan.org": {
@@ -1109,6 +1134,12 @@
         "1622653582018": {
           "threadID": 13221620,
           "postID": 13226204
+        }
+      },
+      "fa": {
+        "1622675307736": {
+          "threadID": 16263788,
+          "postID": 16271266
         }
       }
     },
