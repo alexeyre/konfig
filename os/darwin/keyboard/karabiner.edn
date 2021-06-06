@@ -1,16 +1,17 @@
 {:profiles
  {:Default {:default true
-         :alone   80 ; hold for .. ms to register single tap
-         :held    50 ; TODO: not sure what it's for
+         :alone   5 ; hold for .. ms to register single tap
+         :held    10 ; TODO: not sure what it's for
          :delay   0 ; time after which the key press is delayed
-         :sim     30}} ; keys need to be pressed within this threshold to be considered simultaneous
+         :sim     10}} ; keys need to be pressed within this threshold to be considered simultaneous
  :templates {:alfred "osascript -e 'tell application \"Alfred 4\" to run trigger \"%s\" in workflow \"%s\" with argument \"%s\"'"
               :km "osascript -e 'tell application \"Keyboard Maestro Engine\" to do script \"%s\"'"
               :open "open \"%s\""
               }
  :simlayers {
              :caps_lock-mode {:key :caps_lock}
-             :w-mode {:key :w}},
+             :w-mode {:key :w}
+             :a-mode {:key :a}},
  :main [{:des "capskey",
          :rules [:caps_lock-mode
                  [:##h :left_arrow] ; even with f, still do left arrow
@@ -60,4 +61,9 @@
         {:des "w-mode",
          :rules [:w-mode
                  [:q [:alfred "google" "com.akikoz.alfred.websearchsuggest"]]
-                 [:e [:alfred "wikipedia" "com.akikoz.alfred.websearchsuggest" "en "]]]}]}
+                 [:e [:alfred "wikipedia" "com.akikoz.alfred.websearchsuggest" "en "]]]}
+        {:des "a-mode",
+         :rules [:a-mode
+                 [:k [:open "/Applications/iTerm2.app"]]]}
+
+        ]}
