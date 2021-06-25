@@ -4,6 +4,10 @@
   nix.trustedUsers = [ "alex" ];
   services.nix-daemon.enable = false;
 
+  nix.extraOptions = ''
+    system = aarch64-darwin
+  '';
+
   # tmux reattach
   home-manager.users."${config.main-user}".programs.brew.formulae =
     [ "fabianishere/personal/pam_reattach" ];
