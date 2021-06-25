@@ -183,7 +183,7 @@ with lib; {
       enable = true;
       keyMode = "vi"; # Use vi bindings inside tmux
       newSession = true; # Create a new session by default
-      # prefix = "C-a"; # Set the prefix to something that doesn't collide with vi
+      prefix = "C-a"; # Set the prefix to something that doesn't collide with vi
       escapeTime = 0; # Disable built-in delay on prefix key
       disableConfirmationPrompt =
         true; # Don't ask for confirmation when killing a pane
