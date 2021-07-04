@@ -43,6 +43,11 @@ with lib; {
       signing = {
         signByDefault = true;
         key = "954EBF489FD70E2E4694082B3E1F5A8C0C4F9FB3";
+        gpgPath = "${pkgs.gnupg}/bin/gpg";
+      };
+      extraConfig.pull = {
+        rebase = true;
+        merge = false;
       };
     };
 
