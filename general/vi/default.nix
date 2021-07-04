@@ -3,6 +3,7 @@
     home.sessionVariables.EDITOR = "vi";
     programs.neovim = {
       enable = true;
+      package = pkgs.neovim-nightly;
       extraConfig = builtins.readFile ./init.vim;
       viAlias = true;
       vimAlias = true;
