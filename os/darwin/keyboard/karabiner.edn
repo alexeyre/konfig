@@ -10,8 +10,7 @@
               }
  :simlayers {
              :caps_lock-mode {:key :caps_lock}
-             :w-mode {:key :w}
-             :a-mode {:key :a}},
+             :w-mode {:key :w}},
  :main [{:des "capskey",
          :rules [:caps_lock-mode
                  [:##h :left_arrow] ; even with f, still do left arrow
@@ -62,8 +61,4 @@
          :rules [:w-mode
                  [:q [:alfred "google" "com.akikoz.alfred.websearchsuggest"]]
                  [:e [:alfred "wikipedia" "com.akikoz.alfred.websearchsuggest" "en "]]]}
-        {:des "a-mode",
-         :rules [:a-mode
-                 [:k [:open "/Applications/iTerm2.app"]]]}
-
         ]}
