@@ -15,13 +15,17 @@
     };
     programs.dircolors.enable = true;
 
+    programs.zsh = {
+      enable = true;
+    };
+
     programs.fish = let
       babelfishTranslate = path: name:
         builtins.readFile (pkgs.runCommand "${name}.fish" {
           nativeBuildInputs = [ pkgs.babelfish ];
         } "${pkgs.babelfish}/bin/babelfish < ${path} > $out;");
     in {
-      enable = true;
+      enable = false;
       loginShellInit = ''
                 fenv source /etc/static/bashrc
                 [ -e $HOME/.iterm2_shell_integration.fish ] && source $HOME/.iterm2_shell_integration.fish
