@@ -27,11 +27,13 @@ with lib; {
   in [ "${homebrew_directory}/bin" "/opt/local/bin" ];
 
   home-manager.users."${config.main-user}" = { ... }: {
-    imports = [ ./brew ];
+    imports = [ ./brew ./iina.nix ];
 
     # install fish on macOS
     programs.brew.formulae = [ "gh" ]
       ++ optional config.programs.fish.enable "fish"; # install fish on macOS
+
+    programs.iina.enable = true;
 
     # silence macOS MOTD message
     home.file.hushenv = {
@@ -46,7 +48,6 @@ with lib; {
       "telegram"
       "veracrypt"
       "macfuse"
-      "iina"
       "radio-silence"
       "spotify"
 
