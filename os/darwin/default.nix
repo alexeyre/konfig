@@ -18,6 +18,7 @@ with lib; {
 
   environment.pathsToLink = [ "/share/zsh" "/opt/homebrew/share/zsh" ];
 
+
   # ugly hack
   users.users.alex.home = "/Users/alex";
 
@@ -26,12 +27,12 @@ with lib; {
       config.home-manager.users."${config.main-user}".programs.brew.directory;
   in [ "${homebrew_directory}/bin" "/opt/local/bin" ];
 
-  home-manager.users."${config.main-user}" = { ... }: {
+  home-manager.users."${config.main-user}" = { ... }: with config.home-manager.users."${config.main-user}"; {
     imports = [ ./brew ./iina.nix ];
 
-    # install fish on macOS
     programs.brew.formulae = [ "gh" ]
-      ++ optional config.programs.fish.enable "fish"; # install fish on macOS
+      ++ optional programs.fish.enable "fish" # install fish on macOS
+      ++ optional programs.tmux.enable "tmux";
 
     programs.iina.enable = true;
 

@@ -1,5 +1,7 @@
 { config, lib, pkgs, ... }: {
-  programs.fish.enable = true;
+  programs.fish.enable = false;
+  programs.zsh.enable = true;
+
   home-manager.users."${config.main-user}" = {
     home.packages = with pkgs;
       [
@@ -17,6 +19,10 @@
 
     programs.zsh = {
       enable = true;
+      dotDir = ".config/zsh";
+      envExtra = ''
+        if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then . $HOME/.nix-profile/etc/profile.d/nix.sh; fi
+      '';
     };
 
     programs.fish = let

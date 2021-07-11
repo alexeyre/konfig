@@ -3,7 +3,7 @@ with lib; {
   imports = [
     ../options.nix # setup system-wide options
     ./keyboard.nix # supplies the current keymap for easier keyboard switching if desired
-    ./shell # set up the shell environment
+    ./shell.nix # set up the shell environment
     ./vi # Set up (n)vi(m)
   ];
 
