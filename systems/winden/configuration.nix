@@ -1,15 +1,13 @@
-{ config, pkgs, ... }: {
+{ config, lib, pkgs, ... }: {
   imports = [ ../../os/darwin ];
   networking.hostName = "winden";
   nix.trustedUsers = [ "alex" ];
   services.nix-daemon.enable = false;
-
+  nixpkgs.system = lib.mkForce "aarch64-darwin";
   nix.extraOptions = ''
-    system = aarch64-darwin
-    # extra-platforms = aarch64-darwin x86_64-darwin
+    extra-platforms = x86_64-darwin aarch64-darwin
   '';
-
-
+  nixpkgs.config.allowUnsupportedSystem = true;
   # tmux reattach
   home-manager.users."${config.main-user}" = {
     programs.brew.formulae =
