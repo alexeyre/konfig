@@ -10,6 +10,7 @@
           file=$(${pkgs.findutils}/bin/find $HOME/.local/dot -type f | ${pkgs.fzf}/bin/fzf)
           [ -f $file ] && vi $file
         '')
+        exa
       ];
     programs.direnv = {
       enable = true;
@@ -22,7 +23,28 @@
       dotDir = ".config/zsh";
       envExtra = ''
         if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then . $HOME/.nix-profile/etc/profile.d/nix.sh; fi
+        if [ -e $XDG_CONFIG_HOME/zsh/.pk10k.zsh ]; then . $XDG_CONFIG_HOME/zsh/.pk10k.zsh; fi
       '';
+      zplug.enable = true;
+      zplug.plugins = [
+        {
+          name = "agkozak/zsh-z";
+        }
+        {
+          name = "plugins/common-aliases";
+          tags = [ "from:oh-my-zsh" ];
+        }
+        {
+          name = "mafredri/zsh-async";
+        }
+        {
+          name = "sindresorhus/pure";
+          tags = [ "as:theme" "use:pure.zsh" "depth:1" ];
+        }
+        {
+          name = "DarrinTisdale/zsh-aliases-exa";
+        }
+      ];
     };
 
     programs.fish = let

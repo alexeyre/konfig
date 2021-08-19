@@ -3,10 +3,11 @@
     home.sessionVariables.EDITOR = "vi";
     programs.neovim = {
       enable = true;
-      # package = pkgs.neovim-nightly;
       extraConfig = builtins.readFile ./init.vim;
       viAlias = true;
       vimAlias = true;
+      withPython3 = false;
+      withRuby = false;
       plugins = with pkgs.vimPlugins; [
         vim-polyglot
         vim-surround

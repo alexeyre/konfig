@@ -43,7 +43,7 @@ with lib; {
       signing = {
         signByDefault = true;
         key = "954EBF489FD70E2E4694082B3E1F5A8C0C4F9FB3";
-        gpgPath = "${pkgs.gnupg}/bin/gpg";
+        gpgPath = "\${pkgs.gnupg}/bin/gpg";
       };
       extraConfig.pull = {
         rebase = true;
@@ -58,7 +58,6 @@ with lib; {
 
     home.packages = with pkgs; [
       gopass
-      nixfmt
       (writeScriptBin "strip_exif" ''
         #!${pkgs.stdenv.shell}
         ${pkgs.exiftool}/bin/exiftool -all= "$@"
@@ -198,14 +197,15 @@ with lib; {
           prefix-highlight # Adds a small indicator at the bottom when the prefix key is pressed
         ];
 
-      extraConfig =
-        # Configure the status format
-        ''
-          setw -g window-status-current-format ' #I:#W#F '
-          setw -g window-status-format ' #I:#W#F '
-        '' +
+        extraConfig = let ohMyTmux = pkgs.fetchFromGitHub {
+          owner = "gpakosz";
+          repo = ".tmux";
+          rev = "ed0b83a1184929ec967921d0db6bb0c4e6e9a2c5";
+          sha256 = "sha256-anmlxCX2VPH7MeT+fxowJiN5GGvk0FsW+1UIUV4+me4";
+        } + "/.tmux.conf"; in
         # Make new tumx panes automatically be in the same directory as your active pane
         ''
+          source-file "${ohMyTmux}"
           bind c new-window -c "#{pane_current_path}"
           bind '"' split-window -c "#{pane_current_path}"
           bind % split-window -h -c "#{pane_current_path}"
@@ -220,7 +220,7 @@ with lib; {
           bind-key h select-pane -L
           unbind-key l
           bind-key s select-pane -R
-            '';
+        '';
     };
   };
 }
