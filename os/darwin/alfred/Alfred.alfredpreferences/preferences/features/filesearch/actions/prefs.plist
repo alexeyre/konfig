@@ -5,11 +5,11 @@
 	<key>finderSelectionHotkey</key>
 	<dict>
 		<key>key</key>
-		<integer>39</integer>
+		<integer>15</integer>
 		<key>mod</key>
 		<integer>786432</integer>
 		<key>string</key>
-		<string>-</string>
+		<string>P</string>
 	</dict>
 </dict>
 </plist>

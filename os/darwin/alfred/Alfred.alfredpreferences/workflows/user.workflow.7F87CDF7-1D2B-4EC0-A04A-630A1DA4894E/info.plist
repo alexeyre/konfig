@@ -7,7 +7,18 @@
 	<key>connections</key>
 	<dict>
 		<key>29C3523E-FFA6-416B-8305-98C402F3A7E8</key>
-		<array/>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>BACFA65F-95BE-4A4E-8BD9-2FC02FA51D03</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 	</dict>
 	<key>createdby</key>
 	<string>@alexeyre</string>
@@ -22,8 +33,29 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>action</key>
+				<key>count</key>
 				<integer>1</integer>
+				<key>keychar</key>
+				<string>p</string>
+				<key>keycode</key>
+				<integer>-1</integer>
+				<key>keymod</key>
+				<integer>1048576</integer>
+				<key>overridewithargument</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.dispatchkeycombo</string>
+			<key>uid</key>
+			<string>BACFA65F-95BE-4A4E-8BD9-2FC02FA51D03</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>action</key>
+				<integer>0</integer>
 				<key>argument</key>
 				<integer>0</integer>
 				<key>focusedappvariable</key>
@@ -40,8 +72,12 @@
 				<false/>
 				<key>modsmode</key>
 				<integer>0</integer>
+				<key>relatedApps</key>
+				<array>
+					<string>md.obsidian</string>
+				</array>
 				<key>relatedAppsMode</key>
-				<integer>0</integer>
+				<integer>1</integer>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.trigger.hotkey</string>
@@ -58,9 +94,16 @@
 		<key>29C3523E-FFA6-416B-8305-98C402F3A7E8</key>
 		<dict>
 			<key>xpos</key>
-			<integer>275</integer>
+			<integer>115</integer>
 			<key>ypos</key>
-			<integer>250</integer>
+			<integer>270</integer>
+		</dict>
+		<key>BACFA65F-95BE-4A4E-8BD9-2FC02FA51D03</key>
+		<dict>
+			<key>xpos</key>
+			<integer>430</integer>
+			<key>ypos</key>
+			<integer>260</integer>
 		</dict>
 	</dict>
 	<key>webaddress</key>

@@ -30,6 +30,32 @@
 			<key>utf8</key>
 			<true/>
 		</dict>
+		<key>B87BB3C0-27AA-4576-9AE1-D10EB1CC554A</key>
+		<dict>
+			<key>enabled</key>
+			<true/>
+			<key>keyword</key>
+			<string>obf</string>
+			<key>text</key>
+			<string>Open the '{query}' note in Obsidian</string>
+			<key>url</key>
+			<string>obsidian://open?vault=Notes&amp;file={query}</string>
+			<key>utf8</key>
+			<true/>
+		</dict>
+		<key>EC2CA9E9-B9B4-45AA-B33E-73D082748C2B</key>
+		<dict>
+			<key>enabled</key>
+			<true/>
+			<key>keyword</key>
+			<string>obs</string>
+			<key>text</key>
+			<string>Search for '{query}' in Obsidian</string>
+			<key>url</key>
+			<string>obsidian://search?vault=Notes&amp;query={query}</string>
+			<key>utf8</key>
+			<true/>
+		</dict>
 	</dict>
 </dict>
 </plist>
