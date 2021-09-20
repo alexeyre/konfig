@@ -14,15 +14,13 @@
              :w-mode {:key :w}},
  :main [{:des "capskey",
          :rules [:caps_lock-mode
-                 [:##h :left_arrow] ; even with f, still do left arrow
+                 [:#h :left_arrow] ; even with f, still do left arrow
                  [:##k :up_arrow]
                  [:##j :down_arrow]
                  [:##l :right_arrow]
                  [:##f :left_option]
                  [:##d :left_shift]
-
-                 [:return_or_enter [:applescript "tell application \"iTerm2\" to create window with profile \"tmux-fullscreen\""]]
-
+                 [:return_or_enter :!TOreturn_or_enter]
                  [:open_bracket :!TOopen_bracket]
                  [:close_bracket :!TOclose_bracket]
                  [:semicolon :!TOsemicolon]
@@ -30,12 +28,17 @@
                  [:comma :!TOcomma]
                  [:period :!TOperiod]
                  [:slash :!TOslash]
+                 [:down_arrow :!TOdown_arrow]
+                 [:up_arrow :!TOup_arrow]
+                 [:left_arrow :!TOleft_arrow]
+                 [:right_arrow :!TOright_arrow]
                  [:a :!TOa]
                  [:b :!TOb]
                  [:c :!TOc]
                  [:e :!TOe]
                  [:g :!TOg]
                  [:i :!TOi]
+                 [:l [:open "-a Things3"]]
                  [:m :!TOm]
                  [:n :!TOn]
                  [:o :!TOo]
@@ -61,7 +64,7 @@
                  [:9 :!TO9]
                  [:0 :!TO0]]}
         {:des "w-mode",
-         :rules [:w-mode
+         :rules [:mode
                  [:q [:alfred "google" "com.akikoz.alfred.websearchsuggest"]]
                  [:e [:alfred "wikipedia" "com.akikoz.alfred.websearchsuggest" "en "]]]}
         ]}
