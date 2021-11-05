@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }: {
   imports = [ ../../os/darwin ];
-  networking.hostName = "winden";
+  networking.hostName = "fedbook";
   nix.trustedUsers = [ "alex" ];
   services.nix-daemon.enable = true;
   nixpkgs.system = lib.mkForce "aarch64-darwin";
