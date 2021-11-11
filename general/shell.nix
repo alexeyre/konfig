@@ -25,6 +25,9 @@
         if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then . $HOME/.nix-profile/etc/profile.d/nix.sh; fi
         if [ -e $XDG_CONFIG_HOME/zsh/.pk10k.zsh ]; then . $XDG_CONFIG_HOME/zsh/.pk10k.zsh; fi
       '';
+      initExtra = ''
+        alias ns=nix-shell
+      '';
       zplug.enable = true;
       zplug.plugins = [
         {
@@ -38,11 +41,14 @@
           name = "mafredri/zsh-async";
         }
         {
-          name = "sindresorhus/pure";
-          tags = [ "as:theme" "use:pure.zsh" "depth:1" ];
+          name = "themes/afowler";
+          tags = [ "as:theme" "from:oh-my-zsh" "depth:1" ];
         }
         {
           name = "DarrinTisdale/zsh-aliases-exa";
+        }
+        {
+          name = "jeffreytse/zsh-vi-mode";
         }
       ];
     };
