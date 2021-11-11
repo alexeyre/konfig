@@ -13,7 +13,6 @@ set laststatus=0
 set noshowcmd
 set autochdir
 
-colorscheme onehalfdark
 let g:airline_theme='onehalfdark'
 
 " Some basics:
