@@ -33,9 +33,8 @@ with lib; {
     ###########
     ### Git ###
     ###########
-    programs.gh.enable = true; # Enable GitHub specific tooling
+    programs.gh.enable = false; # Enable GitHub specific tooling
     programs.git.lfs.enable = true; # Enable Git LFS
-    programs.gh.gitProtocol = "ssh";
     programs.git = {
       enable = true;
       userName = "Alex Eyre";
@@ -119,6 +118,8 @@ with lib; {
         enable = true;
         create = "maildir";
       };
+
+      neomutt.enable = true;
     };
 
     # Set up the NeoMutt email reader
@@ -197,15 +198,7 @@ with lib; {
           prefix-highlight # Adds a small indicator at the bottom when the prefix key is pressed
         ];
 
-        extraConfig = let ohMyTmux = pkgs.fetchFromGitHub {
-          owner = "gpakosz";
-          repo = ".tmux";
-          rev = "ed0b83a1184929ec967921d0db6bb0c4e6e9a2c5";
-          sha256 = "sha256-anmlxCX2VPH7MeT+fxowJiN5GGvk0FsW+1UIUV4+me4";
-        } + "/.tmux.conf"; in
-        # Make new tumx panes automatically be in the same directory as your active pane
-        ''
-          source-file "${ohMyTmux}"
+        extraConfig = ''
           bind c new-window -c "#{pane_current_path}"
           bind '"' split-window -c "#{pane_current_path}"
           bind % split-window -h -c "#{pane_current_path}"
