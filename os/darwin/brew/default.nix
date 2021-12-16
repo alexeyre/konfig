@@ -31,10 +31,13 @@ with lib; {
     default = "/opt/homebrew";
     description = "Homebrew install directory";
   };
-  config = {
+  config = mkIf config.programs.brew.enable {
     home.packages =
       [ (pkgs.writeScriptBin "sync_brew" config.home.file.brewfile.onChange) ];
     programs.brew.formulae = mkIf (config.programs.brew.mas != [ ]) [ "mas" ];
+    programs.zsh.envExtra = ''
+      export PATH=$PATH:${config.programs.brew.directory}/bin
+    '';
     home.file.brewfile = {
       target = ".Brewfile";
       text = (concatMapStrings (x:
