@@ -5,9 +5,6 @@
 	<key>fallbacks</key>
 	<array>
 		<string>features.websearch.google.fallback</string>
-		<string>features.websearch.amazon.fallback</string>
-		<string>features.websearch.wiki.fallback</string>
-		<string>user.workflow.45AB42CF-A547-4BF4-B91B-829046E55FED.1BD03BB0-06B9-47F5-9346-7A829C38B248</string>
 	</array>
 	<key>fallbacksMode</key>
 	<integer>1</integer>
