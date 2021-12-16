@@ -21,3 +21,5 @@ switch:
 switch-debug:
 	nix build --show-trace -v "$(PWD)/systems/$(HOSTNAME)#darwinConfigurations.$(HOSTNAME).system"
 	./result/sw/bin/darwin-rebuild switch --show-trace -v --flake ./systems/$(HOSTNAME)
+upgrade:
+	cd ./systems/$(HOSTNAME) && nix flake update && git commit . -m "$(HOSTNAME): bump flake" && cd ../../
