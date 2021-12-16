@@ -38,7 +38,7 @@
                  [:b :!TOb]
                  [:c :!TOc]
                  [:e :!TOe]
-                 [:g [:opena "Notion"]]
+                 [:g :!TOg]
                  [:i :!TOi]
                  [:l :!TOl]
                  [:m :!TOm]
@@ -68,5 +68,6 @@
         {:des "w-mode",
          :rules [:w-mode
                  [:j [:opena "iTerm"]]
+                 [:k [:opena "Notion"]]
                  ]}
         ]}
