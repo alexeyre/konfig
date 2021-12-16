@@ -14,4 +14,4 @@ jobs:
         nix_path: nixpkgs=channel:nixos-unstable
         extra_nix_config: |
           experimental-features = nix-command flakes
-    - run: nix build "$PWD/systems/winden#darwinConfigurations.winden.system"
+    - run: nix build "$PWD/systems/winden#darwinConfigurations.fedbook.system"
