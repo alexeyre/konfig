@@ -27,6 +27,8 @@
       '';
       initExtra = ''
         alias ns=nix-shell
+        autoload -Uz url-quote-magic
+        zle -N self-insert url-quote-magic
       '';
       zplug.enable = true;
       zplug.plugins = [
