@@ -18,7 +18,6 @@ with lib; {
 
   environment.pathsToLink = [ "/share/zsh" "/opt/homebrew/share/zsh" ];
 
-
   # ugly hack
   users.users.alex.home = "/Users/alex";
 
@@ -27,40 +26,44 @@ with lib; {
       config.home-manager.users."${config.main-user}".programs.brew.directory;
   in [ "${homebrew_directory}/bin" "/opt/local/bin" ];
 
-  home-manager.users."${config.main-user}" = { ... }: with config.home-manager.users."${config.main-user}"; {
-    imports = [ ./brew ./iina.nix ];
+  home-manager.users."${config.main-user}" = { ... }:
+    with config.home-manager.users."${config.main-user}"; {
+      imports = [ ./brew ./iina.nix ];
 
-    home.packages = [ (pkgs.writeScriptBin "activate_conda" ''
-      source ~/.local/share/miniconda3/bin/activate
-      '') ];
+      home.packages = [
+        (pkgs.writeScriptBin "activate_conda" ''
+          source ~/.local/share/miniconda3/bin/activate
+        '')
+      ];
 
-    programs.brew.enable = true;
+      programs.brew.enable = true;
 
-    programs.brew.formulae = [ "gh" ]
-      ++ optional programs.fish.enable "fish" # install fish on macOS
-      ++ optional programs.tmux.enable "tmux";
+      programs.brew.formulae = [ "gh" ]
+        ++ optional programs.fish.enable "fish" # install fish on macOS
+        ++ optional programs.tmux.enable "tmux";
 
-    programs.iina.enable = true;
+      programs.iina.enable = true;
 
-    # silence macOS MOTD message
-    home.file.hushenv = {
-      text = "thisisempty";
-      target = ".hushlogin";
+      # silence macOS MOTD message
+      home.file.hushenv = {
+        text = "thisisempty";
+        target = ".hushlogin";
+      };
+
+      programs.brew.casks = [
+        "homebrew/cask/programmer-dvorak"
+        "alfred"
+        "anki"
+        "telegram"
+        "radio-silence"
+        "spotify"
+        "monero-wallet"
+        "zotero"
+        "rectangle"
+        "discord"
+        "steam"
+      ];
+      programs.brew.taps =
+        [ "homebrew/bundle" "homebrew/core" "homebrew/cask" ];
     };
-
-    programs.brew.casks = [
-      "homebrew/cask/programmer-dvorak"
-      "alfred"
-      "anki"
-      "telegram"
-      "radio-silence"
-      "spotify"
-      "monero-wallet"
-      "zotero"
-      "rectangle"
-      "discord"
-      "steam"
-    ];
-    programs.brew.taps = [ "homebrew/bundle" "homebrew/core" "homebrew/cask" ];
-  };
 }

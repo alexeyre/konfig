@@ -198,11 +198,11 @@ with lib; {
           prefix-highlight # Adds a small indicator at the bottom when the prefix key is pressed
         ];
 
-        extraConfig = ''
-          bind c new-window -c "#{pane_current_path}"
-          bind '"' split-window -c "#{pane_current_path}"
-          bind % split-window -h -c "#{pane_current_path}"
-        '' +
+      extraConfig = ''
+        bind c new-window -c "#{pane_current_path}"
+        bind '"' split-window -c "#{pane_current_path}"
+        bind % split-window -h -c "#{pane_current_path}"
+      '' +
         # Configure dvorak select-pane bindings
         optionalString (config.system.keyboard.layout == "dvp") ''
           unbind-key j

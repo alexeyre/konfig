@@ -3,15 +3,14 @@
   programs.zsh.enable = true;
 
   home-manager.users."${config.main-user}" = {
-    home.packages = with pkgs;
-      [
-        (writeScriptBin "dot" ''
-          #!${pkgs.stdenv.shell}
-          file=$(${pkgs.findutils}/bin/find $HOME/.local/dot -type f | ${pkgs.fzf}/bin/fzf)
-          [ -f $file ] && vi $file
-        '')
-        exa
-      ];
+    home.packages = with pkgs; [
+      (writeScriptBin "dot" ''
+        #!${pkgs.stdenv.shell}
+        file=$(${pkgs.findutils}/bin/find $HOME/.local/dot -type f | ${pkgs.fzf}/bin/fzf)
+        [ -f $file ] && vi $file
+      '')
+      exa
+    ];
     programs.direnv = {
       enable = true;
       nix-direnv.enable = true;
@@ -32,26 +31,18 @@
       '';
       zplug.enable = true;
       zplug.plugins = [
-        {
-          name = "agkozak/zsh-z";
-        }
+        { name = "agkozak/zsh-z"; }
         {
           name = "plugins/common-aliases";
           tags = [ "from:oh-my-zsh" ];
         }
-        {
-          name = "mafredri/zsh-async";
-        }
+        { name = "mafredri/zsh-async"; }
         {
           name = "themes/afowler";
           tags = [ "as:theme" "from:oh-my-zsh" "depth:1" ];
         }
-        {
-          name = "DarrinTisdale/zsh-aliases-exa";
-        }
-        {
-          name = "jeffreytse/zsh-vi-mode";
-        }
+        { name = "DarrinTisdale/zsh-aliases-exa"; }
+        { name = "jeffreytse/zsh-vi-mode"; }
       ];
     };
 
@@ -63,10 +54,10 @@
     in {
       enable = false;
       loginShellInit = ''
-                fenv source /etc/static/bashrc
-                [ -e $HOME/.iterm2_shell_integration.fish ] && source $HOME/.iterm2_shell_integration.fish
-                fish_vi_key_bindings
-              '';
+        fenv source /etc/static/bashrc
+        [ -e $HOME/.iterm2_shell_integration.fish ] && source $HOME/.iterm2_shell_integration.fish
+        fish_vi_key_bindings
+      '';
       plugins = [
         {
           name = "fenv";
