@@ -8,7 +8,7 @@ with lib; {
   ];
 
   # Nix tooling options
-  nix.package = pkgs.nixUnstable; # Needed for nix flakes
+  # nix.package = pkgs.nixUnstable; # Needed for nix flakes
   nixpkgs.config.allowUnfree = true; # Allow the installation of unfree packages
 
   # Set up remote builder
