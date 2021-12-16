@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }:
 with lib; {
-  imports = [ ../../general ./alfred ./keyboard ./iterm ./vimari ];
+  imports = [ ../../general ./alfred ./keyboard ./vimari ];
 
   system.defaults.NSGlobalDomain.InitialKeyRepeat = 10;
   system.defaults.NSGlobalDomain.KeyRepeat = 1;
@@ -30,6 +30,12 @@ with lib; {
   home-manager.users."${config.main-user}" = { ... }: with config.home-manager.users."${config.main-user}"; {
     imports = [ ./brew ./iina.nix ];
 
+    home.packages = [ (pkgs.writeScriptBin "activate_conda" ''
+      source ~/.local/share/miniconda3/bin/activate
+      '') ];
+
+    programs.brew.enable = true;
+
     programs.brew.formulae = [ "gh" ]
       ++ optional programs.fish.enable "fish" # install fish on macOS
       ++ optional programs.tmux.enable "tmux";
@@ -47,15 +53,13 @@ with lib; {
       "alfred"
       "anki"
       "telegram"
-      "veracrypt"
-      "macfuse"
       "radio-silence"
       "spotify"
-
-      # "battle-net"
-
       "monero-wallet"
       "zotero"
+      "rectangle"
+      "discord"
+      "steam"
     ];
     programs.brew.taps = [ "homebrew/bundle" "homebrew/core" "homebrew/cask" ];
   };
