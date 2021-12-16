@@ -15,7 +15,7 @@ jobs:
       with:
         path: "."
         type: ".nix"
-    - uses: workflow/nix-shell-action@v1
+    - uses: workflow/nix-shell-action@v3
       with:
         packages: nixfmt
         script: |
