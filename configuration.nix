@@ -10,12 +10,8 @@
   '';
   # tmux reattach
   home-manager.users."${config.main-user}" = {
-    home.packages = [
-      (pkgs.writeScriptBin "rtorrent-tmux"
-        "/usr/bin/arch -arm64 ${pkgs.tmux}/bin/tmux new-session -d -s rtorrent '/usr/bin/arch -arm64 ${pkgs.rtorrent}/bin/rtorrent'")
-    ];
   };
 
   # set the main user of the machine!
-  main-user = "alex";
+  home = home-manager.users.alex;
 }
