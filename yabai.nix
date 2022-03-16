@@ -20,6 +20,7 @@
       target = ".config/yabai/yabairc";
     };
     programs.brew.formulae = [ "koekeishiya/formulae/yabai" ];
+    programs.brew.taps = [ "koekeishiya/formulae" ];
 
   };
 }
