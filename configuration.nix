@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }:
 with lib; {
-  imports = [ ./vi ./shell.nix ];
+  imports = [ ./keyboard ./vi ./shell.nix ./yabai.nix ];
   networking.hostName = "fedbook";
   nix.trustedUsers = [ "alex" ];
   services.nix-daemon.enable = true;
@@ -31,11 +31,9 @@ with lib; {
       "homebrew/core"
       "homebrew/services"
       "homebrew/cask-fonts"
-      "yqrashawn/goku"
     ];
 
-    programs.brew.casks =
-      [ "homebrew/cask/programmer-dvorak" "font-terminus" "iterm2" ];
+    programs.brew.casks = [ "font-terminus" "iterm2" ];
     # Enable the use of XDG directories, see https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
     xdg.enable = true;
 
