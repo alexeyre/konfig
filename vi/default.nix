@@ -1,5 +1,5 @@
 { config, lib, pkgs, ... }: {
-  home-manager.users."${config.main-user}" = {
+  home-manager.users.alex = {
     home.sessionVariables.EDITOR = "vi";
     programs.neovim = {
       enable = true;
@@ -21,9 +21,7 @@
         vim-css-color
         onehalf
         vim-markdown
-        (lib.mkIf
-          config.home-manager.users."${config.main-user}".programs.fzf.enable
-          fzf-vim)
+        (lib.mkIf config.home-manager.users.alex.programs.fzf.enable fzf-vim)
       ];
     };
   };

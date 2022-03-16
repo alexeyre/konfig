@@ -1,7 +1,8 @@
 {
   description = "fedbook";
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/c6702166a675c64659dc9b48c7095856c52bccac";
+    nixpkgs.url =
+      "github:nixos/nixpkgs/c6702166a675c64659dc9b48c7095856c52bccac";
     darwin.url = "github:lnl7/nix-darwin/master";
     home-manager.url = "github:nix-community/home-manager/release-21.11";
 

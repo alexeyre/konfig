@@ -2,7 +2,7 @@
   programs.fish.enable = false;
   programs.zsh.enable = true;
 
-  home-manager.users."${config.main-user}" = {
+  home-manager.users.alex = {
     home.packages = with pkgs; [
       (writeScriptBin "dot" ''
         #!${pkgs.stdenv.shell}

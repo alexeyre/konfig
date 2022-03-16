@@ -1,3 +1,1 @@
-{ config, lib, pkgs, ... }: {
-  home-manager.users."${config.main-user}".programs.brew.casks = [ "alfred" ];
-}
+{ config, lib, pkgs, ... }: { programs.brew.casks = [ "alfred" ]; }
