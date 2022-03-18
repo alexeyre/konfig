@@ -2,6 +2,11 @@
   home-manager.users.alex = { ... }: {
     home.file.yabairc = {
       text = ''
+        yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
+
+        # Split ratio
+        yabai -m config auto_balance on
+
         yabai -m config layout				 bsp
         yabai -m config top_padding    20
         yabai -m config bottom_padding 20
