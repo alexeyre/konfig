@@ -23,6 +23,15 @@ with lib; {
   home-manager.users.alex = { ... }: {
     imports = [ ./brew ./alfred ];
 
+    programs.tmux = {
+      enable = true;
+      keyMode = "vi";
+      newSession = true;
+      prefix = "C-a";
+      reverseSplit = true;
+      terminal = "xterm-256color";
+    };
+
     programs.brew.enable = true;
     programs.brew.taps = [
       "candid82/brew"
@@ -31,11 +40,14 @@ with lib; {
       "homebrew/core"
       "homebrew/services"
       "homebrew/cask-fonts"
+      "homebrew/cask-versions"
     ];
 
     programs.alacritty = {
       enable = true;
       settings = {
+        font.normal.family = "Terminus (TTF)";
+        font.size = 16.0;
         colors = {
 
           primary = {
@@ -70,7 +82,13 @@ with lib; {
       };
     };
 
-    programs.brew.casks = [ "font-terminus" ];
+    programs.brew.casks = [
+      "font-terminus"
+      "iterm2-nightly"
+      "notion"
+      "visual-studio-code"
+      "pdf-expert-beta"
+    ];
     # Enable the use of XDG directories, see https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
     xdg.enable = true;
 

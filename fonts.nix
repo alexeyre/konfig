@@ -4,22 +4,22 @@
       enable = true;
 
     };
-    home.files.fontconfig = {
+    home.file.fontconfig = {
       target = ".config/fontconfig/fonts.conf";
       text = ''
-                <fontconfig> 
-
-          <match target="font">
-            <test name="family" qual="any">
-              <string>Terminus (TTF)</string>
-            </test>
-            <edit name="antialias" mode="assign">
-              <bool>false</bool>
-            </edit>
-          </match>
-
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+        <fontconfig>
+        <match target="pattern">
+        <test qual="any" name="family">
+         <string>Terminus (TTF)</string>
+        </test>
+        <edit name="antialias" mode="assign">
+         <bool>false</bool>
+        </edit>
+        </match>
         </fontconfig>
-              '';
+      '';
     };
   };
 }
