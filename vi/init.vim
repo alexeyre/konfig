@@ -6,6 +6,8 @@ call plug#begin()
 
         Plug 'lervag/vimtex'
         Plug 'PontusPersson/pddl.vim'
+
+        Plug 'tpope/vim-abolish'
 call plug#end()
 
 set bg=light

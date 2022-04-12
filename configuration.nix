@@ -23,6 +23,8 @@ with lib; {
   home-manager.users.alex = { ... }: {
     imports = [ ./brew ./alfred ];
 
+    home.extraOutputsToInstall = [ "man" ];
+
     programs.tmux = {
       enable = true;
       keyMode = "vi";
@@ -130,7 +132,11 @@ with lib; {
       (writeScriptBin "download_wallpaper" ''
         ${pkgs.curl}/bin/curl -l $1 -o ~/Pictures/papes/$(${pkgs.coreutils}/bin/basename $1)
       '')
-      # (texlive.combine { inherit (texlive) plantuml minted fvextra scheme-full wrapfig ulem amsmath capt-of hyperref; })
+      (texlive.combine {
+        inherit (texlive)
+          metafont plantuml minted fvextra scheme-full wrapfig ulem amsmath
+          capt-of hyperref;
+      })
       (pkgs.writeScriptBin "compress_video" ''
         #!${pkgs.stdenv.shell}
             file_name="''${1##*/}"

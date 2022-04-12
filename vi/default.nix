@@ -3,7 +3,7 @@
     home.sessionVariables.EDITOR = "vi";
     programs.neovim = {
       enable = true;
-      package = pkgs.neovim-unwrapped;
+      # package = pkgs.neovim-unwrapped;
       extraConfig = ''
         source ${pkgs.vimPlugins.vim-plug}/plug.vim
         ${builtins.readFile ./init.vim}

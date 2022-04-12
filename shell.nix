@@ -17,8 +17,6 @@
     };
     programs.fzf = { enable = true; };
     programs.dircolors.enable = true;
-    programs.starship.enable = true;
-    programs.starship.settings = { add_newline = false; };
     programs.zsh = {
       enable = true;
       dotDir = ".config/zsh";
@@ -35,7 +33,7 @@
       '';
       zplug.enable = true;
       zplug.plugins = [
-        # { name = "agkozak/agkozak-zsh-prompt"; }
+        { name = "agkozak/agkozak-zsh-prompt"; }
         { name = "agkozak/zsh-z"; }
         { name = "jeffreytse/zsh-vi-mode"; }
         { name = "unixorn/fzf-zsh-plugin"; }

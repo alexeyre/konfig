@@ -8,11 +8,11 @@
         yabai -m config auto_balance on
 
         yabai -m config layout				 bsp
-        yabai -m config top_padding    20
-        yabai -m config bottom_padding 20
-        yabai -m config left_padding   20
-        yabai -m config right_padding  20
-        yabai -m config window_gap     20
+        yabai -m config top_padding    10
+        yabai -m config bottom_padding 10
+        yabai -m config left_padding   10
+        yabai -m config right_padding  10
+        yabai -m config window_gap     10
         yabai -m config window_topmost on
         yabai -m config window_shadow float
         yabai -m config focus_follows_mouse autofocus
@@ -23,6 +23,10 @@
         yabai -m config mouse_modifier cmd
               '';
       target = ".config/yabai/yabairc";
+      onChange = ''
+        chmod +x ~/.config/yabai/yabairc
+        ~/.config/yabai/yabairc
+      '';
     };
     programs.brew.formulae = [ "koekeishiya/formulae/yabai" ];
     programs.brew.taps = [ "koekeishiya/formulae" ];
