@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }:
 with lib; {
-  imports = [ ./keyboard ./vi ./shell.nix ./yabai.nix ./fonts.nix ];
+  imports = [ ./keyboard ./vi ./shell.nix ./yabai.nix ];
   networking.hostName = "fedbook";
   nix.trustedUsers = [ "alex" ];
   services.nix-daemon.enable = true;
@@ -45,52 +45,21 @@ with lib; {
       "homebrew/cask-versions"
     ];
 
-    programs.alacritty = {
-      enable = true;
-      settings = {
-        font.normal.family = "Terminus (TTF)";
-        font.size = 16.0;
-        colors = {
-
-          primary = {
-            background = "0x282828";
-            foreground = "0xebdbb2";
-          };
-
-          # Normal colors
-          normal = {
-            black = "0x282828";
-            red = "0xcc241d";
-            green = "0x98971a";
-            yellow = "0xd79921";
-            blue = "0x458588";
-            magenta = "0xb16286";
-            cyan = "0x689d6a";
-            white = "0xa89984";
-          };
-
-          # Bright colors
-          bright = {
-            black = "0x928374";
-            red = "0xfb4934";
-            green = "0xb8bb26";
-            yellow = "0xfabd2f";
-            blue = "0x83a598";
-            magenta = "0xd3869b";
-            cyan = "0x8ec07c";
-            white = "0xebdbb2";
-          };
-        };
-      };
-    };
-
     programs.brew.casks = [
-      "font-terminus"
-      "iterm2-nightly"
-      "notion"
       "visual-studio-code"
       "pdf-expert-beta"
     ];
+
+    programs.kitty = {
+      enable = true;
+      darwinLaunchOptions = [ "--single-instance" ];
+      settings = {
+        font_size = 14.0;
+        hide_window_decorations = true;
+        sync_to_monitor = true;
+      };
+    };
+
     # Enable the use of XDG directories, see https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
     xdg.enable = true;
 
@@ -132,11 +101,6 @@ with lib; {
       (writeScriptBin "download_wallpaper" ''
         ${pkgs.curl}/bin/curl -l $1 -o ~/Pictures/papes/$(${pkgs.coreutils}/bin/basename $1)
       '')
-      (texlive.combine {
-        inherit (texlive)
-          metafont plantuml minted fvextra scheme-full wrapfig ulem amsmath
-          capt-of hyperref;
-      })
       (pkgs.writeScriptBin "compress_video" ''
         #!${pkgs.stdenv.shell}
             file_name="''${1##*/}"

@@ -10,7 +10,7 @@ call plug#begin()
         Plug 'tpope/vim-abolish'
 call plug#end()
 
-set bg=light
+set background=light
 let mapleader =","
 set mouse=a
 set clipboard+=unnamedplus
