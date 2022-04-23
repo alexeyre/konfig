@@ -13,13 +13,16 @@
         # exa
         ls = "exa";
       };
+      envExtra = ''
+        export ZSHZ_DATA=$XDG_DATA_HOME/z/cache
+      '';
       zplug.enable = true;
       zplug.plugins = [
         { name = "agkozak/agkozak-zsh-prompt"; }
         { name = "agkozak/zsh-z"; }
         { name = "jeffreytse/zsh-vi-mode"; }
         { name = "unixorn/fzf-zsh-plugin"; }
-        { name = "zsh-vi-mode/zsh-vi-mode"; }
+        { name = "jeffreytse/zsh-vi-mode"; }
         { name = "MohamedElashri/exa-zsh"; }
       ];
       zplug.zplugHome = ~/.local/share/zplug;

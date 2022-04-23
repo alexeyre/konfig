@@ -7,7 +7,7 @@ with lib; {
   nixpkgs.system = "aarch64-darwin";
   nix.extraOptions = ''
     build-users-group = nixbld
-    experimental-features = nix-command flakes ca-references
+    experimental-features = nix-command flakes
   '';
 
   environment.darwinConfig = "$HOME/.config/nix/configuration.nix";
@@ -25,15 +25,6 @@ with lib; {
 
     home.extraOutputsToInstall = [ "man" ];
 
-    programs.tmux = {
-      enable = true;
-      keyMode = "vi";
-      newSession = true;
-      prefix = "C-a";
-      reverseSplit = true;
-      terminal = "xterm-256color";
-    };
-
     programs.brew.enable = true;
     programs.brew.taps = [
       "candid82/brew"
@@ -46,6 +37,10 @@ with lib; {
     ];
 
     programs.brew.casks = [
+      "spotify"
+      "anki"
+      "discord"
+      "transmission-nightly"
       "visual-studio-code"
       "pdf-expert-beta"
     ];
@@ -53,15 +48,24 @@ with lib; {
     programs.kitty = {
       enable = true;
       darwinLaunchOptions = [ "--single-instance" ];
+      font = {
+        size = 14;
+        name = "monospace";
+      };
       settings = {
-        font_size = 14.0;
         hide_window_decorations = true;
         sync_to_monitor = true;
+        term = "xterm-256color";
+        macos_quit_when_last_window_closed = true;
+        resize_in_steps = true;
       };
     };
 
     # Enable the use of XDG directories, see https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
-    xdg.enable = true;
+    xdg = {
+      enable = true;
+      cacheHome = ~/.local/cache;
+    };
 
     ###########
     ### Git ###
@@ -87,29 +91,5 @@ with lib; {
       enable = true;
       variables."bell-style" = "none";
     };
-
-    home.packages = with pkgs; [
-      gopass
-      (writeScriptBin "strip_exif" ''
-        #!${pkgs.stdenv.shell}
-        ${pkgs.exiftool}/bin/exiftool -all= "$@"
-      '')
-      less
-      (writeScriptBin "youtube-dl_wav" ''
-        ${pkgs.youtube-dl}/bin/youtube-dl --ffmpeg-location=${pkgs.ffmpeg}/bin/ffmpeg -x --audio-format=wav $1
-      '')
-      (writeScriptBin "download_wallpaper" ''
-        ${pkgs.curl}/bin/curl -l $1 -o ~/Pictures/papes/$(${pkgs.coreutils}/bin/basename $1)
-      '')
-      (pkgs.writeScriptBin "compress_video" ''
-        #!${pkgs.stdenv.shell}
-            file_name="''${1##*/}"
-            file_name="''${file_name%.*}"
-            file_name="''${file_name}.mp4"
-            dir_name="$(dirname $1)"
-            full_path="''${dir_name}/''${file_name}"
-            test "$(file -i $1 | grep video)" = "video" && echo ${pkgs.ffmpeg} -i $1 -vcodec libx265 -crf 28 -tag:v hvc1 "''${full_path}"
-          '')
-    ];
   };
 }

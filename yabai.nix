@@ -2,29 +2,29 @@
   home-manager.users.alex = { ... }: {
     home.file.yabairc = {
       text = ''
-                yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
+        yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
 
-                # Split ratio
-                yabai -m config auto_balance on
+        # Split ratio
+        yabai -m config auto_balance on
 
-                yabai -m config layout				 bsp
-                yabai -m config top_padding    10
-                yabai -m config bottom_padding 10
-                yabai -m config left_padding   10
-                yabai -m config right_padding  10
-                yabai -m config window_gap     10
-                yabai -m config window_topmost on
-                yabai -m config window_shadow float
-                yabai -m config focus_follows_mouse autofocus
-                yabai -m config window_border on
-                yabai -m config active_window_border_color 0xFF005577
-                yabai -m config normal_window_border_color 0xFF444444
-                yabai -m config window_border_width 4
-                yabai -m config mouse_modifier fn
+        yabai -m config layout				 bsp
+        yabai -m config top_padding    10
+        yabai -m config bottom_padding 10
+        yabai -m config left_padding   10
+        yabai -m config right_padding  10
+        yabai -m config window_gap     10
+        yabai -m config window_topmost on
+        yabai -m config window_shadow float
+        yabai -m config focus_follows_mouse autofocus
+        yabai -m config window_border on
+        yabai -m config active_window_border_color 0xFF005577
+        yabai -m config normal_window_border_color 0xFF444444
+        yabai -m config window_border_width 4
+        yabai -m config mouse_modifier fn
 
-                # rules
-                yabai -m rule --add label=obsidian app="^Obsidian$" space=3
-                yabai -m rule --add app="^Accessibility Inspector$" manage=off
+        # rules
+        yabai -m rule --add label=obsidian app="^Obsidian$" space=3
+        yabai -m rule --add app="^Accessibility Inspector$" manage=off
         yabai -m rule --add app="^Activity Monitor$" manage=off
         yabai -m rule --add app="^AlDente$" manage=off
         yabai -m rule --add app="^coconutBattery$" manage=off
@@ -48,7 +48,7 @@
         yabai -m rule --add app="^System Preferences$" manage=off
         yabai -m rule --add app="^Transmission$" manage=off
         yabai -m rule --add app="^Unclutter$" manage=off
-                      '';
+              '';
       target = ".config/yabai/yabairc";
       executable = true;
     };
@@ -61,7 +61,7 @@
         alt - space : yabai -m window
 
         # terminal
-        alt - return : /Applications/kitty.app/Contents/MacOS/kitty --single-instance -d ~ &> /dev/null
+        alt - return : kitty -d ~ &> /dev/null
 
         # movement
         shift + alt - d : yabai -m window --warp west
@@ -79,6 +79,10 @@
         alt - h : yabai -m window --focus south
         alt - t : yabai -m window --focus north
         alt - n : yabai -m window --focus east
+
+        alt - u : yabai -m window --toggle zoom-fullscreen --focus
+
+        alt - space : yabai -m window --toggle float
               '';
       target = ".config/skhd/skhdrc";
     };
