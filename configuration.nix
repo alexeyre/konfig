@@ -42,7 +42,9 @@ with lib; {
       "discord"
       "transmission-nightly"
       "visual-studio-code"
+      "calibre"
       "pdf-expert-beta"
+      "iina"
     ];
 
     programs.kitty = {

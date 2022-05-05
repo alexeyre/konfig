@@ -69,22 +69,28 @@
         shift + alt - h : yabai -m window --warp south
         shift + alt - t : yabai -m window --warp north
 
-        shift + cmd - d : yabai -m window --swap west
-        shift + cmd - s : yabai -m window --swap east
-        shift + cmd - h : yabai -m window --swap south
-        shift + cmd - t : yabai -m window --swap north
-
         # focus
         alt - d : yabai -m window --focus west
         alt - h : yabai -m window --focus south
         alt - t : yabai -m window --focus north
         alt - n : yabai -m window --focus east
 
+        alt + shift - d : yabai -m window --warp west
+        alt + shift - h : yabai -m window --warp south
+        alt + shift - t : yabai -m window --warp north
+        alt + shift - n : yabai -m window --warp east
+
         alt - u : yabai -m window --toggle zoom-fullscreen --focus
+        alt + shift - u : yabai -m window --toggle zoom-parent --focus
 
         alt - space : yabai -m window --toggle float
+
+        alt - p : yabai -m space --rotate 90
+        alt + shift - p : yabai -m space --rotate 270
               '';
       target = ".config/skhd/skhdrc";
+      onChange =
+        "${config.home-manager.users.alex.programs.brew.directory}/bin/brew services restart skhd";
     };
     programs.brew.formulae = [ "yabai" "skhd" ];
     programs.brew.taps = [ "koekeishiya/formulae" ];
