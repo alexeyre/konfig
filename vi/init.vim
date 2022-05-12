@@ -8,7 +8,18 @@ call plug#begin()
         Plug 'PontusPersson/pddl.vim'
 
         Plug 'tpope/vim-abolish'
+        Plug 'ctrlpvim/ctrlp.vim'
+        Plug 'vimwiki/vimwiki'
 call plug#end()
+
+let g:vimwiki_list = [{'path': '~/Heimat/', 'ext': '.md'}]
+
+hi htmlArg gui=italic
+hi Comment gui=italic
+hi Type    gui=italic
+hi htmlArg cterm=italic
+hi Comment cterm=italic
+hi Type    cterm=italic
 
 set background=dark
 let mapleader =","

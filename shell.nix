@@ -9,9 +9,6 @@
       shellAliases = {
         ns = "nix-shell";
         nss = "nix search nixpkgs";
-
-        # exa
-        ls = "exa";
       };
       envExtra = ''
         export ZSHZ_DATA=$XDG_DATA_HOME/z/cache
@@ -22,8 +19,10 @@
         { name = "agkozak/zsh-z"; }
         { name = "jeffreytse/zsh-vi-mode"; }
         { name = "unixorn/fzf-zsh-plugin"; }
-        { name = "jeffreytse/zsh-vi-mode"; }
-        { name = "MohamedElashri/exa-zsh"; }
+        {
+          name = "jeffreytse/zsh-vi-mode";
+        }
+        # { name = "MohamedElashri/exa-zsh"; }
       ];
       zplug.zplugHome = ~/.local/share/zplug;
     };

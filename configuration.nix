@@ -45,6 +45,7 @@ with lib; {
       "calibre"
       "pdf-expert-beta"
       "iina"
+      "iterm2-nightly"
     ];
 
     programs.kitty = {
