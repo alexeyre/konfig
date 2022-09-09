@@ -34,6 +34,7 @@ with lib; {
       "homebrew/services"
       "homebrew/cask-fonts"
       "homebrew/cask-versions"
+      "railwaycat/emacsmacport"
     ];
 
     programs.brew.casks = [
@@ -46,6 +47,7 @@ with lib; {
       "pdf-expert-beta"
       "iina"
       "iterm2-nightly"
+      "qbittorrent"
     ];
 
     programs.kitty = {

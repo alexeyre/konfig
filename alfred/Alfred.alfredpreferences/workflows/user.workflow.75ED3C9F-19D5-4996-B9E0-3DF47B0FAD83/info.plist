@@ -14462,7 +14462,7 @@ Example: https://open.spotify.com/track/6hxgHNJjadmCHAJPXw6AYL</string>
 		<key>__is_public_playlists</key>
 		<string>0</string>
 		<key>__last_check_update_time</key>
-		<string>1650361530</string>
+		<string>1659802719</string>
 		<key>__max_results</key>
 		<string>50</string>
 		<key>__mopidy_port</key>
@@ -14482,7 +14482,7 @@ Example: https://open.spotify.com/track/6hxgHNJjadmCHAJPXw6AYL</string>
 		<key>__oauth_refresh_token</key>
 		<string>AQD3S3rgHIputxI6bb9iRH2A27HDUc6-5JKEPdpAKzBagTZtQMY1v-u199IxxeKg2sEFkUrVBxzVKHr8ITBL9q1dY0ApCLCkQ62zxE-VsMv5banatv_-82dznTWyEe8avsM</string>
 		<key>__output_application</key>
-		<string>APPLESCRIPT</string>
+		<string>CONNECT</string>
 		<key>__podcasts_enabled</key>
 		<string>0</string>
 		<key>__preferred_spotify_connect_device</key>

@@ -10,6 +10,8 @@ call plug#begin()
         Plug 'tpope/vim-abolish'
         Plug 'ctrlpvim/ctrlp.vim'
         Plug 'vimwiki/vimwiki'
+
+        Plug 'tomlion/vim-solidity'
 call plug#end()
 
 let g:vimwiki_list = [{'path': '~/Heimat/', 'ext': '.md'}]
