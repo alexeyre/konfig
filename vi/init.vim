@@ -2,19 +2,15 @@ set langmap='z,\\,w,.e,pr,yt,fy,gu,ci,ro,lp,/[,=],aa,os,ed,uf,ig,dh,hj,tk,nl,sq,
 
 call plug#begin()
         Plug 'sheerun/vim-polyglot'
-        Plug 'skywind3000/asyncrun.vim'
 
         Plug 'lervag/vimtex'
-        Plug 'PontusPersson/pddl.vim'
-
-        Plug 'tpope/vim-abolish'
         Plug 'ctrlpvim/ctrlp.vim'
-        Plug 'vimwiki/vimwiki'
 
-        Plug 'tomlion/vim-solidity'
+        Plug 'NLKNguyen/papercolor-theme'
+        Plug 'neovim/neovim-lsp'
 call plug#end()
 
-let g:vimwiki_list = [{'path': '~/Heimat/', 'ext': '.md'}]
+let g:markdown_folding = 1
 
 hi htmlArg gui=italic
 hi Comment gui=italic
@@ -23,7 +19,9 @@ hi htmlArg cterm=italic
 hi Comment cterm=italic
 hi Type    cterm=italic
 
+
 set background=dark
+colorscheme PaperColor
 let mapleader =","
 set mouse=a
 set clipboard+=unnamedplus

@@ -47,6 +47,7 @@ with lib; {
       "pdf-expert-beta"
       "iina"
       "iterm2-nightly"
+      "zotero"
       "qbittorrent"
     ];
 
@@ -83,7 +84,7 @@ with lib; {
       userEmail = "alexeeyre@gmail.com";
       signing = {
         signByDefault = true;
-        key = "954EBF489FD70E2E4694082B3E1F5A8C0C4F9FB3";
+        key = "259E7C153E6FC9C2A356B67942DA29C7382D3737";
         gpgPath = "${pkgs.gnupg}/bin/gpg";
       };
       extraConfig.pull = {
