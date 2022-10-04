@@ -7,8 +7,13 @@ call plug#begin()
         Plug 'ctrlpvim/ctrlp.vim'
 
         Plug 'NLKNguyen/papercolor-theme'
-        Plug 'neovim/neovim-lsp'
+        Plug 'neovim/nvim-lspconfig'
+        Plug 'williamboman/mason.nvim'
+        Plug 'williamboman/mason-lspconfig.nvim'
 call plug#end()
+
+lua require("mason").setup()
+lua require("mason-lspconfig").setup()
 
 let g:markdown_folding = 1
 
