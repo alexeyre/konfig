@@ -30,6 +30,8 @@
 (setq straight-use-package-by-default t)
 (setq straight-repository-branch "develop")
 
+(global-auto-revert-mode t)
+
 (use-package use-package-ensure-system-package)
 
 (defun dvorak (&rest ignored)
