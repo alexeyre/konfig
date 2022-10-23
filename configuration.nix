@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }:
 with lib; {
-  imports = [ ./keyboard ./vi ./shell.nix ./yabai.nix ];
+  imports = [ ./keyboard ./vi ./shell.nix ];
   networking.hostName = "fedbook";
   nix.trustedUsers = [ "alex" ];
   services.nix-daemon.enable = true;
