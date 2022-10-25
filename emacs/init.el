@@ -70,12 +70,16 @@
 
 (use-package olivetti)
 (add-hook 'org-mode-hook 'visual-line-mode)
+(use-package ivy-posframe
+  :custom(ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-window-center)))
+  :config(ivy-posframe-mode))
 (use-package counsel
   :bind
+  ("M-x" . counsel-M-x)
+  ("C-h f" . counsel-describe-function)
+  ("C-h v" . counsel-describe-variable)
   ("C-c p" . counsel-fzf)
-  ("C-x b" . counsel-switch-buffer)
-  :config(counsel-mode))
-
+  ("C-x b" . counsel-switch-buffer))
 (use-package company
   :after counsel
   :bind (:map prog-mode-map
@@ -89,9 +93,14 @@
   :commands lsp)
 ;; (use-package lsp-ui :commands lsp-ui-mode)
 (use-package lsp-ivy :commands lsy-ivy-workspace-symbol)
-(use-package powerline)
 
 (use-package magit)
+
+(use-package doom-modeline
+  :custom
+  (doom-modeline-icon nil)
+  (doom-modeline-time t)
+  :hook((after-init . doom-modeline-mode)))
 
 (use-package cdlatex
   :hook(org-mode . org-cdlatex-mode))
@@ -124,19 +133,17 @@
 (setq calendar-latitude +55)
 (setq calendar-longitude +3)
 (use-package moe-theme
-  :requires(powerline)
   :config
   (setq moe-theme-highlight-buffer-id t)
   (setq moe-theme-resize-title-markdown '(1.5 1.4 1.3 1.2 1.0 1.0))
   (setq moe-theme-resize-title-org '(1.5 1.4 1.3 1.2 1.1 1.0 1.0 1.0 1.0))
   (setq moe-theme-resize-title-rst '(1.5 1.4 1.3 1.2 1.1 1.0))
   (setq moe-theme-mode-line-color 'purple)
-  (powerline-moe-theme)
   (moe-dark))
 
 
 (use-package pdf-tools
-  :Mode ("\\.pdf\\'" . pdf-view-mode)
+  :mode ("\\.pdf\\'" . pdf-view-mode)
   :config
   (setq pdf-view-use-scaling t)
   (setq-default pdf-view-display-size 'fit-page)
@@ -159,6 +166,13 @@
   (interactive)
   (find-file (expand-file-name (concat user-emacs-directory "/init.el"))))
 (bind-key "C-c f c" 'config)
+(bind-key "C-c f f" #'(lambda () ""
+			(interactive)
+			(find-file "~/Documents/knowledge.org")))
+(bind-key "C-l" #'(lambda () ""
+		    (interactive)
+		    (find-file "~/Documents/knowledge.org")
+		    (counsel-org-goto)))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
