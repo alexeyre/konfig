@@ -30,8 +30,11 @@
                 yabai -m rule --add app='^System Preferences$' manage=off
                 yabai -m rule --add title='Preferences$' manage=off
 
+                yabai -m rule --add app='^Emacs$' manage=off
+
         # float settings windows
                 yabai -m rule --add title='Settings$' manage=off
+
       '';
       target = ".config/yabai/yabairc";
       executable = true;
@@ -43,9 +46,6 @@
         alt - w : yabai -m space --focus prev
 
         alt - space : yabai -m window
-
-        # terminal
-        alt - return : kitty -d ~ &> /dev/null
 
         # movement
         shift + alt - d : yabai -m window --warp west

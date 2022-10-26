@@ -15,7 +15,10 @@
       '';
       zplug.enable = true;
       zplug.plugins = [
-        { name = "agkozak/agkozak-zsh-prompt"; }
+        {
+          name = "romkatv/powerlevel10k";
+          tags = [ "as:theme" ];
+        }
         { name = "agkozak/zsh-z"; }
         { name = "jeffreytse/zsh-vi-mode"; }
         { name = "unixorn/fzf-zsh-plugin"; }

@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }:
 with lib; {
-  imports = [ ./keyboard ./vi ./shell.nix ];
+  imports = [ ./keyboard ./vi ./shell.nix ./yabai.nix ];
   networking.hostName = "fedbook";
   nix.trustedUsers = [ "alex" ];
   services.nix-daemon.enable = true;
@@ -41,7 +41,6 @@ with lib; {
       "spotify"
       "anki"
       "discord"
-      "transmission-nightly"
       "visual-studio-code"
       "calibre"
       "pdf-expert-beta"

@@ -31,6 +31,18 @@
 (setq straight-repository-branch "develop")
 
 (global-auto-revert-mode t)
+ (defun toggle-transparency ()
+   (interactive)
+   (let ((alpha (frame-parameter nil 'alpha)))
+     (set-frame-parameter
+      nil 'alpha
+      (if (eql (cond ((numberp alpha) alpha)
+                     ((numberp (cdr alpha)) (cdr alpha))
+                     ;; Also handle undocumented (<active> <inactive>) form.
+                     ((numberp (cadr alpha)) (cadr alpha)))
+               100)
+          '(95 . 100) '(100 . 100)))))
+ (global-set-key (kbd "C-c t") 'toggle-transparency)
 
 (use-package use-package-ensure-system-package)
 
@@ -49,7 +61,7 @@
   (scroll-bar-mode -1)
   (menu-bar-mode -1)
   (add-to-list 'default-frame-alist '(font . "MonoLisa 14"))
-					; :hook(minibuffer-setup . (lambda () (set-input-method "programmer-dvorak")))
+  :hook(minibuffer-setup . (lambda () (set-input-method "programmer-dvorak")))
   :custom
   (vc-follow-symlinks t)
   (enable-recursive-minibuffers t))
@@ -98,9 +110,8 @@
 
 (use-package doom-modeline
   :custom
-  (doom-modeline-icon nil)
   (doom-modeline-time t)
-  :hook((after-init . doom-modeline-mode)))
+  :hook(after-init . doom-modeline-mode))
 
 (use-package cdlatex
   :hook(org-mode . org-cdlatex-mode))
@@ -138,7 +149,7 @@
   (setq moe-theme-resize-title-markdown '(1.5 1.4 1.3 1.2 1.0 1.0))
   (setq moe-theme-resize-title-org '(1.5 1.4 1.3 1.2 1.1 1.0 1.0 1.0 1.0))
   (setq moe-theme-resize-title-rst '(1.5 1.4 1.3 1.2 1.1 1.0))
-  (setq moe-theme-mode-line-color 'purple)
+  ; (setq moe-theme-mode-line-color 'purple)
   (moe-dark))
 
 
