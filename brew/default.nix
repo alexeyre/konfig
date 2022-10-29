@@ -36,7 +36,7 @@ with lib; {
       [ (pkgs.writeScriptBin "sync_brew" config.home.file.brewfile.onChange) ];
     programs.brew.formulae = mkIf (config.programs.brew.mas != [ ]) [ "mas" ];
     programs.zsh.envExtra = ''
-      export PATH=$PATH:${config.programs.brew.directory}/bin
+      export PATH=${config.programs.brew.directory}/bin:${config.programs.brew.directory}/sbin:$PATH
     '';
     home.file.brewfile = {
       target = ".Brewfile";
