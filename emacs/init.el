@@ -23,29 +23,44 @@
 (setq straight-use-package-by-default t)
 (setq straight-repository-branch "develop")
 
-(global-auto-revert-mode t)
-(add-to-list 'default-frame-alist '(undecorated-round . t))
-
-(use-package dashboard
-
-  :config
-  (setq dashboard-startup-banner (expand-file-name "logo.png" user-emacs-directory))
-  (dashboard-setup-startup-hook))
-
 (use-package exec-path-from-shell
-  :custom(exec-path-from-shell-arguments '("-l"))
-  :init(exec-path-from-shell-initialize))
+  :config(exec-path-from-shell-initialize))
+
+
+(use-package page-break-lines)
+(use-package all-the-icons)
+(use-package dashboard
+  :config
+  (setq dashboard-startup-banner (expand-file-name "logo.png" user-emacs-directory)
+	dashboard-items '((agenda . 5)
+			  (recents  . 5)
+			  (bookmarks . 5)
+			  (projects . 5)
+			  (registers . 5))
+	dashboard-show-navigator t
+	dashboard-set-init-info t
+	dashboard-center-content t
+	dashboard-projects-switch-function 'counsel-projectile-switch-project-by-name
+	)
+  (dashboard-setup-startup-hook))
 
 (use-package which-key
   :init(which-key-mode))
 
 (use-package emacs
+  :bind
+  ("C-c e" . eshell)
   :config
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
   (menu-bar-mode -1)
   (add-to-list 'default-frame-alist '(font . "MonoLisa 14"))
-  :hook(minibuffer-setup . (lambda () (set-input-method "programmer-dvorak")))
+  (add-to-list 'default-frame-alist '(undecorated-round . t))
+  (global-auto-revert-mode t)
+  :hook
+  (minibuffer-setup . (lambda () (set-input-method "programmer-dvorak")))
+  (char-mode . (lambda () (set-input-method "programmer-dvorak")))
+  (line-mode . (lambda () (set-input-method "programmer-dvorak")))
   :custom
   (vc-follow-symlinks t)
   (enable-recursive-minibuffers t))
@@ -72,6 +87,12 @@
   :custom(ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-window-center)))
   :config(ivy-posframe-mode))
 
+(use-package ace-window
+  :config
+  (setq aw-keys '(?a ?s ?d ?f ?q ?w ?e ?r))
+  (ace-window-posframe-enable)
+  :bind("C-a" . ace-window))
+
 (use-package counsel
   :config(counsel-mode)
   :bind
@@ -79,6 +100,7 @@
   ("C-h f" . counsel-describe-function)
   ("C-h v" . counsel-describe-variable)
   ("C-c p" . counsel-fzf)
+  ("C-c c p" . (lambda () (interactive) (counsel-fzf "" "~")))
   ("C-x b" . counsel-switch-buffer))
 
 (use-package company
@@ -92,6 +114,8 @@
 
 (use-package magit
   :commands magit)
+(use-package counsel-projectile
+  :config(counsel-projectile-mode))
 (use-package projectile
   :bind(:map projectile-mode-map
 	     ("C-c C-p" . 'projectile-command-map))
@@ -137,7 +161,9 @@
 (use-package org
   :straight nil
   :custom(org-preview-latex-image-directory "~/.local/cache/org-previews/")
-  :config(require 'org-tempo)
+  :config
+  (setq org-agenda-files '("~/Documents/knowledge/main.org"))
+  (require 'org-tempo)
   :hook
   (org-mode . auto-fill-mode)
   (org-mode . (lambda ()
@@ -150,3 +176,5 @@
 		    (interactive)
 		    (find-file "~/Documents/knowledge/main.org")
 		    (counsel-org-goto)))
+(use-package twittering-mode
+  :bind("C-c t t" . twit))
