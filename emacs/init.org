@@ -3,18 +3,14 @@ Loads secrets
   (load-file (expand-file-name "secrets.el" user-emacs-directory))
 #+end_src
 
-#+RESULTS:
-: t
-
-Collect ~$PATH~ from my local shell to ensure ~brew~ and ~nix~
+Collect ~$PATH~ from my local shell, to ensure ~brew~ and ~nix~
 compatibility mainly.
 #+begin_src emacs-lisp
   (use-package exec-path-from-shell
-    :config(exec-path-from-shell-initialize))
+    :config
+    (setq exec-path-from-shell-arguments '("-l"))
+    (exec-path-from-shell-initialize))
 #+end_src
-
-#+RESULTS:
-: t
 
 Installs the dashboard, sets up the floating GNU logo and uses counsel
 commands for projectile.
@@ -36,18 +32,8 @@ commands for projectile.
 	  )
     (dashboard-setup-startup-hook))
 #+end_src
-xwidget things
-#+begin_src emacs-lisp
-   (add-hook 'xwidget-webkit-mode-hook '(lambda () "" (setq-local default-input-method "programmer-dvorak")))
-#+end_src
-
-#+RESULTS:
-| lambda | nil |   | (setq-local default-input-method programmer-dvorak) |
-| lambda | nil |   | (set-input-method programmer-dvorak)                |
-
  - remove unnecessary UI
  - set up fonts
- - remove window decoration on macOS
  - hook dvp in input modes
 #+begin_src emacs-lisp
   (use-package programmer-dvorak)
@@ -59,7 +45,6 @@ xwidget things
     (scroll-bar-mode -1)
     (menu-bar-mode -1)
     (add-to-list 'default-frame-alist '(font . "MonoLisa 14"))
-    (add-to-list 'default-frame-alist '(undecorated-round . t))
     (global-auto-revert-mode t)
     :hook
     (minibuffer-setup . (lambda () (set-input-method "programmer-dvorak")))
@@ -69,9 +54,6 @@ xwidget things
     (vc-follow-symlinks t)
     (enable-recursive-minibuffers t))
 #+end_src
-
-#+RESULTS:
-: eshell
 
 - setup evil and extensions
 - ace window for fast window switching
@@ -106,9 +88,6 @@ xwidget things
     (ace-window-posframe-mode)
     :bind("C-a" . ace-window))
 #+end_src
-
-#+RESULTS:
-: ace-window
 
 - ivy/counsel/swiper because it's infinitely better than the default
 - company for popups in code
@@ -166,9 +145,6 @@ xwidget things
     :hook(after-init . doom-modeline-mode))
 #+end_src
 
-#+RESULTS:
-| doom-modeline-mode | #[0 \300 \207 [dashboard-insert-startupify-lists] 1] | tramp-register-archive-file-name-handler |
-
 #+begin_src emacs-lisp
   (use-package markdown-mode+
     :mode ("\\.md\\'" . markdown-mode+))
@@ -181,10 +157,7 @@ xwidget things
   (pdf-tools-install))
 #+end_src
 
-#+RESULTS:
-: t
-
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
 
   (defun my/text-scale-adjust-latex-previews ()
     "Adjust the size of latex preview fragments when changing the
@@ -211,6 +184,7 @@ xwidget things
 
   (add-hook 'text-scale-mode-hook #'my/text-scale-adjust-latex-previews)
 #+end_src
+
 #+begin_src emacs-lisp
   (use-package cdlatex
     :hook
@@ -218,8 +192,13 @@ xwidget things
 
   (use-package org
     :straight nil
+    :bind("C-c c" . org-capture)
     :custom
     (org-preview-latex-image-directory "~/.local/cache/org-previews/")
+    (org-default-notes-file "~/Documents/knowledge/main.org")
+    (org-capture-templates '(
+			     ("n" "Note" entry (file+datetree "~/Documents/knowledge/main.org" "Fleeting notes") "* %?\n%i\n")
+			     ))
     :config
     (setq org-latex-create-formula-image-program 'dvisvgm)
     (setq org-agenda-files '("~/Documents/knowledge/main.org"))
@@ -229,30 +208,48 @@ xwidget things
     (org-mode . visual-line-mode)
     (org-mode . (lambda ()
 		  (interactive)
-		 (setq buffer-face-mode-face '(:family "Space Mono"))
+		  (setq buffer-face-mode-face '(:family "Space Mono"))
 		  (buffer-face-mode))))
-  (use-package math-preview
-    :config
-    (defalias #'org-latex-preview #'math-preview-at-point)
-    (defalias #'org-clear-latex-preview #'math-preview-clear-region))
   (use-package org-fragtog
     :hook org-mode)
   (use-package centered-cursor-mode
-  :commands centered-cursor-mode)
+    :commands centered-cursor-mode)
   (use-package olivetti
-  :commands olivetti-mode)
+    :commands olivetti-mode)
   (bind-key "C-l" #'(lambda () ""
 		      (interactive)
 		      (find-file "~/Documents/knowledge/main.org")
 		      (counsel-org-goto)))
+#+end_src
+#+begin_src emacs-lisp
+    (use-package org-auctex
+  :straight(:type git :host github :repo "karthink/org-auctex")
+    :config
+    (defalias #'org-latex-preview #'org-auctex-preview-dwim)
+    (defalias #'org-clear-latex-preview #'math-preview-clearout-at-point))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package org-noter
+  :commands(org-noter)
+  :bind(:map pdf-view-mode-map
+	     ("i" . org-noter-insert-note)))
+#+end_src
+
+#+RESULTS:
+
+#+begin_src emacs-lisp :tangle no
+  (use-package math-preview
+    :disabled t
+    :config
+    (defalias #'org-latex-preview #'math-preview-at-point)
+    (defalias #'org-clear-latex-preview #'math-preview-clear-region))
 #+end_src
 
 #+begin_src emacs-lisp
   (use-package counsel-spotify
   :requires ivy)
 #+end_src
-
-#+RESULTS:
 
 #+begin_src emacs-lisp
 
@@ -268,13 +265,7 @@ xwidget things
     :init(projectile-mode +1))
 #+end_src
 
-#+RESULTS:
-: projectile-command-map
-
 #+begin_src emacs-lisp
   (use-package twittering-mode
     :bind("C-c t t" . twit))
 #+end_src
-
-#+RESULTS:
-: twit

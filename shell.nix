@@ -10,6 +10,7 @@
         ns = "nix-shell";
         nss = "nix search nixpkgs";
       };
+      initExtra = (builtins.readFile ./p10k.zsh);
       envExtra = ''
         export ZSHZ_DATA=$XDG_DATA_HOME/z/cache
       '';
