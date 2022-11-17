@@ -232,11 +232,12 @@ commands for projectile.
 #+begin_src emacs-lisp
   (use-package org-noter
   :commands(org-noter)
-  :bind(:map pdf-view-mode-map
-	     ("i" . org-noter-insert-note)))
+  :config(evil-collection-define-key 'normal 'pdf-view-mode-map
+  (kbd "i") 'org-noter-insert-note))
 #+end_src
 
 #+RESULTS:
+: t
 
 #+begin_src emacs-lisp :tangle no
   (use-package math-preview

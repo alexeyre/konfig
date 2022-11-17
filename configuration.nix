@@ -2,7 +2,7 @@
 with lib; {
   imports = [ ./keyboard ./vi ./shell.nix ./yabai.nix ];
   networking.hostName = "fedbook";
-  nix.trustedUsers = [ "alex" ];
+  nix.settings.trusted-users = [ "alex" ];
   services.nix-daemon.enable = true;
   nixpkgs.system = "aarch64-darwin";
   nix.extraOptions = ''
