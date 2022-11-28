@@ -1,3 +1,3 @@
 #!/usr/bin/env sh
-stow --dotfiles -t ~ --no-folding emacs
-stow --dotfiles -t ~ --no-folding fish
+stow -t ~ --no-folding emacs
+stow -t ~ --no-folding fish
