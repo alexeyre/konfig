@@ -1,0 +1,5 @@
+(use-package org-auctex
+  :straight(:type git :host github :repo "karthink/org-auctex")
+  :config
+  (defalias #'org-latex-preview #'org-auctex-preview-dwim)
+  (defalias #'org-clear-latex-preview #'math-preview-clearout-at-point))
