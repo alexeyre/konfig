@@ -1,34 +1,157 @@
+(load-file (expand-file-name "secrets.el" user-emacs-directory))
+(setq straight-repository-branch "stable")
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
       (bootstrap-version 6))
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
-	(url-retrieve-synchronously
-	 "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-	 'silent 'inhibit-cookies)
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
-(setq native-comp-async-report-warnings-errors nil)
-(setq enable-recursive-minibuffers t)
+                                        ; (setq native-comp-async-report-warnings-errors nil) (setq straight-disable-native-compile t)
+
+(setq straight-disable-compile t)
+(setq straight-host-usernames '((github . "alexeyre")))
+
+;; garbage collection magic hack
 (straight-use-package 'gcmh)
 (require 'gcmh)
 (gcmh-mode 1)
+
+(setq system-time-locale "en_GB")
+(setq calendar-date-style 'european)
+
+(setq frame-resize-pixelwise t)
+
+;; no-littering
+;; moves emacs data directories and moves backup files
+(straight-use-package 'no-littering)
+(require 'no-littering)
+
+;; always follow symlinks
 (setq vc-follow-symlinks t)
+
+;; use-package and extensions
 (straight-use-package 'use-package)
 (straight-use-package 'use-package-ensure-system-package)
+(setq use-package-always-ensure nil)
 (setq straight-use-package-by-default t)
-(setq vc-follow-symlinks t)
+
+(use-package variable-pitch
+  :straight nil
+  :hook org-mode)
+
+(use-package cdlatex
+  :hook(org-mode . org-cdlatex-mode))
+
+(defun open-knowledge-file (file-name)
+  "Open the file FILE-NAME.org in ~/Documents/knowledge"
+  (find-file (expand-file-name file-name "~/Documents/knowledge"))  )
+(defun open-knowledge-file/main ()
+  "Open main.org in ~/Documents/knowledge"
+  (interactive)
+  (open-knowledge-file "main.org"))
+(bind-key "C-c C-f n" 'open-knowledge-file/main)
+
+
+
+(use-package aas
+  :hook (LaTeX-mode . aas-activate-for-major-mode)
+  :hook (org-mode . aas-activate-for-major-mode))
+(use-package laas
+  :hook org-mode)
+(use-package yasnippet
+  :hook (org-mode . yas-minor-mode))
+
+;; the org that ships normally is old
+(use-package org
+  :bind
+  ("C-c c" . org-capture)
+  ("C-c a" . org-agenda)
+  (:map org-mode-map
+        ("s-<tab>" . org-show-current-heading-tidily)
+        ("s-<return>" . org-insert-heading-after-current)
+        )
+  :custom
+  ;; (org-startup-indented t)
+  (org-startup-with-inline-images t)
+  (org-image-actual-width '(300))
+  (org-pretty-entities t)
+  (org-pretty-entities-include-sub-superscripts nil)
+  (org-agenda-window-setup 'current-window)
+  (org-agenda-restore-windows-after-quit t)
+  (org-treat-insert-todo-heading-as-state-change t)
+  (org-log-into-drawer t)
+  (org-preview-latex-image-directory "~/.local/cache/org-previews/")
+  (org-default-notes-file "~/Documents/knowledge/main.org")
+                                        ; (org-hide-emphasis-markers t)
+  (org-capture-templates '(
+                           ("n" "Note" entry (file+datetree "~/Documents/knowledge/main.org" "Fleeting notes") "* %?\n%i\n")
+                           ))
+  :config
+  (defun org-show-current-heading-tidily ()
+    (interactive)  ;Inteactive
+    "Show next entry, keeping other entries closed."
+    (if (save-excursion (end-of-line) (outline-invisible-p))
+        (progn (org-show-entry) (show-children))
+      (outline-back-to-heading)
+      (unless (and (bolp) (org-on-heading-p))
+        (org-up-heading-safe)
+        (hide-subtree)
+        (error "Boundary reached"))
+      (org-overview)
+      (org-reveal t)
+      (org-show-entry)
+      (show-children)))
+  (require 'org-agenda)
+  (add-to-list 'org-agenda-prefix-format '(todo . "%b"))
+                                        ; (plist-put org-format-latex-options :scale 1.5)
+  (require 'org-capture)
+  (add-to-list 'org-capture-templates '("t" "Todo" entry (file+headline "~/Documents/knowledge/todo.org" "Tasks")
+                                        "* TODO %?\n  %i\n  %a"))
+
+  (setq org-latex-create-formula-image-program 'dvisvgm)
+  (setq org-agenda-files '("~/Documents/knowledge/main.org" "~/Documents/knowledge/todo.org"))
+  (setq org-src-fontify-natively t)
+  (setq org-highlight-latex-and-related '(latex script entities))
+  (font-lock-add-keywords 'org-mode
+                          '(("\\(\\\\cite\\)" . font-lock-keyword-face)
+                            ("\\[[0-9]+]" . font-lock-type-face)
+                            ("\\s-*[a-zA-Z]+[0-9]+[a-z]" . font-lock-constant-face)))
+  (font-lock-add-keywords 'org-mode
+                          '(("\\(\\\\citep\\)" . font-lock-keyword-face)))
+  (font-lock-add-keywords 'org-mode
+                          '(("\\(\\\\citet\\)" . font-lock-keyword-face)))
+  (font-lock-add-keywords 'org-mode
+                          '(("\\(\\\\citealp\\)" . font-lock-keyword-face)))
+  (font-lock-add-keywords 'org-mode
+                          '(("\\(\\\\citeauthor\\)" . font-lock-keyword-face)))
+  (font-lock-add-keywords 'org-mode
+                          '(("\\(\\\\citeyear\\)" . font-lock-keyword-face)))
+  (require 'org-tempo)
+  :hook
+  (org-mode . org-indent-mode)
+  (org-mode . auto-fill-mode)
+  (org-mode . visual-line-mode))
+
+(use-package python
+  :straight nil
+  :custom
+  (python-indent-guess-indent-offset t))
+
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 2)
+(setq indent-line-function 'insert-tab)
+
+;; derive exec-path from $SHELL
 (use-package exec-path-from-shell
   :config
   (setq exec-path-from-shell-arguments '("-l"))
   (exec-path-from-shell-initialize))
-
-(use-package tree-sitter
-  :config(global-tree-sitter-mode))
-(use-package tree-sitter-langs
-  :after tree-sitter)
 
 ;; transparency binds
 ;; https://www.emacswiki.org/emacs/TransparentEmacs
@@ -38,54 +161,20 @@
     (set-frame-parameter
      nil 'alpha
      (if (eql (cond ((numberp alpha) alpha)
-		    ((numberp (cdr alpha)) (cdr alpha))
-		    ;; Also handle undocumented (<active> <inactive>) form.
-		    ((numberp (cadr alpha)) (cadr alpha)))
-	      100)
-	 '(90 . 90) '(100 . 100)))))
-(toggle-transparency)
+                    ((numberp (cdr alpha)) (cdr alpha))
+                    ;; Also handle undocumented (<active> <inactive>) form.
+                    ((numberp (cadr alpha)) (cadr alpha)))
+              100)
+         '(90 . 90) '(100 . 100)))))
+(set-frame-parameter nil 'alpha '(100 . 100))
 (bind-key "C-c t t" 'toggle-transparency)
+(bind-key "C-c f" 'toggle-frame-fullscreen)
 
-
-;; lsp
-(use-package lsp-mode
-  :hook (lsp-configure . (lambda () (lsp-headerline-breadcrumb-mode -1)))
-  :commands (lsp lsp-deferred)
-  :init (setq lsp-keymap-prefix "C-c l")
-  :config
-  (progn
-    (lsp-register-client
-     (make-lsp-client :new-connection (lsp-tramp-connection "clangd")
-		      :major-modes '(c-mode c++-mode)
-		      :remote? t
-		      :server-id 'clangd-remote))))
-(use-package lsp-ivy)
-(use-package yasnippet
-  :hook (prog-mode . yas-minor-mode)
-  (latex-mode . yas-minor-mode))
-(use-package lsp-java)
-(use-package lsp-pyright)
-(use-package yasnippet-snippets)
-(use-package lsp-ui
-  :commands lsp-ui-mode
-  :config
-  (setq lsp-ui-doc-enable t
-	lsp-ui-doc-use-childframe t
-	lsp-ui-doc-position 'top
-	lsp-ui-doc-include-signature t
-	lsp-ui-sideline-enable nil
-	lsp-ui-flycheck-enable t
-	lsp-ui-flycheck-list-position 'right
-	lsp-ui-flycheck-live-reporting t
-	lsp-ui-peek-enable t
-	lsp-ui-peek-list-width 60
-	lsp-ui-peek-peek-height 25))
-(use-package company-lsp)
-
-;; treemacs
-(use-package treemacs
-  :config(define-key treemacs-mode-map [mouse-1] #'treemacs-single-click-expand-action)
-  :bind("C-c s" . treemacs))
+(use-package copilot
+  :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
+  :bind(:map copilot-completion-map
+             ("<tab>" . copilot-accept-completion))
+  )
 
 ;; restart-emacs
 (use-package restart-emacs
@@ -100,19 +189,45 @@
 (use-package page-break-lines)
 (use-package all-the-icons)
 (use-package dashboard
+  :bind
+  ("C-c d d" . (lambda () "Goto the dashboard buffer" (interactive) (switch-to-buffer "*dashboard*")))
   :config
+  (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
   (setq dashboard-startup-banner (expand-file-name "logo.png" user-emacs-directory)
-	dashboard-items '((agenda . 5)
-			  (recents  . 5)
-			  (bookmarks . 5)
-			  (projects . 5)
-			  (registers . 5))
-	dashboard-show-navigator t
-	dashboard-set-init-info t
-	dashboard-center-content t
-	dashboard-projects-switch-function 'counsel-projectile-switch-project-by-name
-	)
+        dashboard-agenda-prefix-format "%20b%s"
+        dashboard-items '((agenda . 20))
+        dashboard-center-content t
+        dashboard-projects-switch-function 'counsel-projectile-switch-project-by-name
+        )
   (dashboard-setup-startup-hook))
+
+(defun open-current-directory ()
+  "Open the current file's directory in Finder"
+  (interactive)
+  (let ((process-connection-type nil))
+    (start-process ""
+                   nil
+                   "open"
+                   (url-file-directory buffer-file-name))))
+(bind-key "C-c o" 'open-current-directory)
+
+;; swap meta and alt
+;;; I prefer cmd key for meta
+(setq mac-option-key-is-meta nil
+      mac-command-key-is-meta t
+      mac-command-modifier 'meta
+      mac-option-modifier 'super)
+
+(defun os-layout/qwerty ()
+  "Set the OS layout to QWERTY"
+  (let ((inhibit-message t)
+        (message-log-max nil))
+    (call-process-shell-command "im-select com.apple.keylayout.US&" nil 0)))
+(defun os-layout/dvp ()
+  "Set the OS layout to Programmer Dvorak"
+  (let ((inhibit-message t)
+        (message-log-max nil))
+    (call-process-shell-command "im-select \"com.apple.keyboardlayout.Programmer Dvorak.keylayout.ProgrammerDvorak\"" nil 0)))
 
 ;; dvp input method
 (use-package programmer-dvorak
@@ -120,10 +235,11 @@
   (minibuffer-setup . (lambda () (set-input-method "programmer-dvorak")))
   (char-mode . (lambda () (set-input-method "programmer-dvorak")))
   (line-mode . (lambda () (set-input-method "programmer-dvorak")))
-  (emacs-startup . (lambda () (shell-command "im-select com.apple.keylayout.US")))
-  (focus-in . (lambda () (shell-command "im-select com.apple.keylayout.US")))
-  (focus-out . (lambda () (shell-command "im-select \"com.apple.keyboardlayout.Programmer Dvorak.keylayout.ProgrammerDvorak\"")))
-  (kill-emacs . (lambda () (shell-command "im-select \"com.apple.keyboardlayout.Programmer Dvorak.keylayout.ProgrammerDvorak\""))))
+  (isearch-mode-end . (lambda () (set-input-method "programmer-dvorak")))
+  (emacs-startup . os-layout/qwerty)
+  (focus-in . os-layout/qwerty)
+  (focus-out . os-layout/dvp)
+  (kill-emacs . os-layout/dvp))
 
 ;; use fish-completion when fish is installed
 (use-package fish-completion
@@ -137,11 +253,11 @@
 (menu-bar-mode 0)
 (setq initial-frame-alist
       '((menu-bar-lines . 0)
-	(tool-bar-lines . 0)))
-(setq visible-bell t)
+        (tool-bar-lines . 0)))
 (setq inhibit-startup-message t)
 (setq initial-scratch-message "")
 (blink-cursor-mode 0)
+(setq ring-bell-function 'ignore)
 (setq inhibit-startup-echo-area-message "alex")
 
 ;; minimalist titlebar
@@ -150,24 +266,52 @@
 (setq ns-use-proxy-icon nil)
 (setq frame-title-format nil)
 
-;; set the default font
-(set-face-attribute 'default nil :font "Mx437 IBM XGA-AI 7x15-15:antialias=false:hinting=true")
-(set-face-attribute 'variable-pitch nil :font "Dank Mono-12")
-(set-face-attribute 'fixed-pitch nil :inherit 'default)
-;; disable bold
-(defun disable-bold-on-all-faces ()
-  "Sets the weight of all faces to normal"
-    (mapc
-  (lambda (face)
-    (set-face-attribute face nil :weight 'normal :underline nil))
-  (face-list)))
-(add-hook 'after-init-hook 'disable-bold-on-all-faces)
+;; ligatures
+
+(let ((alist '((33 . ".\\(?:\\(?:==\\|!!\\)\\|[!=]\\)")
+               (35 . ".\\(?:###\\|##\\|_(\\|[#(?[_{]\\)")
+               (36 . ".\\(?:>\\)")
+               (37 . ".\\(?:\\(?:%%\\)\\|%\\)")
+               (38 . ".\\(?:\\(?:&&\\)\\|&\\)")
+               (42 . ".\\(?:\\(?:\\*\\*/\\)\\|\\(?:\\*[*/]\\)\\|[*/>]\\)")
+               (43 . ".\\(?:\\(?:\\+\\+\\)\\|[+>]\\)")
+               (45 . ".\\(?:\\(?:-[>-]\\|<<\\|>>\\)\\|[<>}~-]\\)")
+               (46 . ".\\(?:\\(?:\\.[.<]\\)\\|[.=-]\\)")
+               (47 . ".\\(?:\\(?:\\*\\*\\|//\\|==\\)\\|[*/=>]\\)")
+               (48 . ".\\(?:x[a-zA-Z]\\)")
+               (58 . ".\\(?:::\\|[:=]\\)")
+               (59 . ".\\(?:;;\\|;\\)")
+               (60 . ".\\(?:\\(?:!--\\)\\|\\(?:~~\\|->\\|\\$>\\|\\*>\\|\\+>\\|--\\|<[<=-]\\|=[<=>]\\||>\\)\\|[*$+~/<=>|-]\\)")
+               (61 . ".\\(?:\\(?:/=\\|:=\\|<<\\|=[=>]\\|>>\\)\\|[<=>~]\\)")
+               (62 . ".\\(?:\\(?:=>\\|>[=>-]\\)\\|[=>-]\\)")
+               (63 . ".\\(?:\\(\\?\\?\\)\\|[:=?]\\)")
+               (91 . ".\\(?:]\\)")
+               (92 . ".\\(?:\\(?:\\\\\\\\\\)\\|\\\\\\)")
+               (94 . ".\\(?:=\\)")
+               (119 . ".\\(?:ww\\)")
+               (123 . ".\\(?:-\\)")
+               (124 . ".\\(?:\\(?:|[=|]\\)\\|[=>|]\\)")
+               (126 . ".\\(?:~>\\|~~\\|[>=@~-]\\)")
+               )
+             ))
+  (dolist (char-regexp alist)
+    (set-char-table-range composition-function-table (car char-regexp)
+                          `([,(cdr char-regexp) 0 font-shape-gstring]))))
+
+;; font config
+(set-face-attribute 'default nil :family "SF Mono" :height 140)
+(set-face-attribute 'variable-pitch nil :inherit 'default :family "Source Code Pro" :weight 'normal :height 140)
+
+(use-package mixed-pitch
+  :hook org-mode)
 
 ;; automatically revert buffers
 (global-auto-revert-mode)
 
 ;; scroll line-by-line
 (setq scroll-conservatively 101)
+(setq auto-window-vscroll nil)
+(setq scroll-step 1)
 
 ;; disable the modeline by default
 ;; https://bzg.fr/en/emacs-hide-mode-line/
@@ -181,48 +325,59 @@
   :group 'editing-basics
   (if hidden-mode-line-mode
       (setq hide-mode-line mode-line-format
-	    mode-line-format nil)
+            mode-line-format nil)
     (setq mode-line-format hide-mode-line
-	  hide-mode-line nil))
+          hide-mode-line nil))
   (force-mode-line-update)
   ;; Apparently force-mode-line-update is not always enough to
   ;; redisplay the mode-line
   (redraw-display)
   (when (and (called-interactively-p 'interactive)
-	     hidden-mode-line-mode)
+             hidden-mode-line-mode)
     (run-with-idle-timer
      0 nil 'message
      (concat "Hidden Mode Line Mode enabled.  "
-	     "Use M-x hidden-mode-line-mode to make the mode-line appear."))))
+             "Use M-x hidden-mode-line-mode to make the mode-line appear."))))
 (add-hook 'after-change-major-mode-hook 'hidden-mode-line-mode)
 (hidden-mode-line-mode 1)
 
 (bind-key (kbd "C-c t m") 'hidden-mode-line-mode)
 
+
 ;; vterm terminal emulator
 (use-package vterm
   :config
+  (setq vterm-eval-cmds '(("find-file" find-file)
+                          ("message" message)
+                          ("vterm-clear-scrollback" vterm-clear-scrollback)
+                          ("dired" dired)
+                          ("ediff-files" ediff-files)))
   (add-to-list 'display-buffer-alist
-	       '("\*vterm\*"
-		 (display-buffer-in-side-window)
-		 (window-height . 0.25)
-		 (side . bottom)
-		 (slot . 0))))
+               '("\*vterm\*"
+                 (display-buffer-in-side-window)
+                 (window-height . 0.25)
+                 (side . bottom)
+                 (slot . 0))))
 ;; popover for vterm
 (use-package vterm-toggle
-  :after vterm
   :bind
   ("C-," . vterm-toggle))
 
-
-;; auto balanaces windows
+;; auto balances windows
 (use-package zoom
+  :disabled t
   :custom
   (zoom-size '(0.618 . 0.618))
   (zoom-ignored-major-modes '(dired-mode markdown-mode vterm-mode))
   (zoom-ignored-buffer-names '("zoom.el" "init.el"))
   (zoom-ignored-buffer-name-regexps '("^*calc"))
-  :hook after-init)
+  :hook (after-init . zoom-mode))
+(use-package golden-ratio
+  :config
+  (setq golden-ratio-auto-scale t)
+  (add-to-list 'golden-ratio-exclude-modes 'pdf-view-mode)
+  (add-to-list 'golden-ratio-exclude-modes 'calendar-mode)
+  (golden-ratio-mode 1))
 
 ;; quick-edit emacs config
 (defun edit-config ()
@@ -234,10 +389,7 @@
 
 ;; evil binds for org
 (use-package evil-org
-  :after org
-  :after evil
-  :after evil-collection
-  :hook (org-mode . (lambda () evil-org-mode))
+  :hook org-mode
   :config
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
@@ -250,25 +402,39 @@
 
 ;; automatically show keybinds
 (use-package which-key
-  :disabled t
   :config(which-key-mode))
+
 ;; better search for evil
 (use-package evil-anzu
   :after evil
   :config
-  (with-eval-after-load 'evil
-    (require 'evil-anzu)))
+  (require 'evil-anzu))
 
 ;; doesn't need explaining
 (use-package evil
+  :config
+  (defun programmer-dvorak-mode ()
+    "Set input method to programmer dvorak"
+    (set-input-method "programmer-dvorak"))
   :hook
-  (evil-insert-state-entry . (lambda () (set-input-method "programmer-dvorak")))
-  (evil-replace-state-entry . (lambda () (set-input-method "programmer-dvorak")))
-  (isearch-mode . (lambda () (set-input-method "programmer-dvorak")))
+  (evil-motion-state-entry . programmer-dvorak-mode)
+  (evil-jump-state-entry . programmer-dvorak-mode)
+  (evil-insert-state-entry . programmer-dvorak-mode)
+  (evil-replace-state-entry . programmer-dvorak-mode)
+  (isearch-mode . programmer-dvorak-mode)
+  (evil-insert-state-entry . (lambda () (let ((inhibit-message t)
+                                              (message-log-max nil))
+                                          (blink-cursor-mode 1))))
+  (evil-insert-state-exit . (lambda () (let ((inhibit-message t)
+                                             (message-log-max nil))
+                                         (blink-cursor-mode -1))))
   :init
   (setq evil-want-integration t) ;; This is optional since it's already set to t by default.
   (setq evil-want-keybinding nil)
+  :bind("C-\\" . evil-switch-to-windows-last-buffer)
   :config
+  (setq evil-vsplit-window-right t
+        evil-split-window-below t)
   (evil-set-undo-system 'undo-redo)
   (evil-mode 1))
 
@@ -286,71 +452,102 @@
 (use-package zygospore
   :bind("C-x 1" . zygospore-toggle-delete-other-windows))
 
-;; fancy ivy
-(use-package ivy-posframe
-  :disabled t
-  :custom(ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-window-center)))
-  :config(ivy-posframe-mode))
-
 ;; better ingredients, better pizza, better M-x
 (use-package counsel
   :config
+  (setq ivy-use-virtual-buffers t
+        enable-recursive-minibuffers t)
   (add-to-list 'ivy-initial-inputs-alist '(counsel-M-x . ""))
-  (counsel-mode 1)
-  (ivy-mode 1)
+
+  (defun yf--swiper-advice (&rest r)
+    (setq isearch-string (substring-no-properties (car swiper-history)))
+    ;;(setq isearch-forward t)
+    (evil-search-previous))
+  (advice-add 'swiper :after #'yf--swiper-advice)
+  :hook((after-init . ivy-mode)
+        (ivy-mode . counsel-mode))
   :bind
   ("M-x" . counsel-M-x)
   ("C-h f" . counsel-describe-function)
   ("C-h v" . counsel-describe-variable)
-  ("C-c p" . counsel-fzf)
+  ("C-f" . counsel-fzf)
   ("C-s" . swiper)
   ("C-x b" . counsel-switch-buffer))
-
-;; company completion for < in org
-(use-package company-org-block
-  :after company
-  :config(add-to-list 'company-backends 'company-org-block))
 
 ;; popups
 (use-package company
   :bind (:map prog-mode-map
-	      ("C-i" . company-indent-or-complete-common)
-	      ("C-M-i" . counsel-company))
+              ("C-i" . company-indent-or-complete-common)
+              ("C-M-i" . counsel-company))
   :custom
   (company-minimum-prefix-length 2)
   (company-idle-delay 0.0)
-  :hook prog-mode)
+  :hook (prog-mode . company-mode))
 
 ;;  company front-end with icons
 (use-package company-box
-  :hook company-mode)
+  :hook (company-mode . company-box-mode))
 
-;; all themes are safe, it's a security hole, bite me
-(setq custom-safe-themes t)
+;; create a hook for theme changes
+(defvar after-load-theme-hook nil
+  "Hook run after a color theme is loaded using `load-theme'.")
+(defadvice load-theme (after run-after-load-theme-hook activate)
+  "Run `after-load-theme-hook'."
+  (run-hooks 'after-load-theme-hook))
+
 (use-package doom-themes
   :config
-  (load-theme 'doom-one-light t)
+  (setq doom-themes-enable-bold t)
+  (setq doom-themes-enable-italic t)
+  (defun disable-bold-org-headers ()
+    "Stop the org-level headers from being bold"
+    (dolist (face '(org-level-1
+                    org-level-2
+                    org-level-3
+                    org-level-4
+                    org-level-5))
+      (set-face-attribute face nil :weight 'normal :height 1.0)))
+  (add-hook 'org-mode-hook #'disable-bold-org-headers)
   (doom-themes-org-config))
+
+(use-package auto-dark
+  :custom
+  (auto-dark-allow-osascript t)
+  (auto-dark-dark-theme 'doom-xcode)
+  (auto-dark-light-theme 'doom-tomorrow-day)
+  ;; poll every 5 mins
+  (auto-dark-polling-interval-seconds 300)
+  :hook
+  after-init
+  (after-init . auto-dark--check-and-set-dark-mode)
+  :config
+  (advice-add 'dwim-shell-commands/macos-toggle-dark-mode :after #'(lambda ()
+                                                                     "Reassess dark mode on system appearance change"
+                                                                     nil
+                                                                     (progn
+                                                                       (sleep-for 1)
+                                                                       (auto-dark--check-and-set-dark-mode)))))
+
+(use-package dwim-shell-command
+  :config
+  (defun dwim-shell-commands/macos-toggle-dark-mode () "Toggle macOS dark mode."
+         (interactive)
+         (dwim-shell-command-on-marked-files
+          "Toggle dark mode"
+          "dark-mode" :utils "dark-mode" ;; brew install dark-mode
+          :silent-success t))
+  :bind
+  ("C-c t l" . 'dwim-shell-commands/macos-toggle-dark-mode))
+
+(use-package solaire-mode
+  :config(solaire-global-mode 1))
 
 ;; why this isn't a bind already is beyond me
 (bind-key "C-;" 'eval-buffer 'emacs-lisp-mode-map)
 
-;; themes
-(global-hl-line-mode +1)
-(setq modus-themes-fringes nil
-      modus-themes-hl-line 'accented
-      modus-themes-subtle-line-numbers t
-      modus-themes-org-blocks 'tinted-background
-      )
-
-; (bind-key "C-c t d" 'modus-themes-toggle)
-; (load-theme 'modus-vivendi t)
-
-
-;; line numbers are good
-(add-hook 'prog-mode-hook 'linum-mode)
-
-
+(use-package hl-line
+  :straight nil
+  :hook prog-mode)
 
 (use-package doom-modeline
   :custom
@@ -358,143 +555,123 @@
   :init(display-battery-mode)
   :config(doom-modeline-mode))
 
-;; plantuml for babel
-(setq org-plantuml-jar-path (expand-file-name "~/.config/emacs/plantuml.jar"))
-(add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
-(org-babel-do-load-languages 'org-babel-load-languages '((plantuml . t)))
-
 ;; better pdf viewer
 (use-package pdf-tools
   :config
+  ;; scales pdfs for retina displays
   (setq pdf-view-use-scaling t)
   (pdf-tools-install))
 
-
-
-;; hack to scale latex previews
-(defun my/text-scale-adjust-latex-previews ()
-  "Adjust the size of latex preview fragments when changing the
-buffer's text scale."
-  (pcase major-mode
-    ('latex-mode
-     (dolist (ov (overlays-in (point-min) (point-max)))
-       (if (eq (overlay-get ov 'category)
-	       'preview-overlay)
-	   (my/text-scale--resize-fragment ov))))
-    ('org-mode
-     (dolist (ov (overlays-in (point-min) (point-max)))
-       (if (eq (overlay-get ov 'org-overlay-type)
-	       'org-latex-overlay)
-	   (my/text-scale--resize-fragment ov))))))
-
-(defun my/text-scale--resize-fragment (ov)
-  (overlay-put
-   ov 'display
-   (cons 'image
-	 (plist-put
-	  (cdr (overlay-get ov 'display))
-	  :scale (+ 1.0 (* 0.25 text-scale-mode-amount))))))
-(add-hook 'text-scale-mode-hook #'my/text-scale-adjust-latex-previews)
-
-;; fast latex input
-(use-package cdlatex
-  :hook
-  (org-mode . turn-on-org-cdlatex))
-
-;; use variable-pitch for text
-(use-package mixed-pitch
-  :hook text-mode)
-
 ;; fancy bullets
-(use-package org-bullets
-  :hook org-mode)
-
-;; the org that ships normally is old
-(use-package org
-  :bind
-  ("C-c c" . org-capture)
-  (:map org-mode-map
-	("A-<tab>" . org-show-current-heading-tidily)
-	)
+(use-package org-superstar
+  :disabled
   :custom
-  (org-preview-latex-image-directory "~/.local/cache/org-previews/")
-  (org-default-notes-file "~/Documents/knowledge/main.org")
-  (org-capture-templates '(
-			   ("n" "Note" entry (file+datetree "~/Documents/knowledge/main.org" "Fleeting notes") "* %?\n%i\n")
-			   ))
-  :config
-  (defun org-show-current-heading-tidily ()
-    (interactive)  ;Inteactive
-    "Show next entry, keeping other entries closed."
-    (if (save-excursion (end-of-line) (outline-invisible-p))
-	(progn (org-show-entry) (show-children))
-      (outline-back-to-heading)
-      (unless (and (bolp) (org-on-heading-p))
-	(org-up-heading-safe)
-	(hide-subtree)
-	(error "Boundary reached"))
-      (org-overview)
-      (org-reveal t)
-      (org-show-entry)
-      (show-children)))
-  ; (setq org-latex-create-formula-image-program 'dvisvgm)
-  (setq org-agenda-files '("~/Documents/knowledge/main.org"))
-  (setq org-src-fontify-natively t)
-  (setq org-highlight-latex-and-related '(latex script entities))
-  (font-lock-add-keywords 'org-mode
-			  '(("\\(\\\\cite\\)" . font-lock-keyword-face)
-			    ("\\[[0-9]+]" . font-lock-type-face)
-			    ("\\s-*[a-zA-Z]+[0-9]+[a-z]" . font-lock-constant-face)))
-  (font-lock-add-keywords 'org-mode
-			  '(("\\(\\\\citep\\)" . font-lock-keyword-face)))
-  (font-lock-add-keywords 'org-mode
-			  '(("\\(\\\\citet\\)" . font-lock-keyword-face)))
-  (font-lock-add-keywords 'org-mode
-			  '(("\\(\\\\citealp\\)" . font-lock-keyword-face)))
-  (font-lock-add-keywords 'org-mode
-			  '(("\\(\\\\citeauthor\\)" . font-lock-keyword-face)))
-  (font-lock-add-keywords 'org-mode
-			  '(("\\(\\\\citeyear\\)" . font-lock-keyword-face)))
-  (require 'org-tempo)
-  :hook
-  (org-mode . auto-fill-mode)
-  (org-mode . visual-line-mode))
-
-(use-package names)
-(use-package org-latex-impatient
-  ; :ensure-system-package (mathjax-node-cli . "npm i -g mathjax-node-cli")
-  :hook org-mode
-  :config 
-  (setq org-latex-impatient-tex2svg-bin "~/.config/emacs/node_modules/.bin/tex2svg"))
-
-(use-package webkit-katex-render
-  :disabled t
-  :straight (:type git :host github :repo "fuxialexander/emacs-webkit-katex-render")
-  :hook org-mode
-  :init
-  (setq webkit-katex-render--background-color (doom-color 'bg)))
-
-(use-package org-fragtog
-  :disabled t
+  (org-superstar-special-todo-items t)
   :hook org-mode)
+
+;; prettier org
+(use-package org-modern
+  :hook org-mode)
+(use-package org-modern-indent
+  :straight (:type git :host github :repo "jdtsmith/org-modern-indent")
+  :hook (org-indent-mode . org-modern-indent-mode)
+  :custom-face
+  (org-modern-indent-line ((t (:height 1.0 :inherit lem-ui-default-font :inherit lambda-meek)))))
+
+(use-package org-autolist
+  :hook org-mode)
+
+(use-package org-appear
+  :hook org-mode
+  :custom
+  (org-appear-autoemphasis  t)
+  (org-appear-autolinks t)
+  (org-appear-autosubmarkers t)
+  :config(setq org-hide-emphasis-markers t))
+
+;; automatically hide help windows
+(use-package popwin
+  :hook after-init)
+
+;; latex hell
+(use-package xenops
+  :disabled t
+  :hook org-mode
+  :config
+  (org-mode . (lambda () (add-hook 'after-load-theme-hook #'(lambda () (xenops-regenerate)) nil t)))
+  (defun xenops-math-reveal (element)
+    "Remove image overlay for ELEMENT.
+If a prefix argument is in effect, also delete its cache file."
+    (xenops-element-overlays-delete element)
+    (if current-prefix-arg
+        (delete-file (xenops-math-get-cache-file element)))
+    ;; TODO: is :begin-content for block math off by one?
+    (let ((element-type (plist-get element :type))
+          (begin-content (plist-get element :begin-content)))
+      )
+    (xenops-math-render-below-maybe element))
+  (setq xenops-math-latex-process-alist
+        '((dvipng :programs
+                  ("latex" "dvipng")
+                  :description "dvi > png" :message "you need to install the programs: latex and dvipng." :image-input-type "dvi" :image-output-type "png" :image-size-adjust
+                  (1.0 . 1.0)
+                  :latex-compiler
+                  ("latex -interaction nonstopmode -shell-escape -output-format dvi -output-directory %o %f")
+                  :image-converter
+                  ("dvipng -D %D -T tight -o %O %f"))
+          (dvisvgm :programs
+                   ("latex" "dvisvgm")
+                   :description "xdv > svg"
+                   :message "you need to install the programs: latex and dvisvgm."
+                   :image-input-type "xdv"
+                   :image-output-type "svg"
+                   :image-size-adjust (1.7 . 1.5)
+                   :latex-compiler
+                   ("xelatex -no-pdf -interaction nonstopmode -shell-escape -output-directory %o %f")
+                   :image-converter
+                   ("dvisvgm %f -e -n -b min -c %S -o %O"))
+          (imagemagick :programs
+                       ("latex" "convert")
+                       :description "pdf > png" :message "you need to install the programs: latex and imagemagick." :image-input-type "pdf" :image-output-type "png" :image-size-adjust
+                       (1.0 . 1.0)
+                       :latex-compiler
+                       ("pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f")
+                       :image-converter
+                       ("convert -density %D -trim -antialias %f -quality 100 %O"))))
+  (setq xenops-font-height 140)
+  (setq xenops-font-height-code 140)
+  (setq xenops-math-image-scale-factor 1.0)
+  (setq xenops-reveal-on-entry t)
+  (setq xenops-math-latex-process 'dvisvgm))
+
+
+(use-package org-latex-impatient
+  :hook org-mode
+  :config
+  (setq org-latex-impatient-tex2svg-bin (executable-find "tex2svg")))
+
 ;; typewriter mode
 (use-package centered-cursor-mode
+  :config
+  (setq ccm-recenter-at-end-of-file t)
+  :hook (org-mode . centered-cursor-mode)
+  :bind(:map text-mode-map
+             ("C-c t c" . centered-cursor-mode))
   :commands centered-cursor-mode)
+
 ;; zen-mode
 (use-package olivetti
   :commands olivetti-mode)
 
-;; search my notes
-(bind-key "C-l" #'(lambda () ""
-		   (interactive)
-		   (find-file "~/Documents/knowledge/main.org")
-		   (counsel-org-goto)))
-
 ;; interleave notes with pdfs
 (use-package org-noter
   :commands(org-noter)
-  :config(evil-collection-define-key 'normal 'pdf-view-mode-map
-	   (kbd "i") 'org-noter-insert-note))
+  :config
+  (evil-collection-define-key 'normal 'pdf-view-mode-map
+    (kbd "i") 'org-noter-insert-note)
+  (evil-collection-define-key 'normal 'pdf-view-mode-map
+    (kbd "I") 'org-noter-insert-note-toggle-no-questions)
+  )
 
 
 ;; magit
@@ -503,10 +680,16 @@ buffer's text scale."
   :commands(magit))
 ;; project management
 (use-package counsel-projectile
-  :hook projectile-mode)
+  :hook (projectile-mode . counsel-projectile-mode)
+  :bind
+  ("C-c s" . counsel-projectile-switch-project))
 (use-package projectile
   :bind(:map projectile-mode-map
-	     ("C-c C-p" . 'projectile-command-map))
+             ("C-c C-p" . 'projectile-command-map))
   :custom
   (projectile-project-search-path (cddr (directory-files "~/Projects" t)))
   (projectile-completion-system 'ivy))
+
+(setq warning-suppress-types '((comp)))
+(provide 'init)
+;;; init.el ends here
