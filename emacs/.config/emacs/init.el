@@ -67,8 +67,33 @@
 (use-package yasnippet
   :hook (org-mode . yas-minor-mode))
 
+;; hack to scale latex previews
+(defun my/text-scale-adjust-latex-previews ()
+  "Adjust the size of latex preview fragments when changing the
+buffer's text scale."
+  (pcase major-mode
+    ('latex-mode
+     (dolist (ov (overlays-in (point-min) (point-max)))
+       (if (eq (overlay-get ov 'category)
+	       'preview-overlay)
+	   (my/text-scale--resize-fragment ov))))
+    ('org-mode
+     (dolist (ov (overlays-in (point-min) (point-max)))
+       (if (eq (overlay-get ov 'org-overlay-type)
+	       'org-latex-overlay)
+	   (my/text-scale--resize-fragment ov))))))
+
+(defun my/text-scale--resize-fragment (ov)
+  (overlay-put
+   ov 'display
+   (cons 'image
+	 (plist-put
+	  (cdr (overlay-get ov 'display))
+	  :scale (+ 1.0 (* 0.25 text-scale-mode-amount))))))
+(add-hook 'text-scale-mode-hook #'my/text-scale-adjust-latex-previews)
 ;; the org that ships normally is old
 (use-package org
+  :straight(:type git :repo "https://git.tecosaur.net/tec/org-mode.git")
   :bind
   ("C-c c" . org-capture)
   ("C-c a" . org-agenda)
@@ -107,6 +132,7 @@
       (org-reveal t)
       (org-show-entry)
       (show-children)))
+  (add-to-list 'org-latex-packages-alist '("" "amsmath" t nil))
   (require 'org-agenda)
   (add-to-list 'org-agenda-prefix-format '(todo . "%b"))
                                         ; (plist-put org-format-latex-options :scale 1.5)
@@ -134,9 +160,17 @@
                           '(("\\(\\\\citeyear\\)" . font-lock-keyword-face)))
   (require 'org-tempo)
   :hook
+  (org-mode . org-latex-preview-auto-mode)
   (org-mode . org-indent-mode)
   (org-mode . auto-fill-mode)
   (org-mode . visual-line-mode))
+
+(use-package smartparens
+  :hook prog-mode org-mode
+  :config
+  (require 'smartparens-config)
+  (sp-with-modes 'org-mode
+    (sp-local-pair "$" "$")))
 
 (use-package python
   :straight nil
@@ -299,10 +333,18 @@
                           `([,(cdr char-regexp) 0 font-shape-gstring]))))
 
 ;; font config
-(set-face-attribute 'default nil :family "SF Mono" :height 140)
-(set-face-attribute 'variable-pitch nil :inherit 'default :family "Source Code Pro" :weight 'normal :height 140)
+(set-face-attribute 'variable-pitch nil :inherit 'default :family "Overpass" :height 160)
+(set-face-attribute 'default nil :family "FiraCode Nerd Font Mono" :height 140)
 
 (use-package mixed-pitch
+  :config
+  (dolist (face '(org-modern-todo
+                  org-level-1
+                  org-level-2
+                  org-level-3
+                  org-level-4
+                  org-level-5))
+    (add-to-list 'mixed-pitch-fixed-pitch-faces face))
   :hook org-mode)
 
 ;; automatically revert buffers
@@ -384,7 +426,7 @@
   "Edit the emacs init.el in user-emacs-directory"
   (interactive)
   (find-file (expand-file-name "init.el" user-emacs-directory)))
-(bind-key "C-c d c" 'edit-config)
+(bind-key "C-c C-f c" 'edit-config)
 
 
 ;; evil binds for org
@@ -646,6 +688,7 @@ If a prefix argument is in effect, also delete its cache file."
 
 
 (use-package org-latex-impatient
+  :disabled
   :hook org-mode
   :config
   (setq org-latex-impatient-tex2svg-bin (executable-find "tex2svg")))
@@ -661,7 +704,13 @@ If a prefix argument is in effect, also delete its cache file."
 
 ;; zen-mode
 (use-package olivetti
+  :disabled
   :commands olivetti-mode)
+
+(use-package writeroom-mode
+  :bind(:map org-mode-map
+             ("C-c t w" . writeroom-mode))
+  :commands(writeroom-mode))
 
 ;; interleave notes with pdfs
 (use-package org-noter
