@@ -1,466 +1,1010 @@
-#+begin_src emacs-lisp
-  ; (load-file (expand-file-name "secrets.el" user-emacs-directory))
-  (setq vc-follow-symlinks t)
+#+STARTUP: overview
+#+PROPERTY: header-args    :results silent
+* Bootstrapping and rudimentary configuration
+
+** Straight
+[[https://github.com/radian-software/straight.el][Straight.el]] is a package management library that offers many more
+ features than ~package.el~. However, to ensure we minimise conflicts,
+ the default Emacs package management system needs to be disabled.
+#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+;;; init.el --- init.el of @alexeyre's emacs config  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023 @alexeyre
+
+;; Author: alex <s2031787@ed.ac.uk>
+;; Keywords: 
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; Simply loads the config.org literate config
+
+;;; Code:
+(require 'cl-lib)
+;; always follow symlinks
+(setq vc-follow-symlinks t)
+
+(setq package-enable-at-startup nil)
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 6))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+;; Removes in-build version from the `load-path'
+(when-let (orglib (locate-library "org" nil load-path))
+   (setq-default load-path (delete (substring (file-name-directory orglib) 0 -1)
+                                   load-path)))
+
+(cl-assert (memq 'org-elpa straight-recipe-repositories))
+(straight-use-package '(org :fork (:type git :repo "https://git.tecosaur.net/tec/org-mode.git")))
+(straight-use-package 'babel)
+(org-babel-load-file (expand-file-name "config.org" user-emacs-directory))
+
+(provide 'init)
+;;; init.el ends here
+
 #+end_src
 
-#+RESULTS:
-: t
-
-Collect ~$PATH~ from my local shell, to ensure ~brew~ and ~nix~
-compatibility mainly.
+*** Native compilation 
+I've /always/ had issues with Emacs' native compilation, it
+ causes weird things to happen with hooks and it's more pain than it's
+ worth. Therefore, we need to disable it:
+ #+begin_src emacs-lisp :tangle nil
+(setq straight-disable-compile t)
+ #+end_src
+ 
+*** ~max-pescpdl-size~
 #+begin_src emacs-lisp
-  (use-package exec-path-from-shell
-    :config
-    (setq exec-path-from-shell-arguments '("-l"))
-    (exec-path-from-shell-initialize))
+  (setq max-specpdl-size 3200)
+  (setq max-lisp-eval-depth 3200)
+  (setq debug-on-error t)
 #+end_src
-#+begin_src emacs-lisp
-  (use-package lsp-mode
-    :hook ((prog-mode . lsp-deferred)
-	   (lsp-configure . (lambda () (lsp-headerline-breadcrumb-mode -1))))
-    :commands (lsp lsp-deferred)
-    :init (setq lsp-keymap-prefix "C-c l")
-    :config
-    (progn
-      (lsp-register-client
-       (make-lsp-client :new-connection (lsp-tramp-connection "clangd")
-			:major-modes '(c-mode c++-mode)
-			:remote? t
-			:server-id 'clangd-remote))))
+*** Fork support
+One of the best features of ~straight.el~ is the good fork support, for
+ ease of configuration I set my GitHub username, allowing ~:fork t~ 
+ instead of a verbose recipe.
+ #+begin_src emacs-lisp
+(setq straight-host-usernames '((github . "alexeyre")))
+ #+end_src
 
-  (use-package yasnippet
-    :hook (prog-mode . yas-minor-mode)
-    (latex-mode . yas-minor-mode))
-  (use-package yasnippet-snippets)
-  (use-package lsp-ui
-    :commands lsp-ui-mode
-    :config
-    (setq lsp-ui-doc-enable t
-	  lsp-ui-doc-use-childframe t
-	  lsp-ui-doc-position 'top
-	  lsp-ui-doc-include-signature t
-	  lsp-ui-sideline-enable nil
-	  lsp-ui-flycheck-enable t
-	  lsp-ui-flycheck-list-position 'right
-	  lsp-ui-flycheck-live-reporting t
-	  lsp-ui-peek-enable t
-	  lsp-ui-peek-list-width 60
-	  lsp-ui-peek-peek-height 25)
-    :hook (lsp-mode . lsp-ui-mode))
-  (use-package company-lsp)
+** Garbage collection magic hack
+Performs magic in order to speed up Emacs startup times by not
+spending time performing garbage collection on modern systems.
+
+#+begin_src emacs-lisp
+  (straight-use-package 'gcmh)
+  (require 'gcmh)
+  (gcmh-mode 1)
 #+end_src
 
-#+RESULTS:
+** No littering
+Prevents Emacs from spewing temp files at quite such an alarming rate,
+and attempts to make it respect some semblance of the XDG standard by
+confining it to a ~~/.config~ directory.
 
 #+begin_src emacs-lisp
-  (use-package restart-emacs
-:commands(restart-emacs))
+  (straight-use-package 'no-littering)
+  (require 'no-littering)
 #+end_src
 
-#+RESULTS:
+** ~use-package~
+Provides the glorious ~use-package~ macro that streamlines processing
+and makes my life just that little bit more bearable.
 
 #+begin_src emacs-lisp
+(straight-use-package 'use-package)
+(straight-use-package 'use-package-ensure-system-package)
+#+end_src
+
+Furthermore, I always want ~use-package~ to pull packages using
+[[Straight]] if not otherwise specifcied, and I definitely don't want it
+using ~ensure~.
+
+#+begin_src emacs-lisp
+  (setq use-package-always-ensure nil)
+  (setq straight-use-package-by-default t)
+#+end_src
+
+** Locale and timezones
+I live in the UK, so I need to tell Emacs this somehow.
+#+begin_src emacs-lisp
+  (setq system-time-locale "en_GB")
+  (setq calendar-date-style 'european)
+#+end_src
+** Better defaults
+*** Simple settings
+Some sane modified defaults for the 21st Century.
+#+begin_src emacs-lisp
+  (setq-default
+   delete-by-moving-to-trash t ; send files to the system trash rather than using ~rm~
+   window-combination-resize t ; take new window space from all other windows
+   x-stretch-cursor t          ; stretch the cursor to the entire glyph width
+   )
+  (setq undo-limit 80000000   ; set the undo-limit to 80Mb, I can afford that amount of RAM
+        evil-want-fine-undo t ; force evil to use fine undo, rather than treating all insert actions as one
+        display-time-default-load-average nil
+        )
+  ;; display the time
+  (display-time-mode 1)
+
+  ;; iterate through CamelCase words
+  (global-subword-mode 1)
+#+end_src
+*** Frame sizing
+Make Emacs as small as is reasonable when starting up, as resizing is
+ easy with keybinds.
+#+begin_src emacs-lisp
+  (add-to-list 'default-frame-alist '(height . 24))
+  (add-to-list 'default-frame-alist '(width . 80))
+#+end_src
+*** Window managment and splitting
+I find it more natural to focus the window I'm creating.
+#+begin_src emacs-lisp
+  (setq evil-vsplit-window-right t
+        evil-split-window-below t)
   (defadvice split-window (after split-window-after activate)
     (other-window 1))
 #+end_src
 
-#+RESULTS:
-: split-window
+Then upon splitting, prompt me for a buffer to show:
 
-Installs the dashboard, sets up the floating GNU logo and uses counsel
-commands for projectile.
 #+begin_src emacs-lisp
-  (use-package page-break-lines)
-  (use-package all-the-icons)
-  (use-package dashboard
-    :config
-    (setq dashboard-startup-banner (expand-file-name "logo.png" user-emacs-directory)
-	  dashboard-items '((agenda . 5)
-			    (recents  . 5)
-			    (bookmarks . 5)
-			    (projects . 5)
-			    (registers . 5))
-	  dashboard-show-navigator t
-	  dashboard-set-init-info t
-	  dashboard-center-content t
-	  dashboard-projects-switch-function 'counsel-projectile-switch-project-by-name
-	  )
-    (dashboard-setup-startup-hook))
+  (advice-add 'evil-window-split :after #'counsel-switch-buffer)
+  (advice-add 'evil-window-vsplit :after #'counsel-switch-buffer)
 #+end_src
-- remove unnecessary UI
-- set up fonts
-- hook dvp in input modes
+*** Bell
+I don't need to be pinged, thanks.
+#+begin_src emacs-lisp
+  (setq ring-bell-function 'ignore)
+#+end_src
+** Visual configuration
+*** Scrolling
+For some reason the default Emacs scrolling gives me a headache, this
+ replaces it with vim-like scrolling behaviour.
+ #+begin_src emacs-lisp
+;; scroll line-by-line
+(setq scroll-conservatively 101)
+(setq auto-window-vscroll nil)
+(setq scroll-step 1)
+ #+end_src
+*** Resizing
+By default Emacs uses line-based frame sizing, but I want it to fit in
+ with my other native applications and conform to any size, if for no
+ other reason than aesthetics.
+#+begin_src emacs-lisp
+  (setq frame-resize-pixelwise t)
+#+end_src
+*** Visual clutter
+I don't need the scrollbar, toolbar, or menubar, I can (mostly)
+remember keyboard shortcuts, and if not [[Which key]] has my back!
+#+begin_src emacs-lisp
+  (tool-bar-mode 0)
+  (scroll-bar-mode 0)
+  (menu-bar-mode 0)
+  (setq initial-frame-alist
+        '((menu-bar-lines . 0)
+          (tool-bar-lines . 0)))
+#+end_src
+Furthermore I don't need a message in my ~*scratch*~ buffer thank you
+very much.
+#+begin_src emacs-lisp
+  (setq inhibit-startup-message t)
+  (setq initial-scratch-message "")
+#+end_src
+Bigger fringes
+#+begin_src emacs-lisp  :tangle nil
+(modify-all-frames-parameters
+ '((right-divider-width . 40)
+   (internal-border-width . 40)))
+(dolist (face '(window-divider
+                window-divider-first-pixel
+                window-divider-last-pixel))
+  (face-spec-reset-face face)
+  (set-face-foreground face (face-attribute 'default :background)))
+(set-face-background 'fringe (face-attribute 'default :background))
+#+end_src
+*** Font configuration
+Not a whole lot of explanation to go on here, set the default faces.
+#+begin_src emacs-lisp
+  (set-face-attribute 'variable-pitch nil :inherit 'default :family "SF Pro Display" :height 120)
+  (set-face-attribute 'default nil :family "SF Mono" :height 120)
+  (set-face-attribute 'fixed-pitch nil :inherit 'default :height 1.0)
+#+end_src
+
+Furthermore, I like italic comments, so set the faces appropriately.
+
+n.b. disabled as of <2023-03-07 Tue> as it's causing a weird
+indefinite-hang bug
+#+begin_src emacs-lisp :tangle nil
+  (use-package font-lock
+    :straight(:type built-in)
+    :defer t
+    :custom-face
+    (font-lock-comment-face ((t (:inherit font-lock-comment-face :italic t))))
+    (font-lock-doc-face ((t (:inherit font-lock-doc-face :italic t))))
+    (font-lock-string-face ((t (:inherit font-lock-string-face :italic t)))))
+#+end_src
+*** Theme
+Unpopular opinion but I love the default Emacs themes, this package
+implements them as actual themes and makes the more compatible.
+#+begin_src emacs-lisp
+   (use-package standard-themes
+     :config
+     ;; Read the doc string of each of those user options.  These are some
+     ;; sample values.
+     (setq standard-themes-fringes nil
+	   standard-themes-bold-constructs t
+	   standard-themes-italic-constructs t
+	   standard-themes-mixed-fonts t
+	   standard-themes-variable-pitch-ui nil
+	   standard-themes-mode-line-accented t)
+     :hook(after-init . (lambda () (load-theme 'standard-light t)))
+     :bind("C-c t l" . standard-themes-toggle))
+#+end_src
+** Keyboard configuration
+*** Modifier keys
+I use a mac, so I like to use the command key as my meta (M-) key, and
+alt as my super "s-"
+#+begin_src emacs-lisp
+  (setq mac-option-key-is-meta nil
+        mac-command-key-is-meta t
+        mac-command-modifier 'meta
+        mac-option-modifier 'super)
+#+end_src
+
+*** Layout
+I use [[https://www.kaufmann.no/roland/dvorak/][dvorak programmer]], so I want to use this layout in insert modes,
+but retain QWERTY for keybind input. This set of requirements results
+in some /interesting/ configuration, but it seems to work just fine.
+
+First I need the layout itself as an Emacs input-method:
+
+#+begin_src emacs-lisp
+   (use-package programmer-dvorak)
+#+end_src
+
+and then I set up hooks for common insert modes etc.
+
+#+begin_src emacs-lisp
+  (use-package programmer-dvorak
+    :after evil
+    :config
+    (defun programmer-dvorak-mode ()
+      "Set input method to programmer dvorak"
+      (set-input-method "programmer-dvorak"))
+
+    :hook ((evil-motion-state-entry evil-jump-state-entry
+                                    evil-insert-state-entry evil-replace-state-entry
+                                    isearch-mode minibuffer-setup char-mode line-mode
+                                    isearch-mode-end) . programmer-dvorak-mode))
+#+end_src
+
+However, I still use dvp as my main input method for every application
+except Emacs, so I need it to automatically switch between the two
+based on if I'm in Emacs or not. I accomplish this with the
+~im-select~ utility.
+
+#+begin_src emacs-lisp
+  (defun os-layout/qwerty ()
+    "Set the OS layout to QWERTY"
+    (let ((inhibit-message t)
+          (message-log-max nil))
+      (call-process-shell-command "im-select com.apple.keylayout.US&" nil 0)))
+  (defun os-layout/dvp ()
+    "Set the OS layout to Programmer Dvorak"
+    (let ((inhibit-message t)
+          (message-log-max nil))
+      (call-process-shell-command "im-select \"com.apple.keyboardlayout.Programmer Dvorak.keylayout.ProgrammerDvorak\"" nil 0)))
+#+end_src
+
+Then attaching to the necessary hooks:
+
 #+begin_src emacs-lisp
   (use-package programmer-dvorak
     :hook
-    (emacs-startup . (lambda () (shell-command "im-select com.apple.keylayout.US")))
-    (focus-in . (lambda () (shell-command "im-select com.apple.keylayout.US")))
-    (focus-out . (lambda () (shell-command "im-select \"com.apple.keyboardlayout.Programmer Dvorak.keylayout.ProgrammerDvorak\"")))
-    (kill-emacs . (lambda () (shell-command "im-select \"com.apple.keyboardlayout.Programmer Dvorak.keylayout.ProgrammerDvorak\""))))
-  (use-package fish-completion
-    :when(executable-find "fish")
-    :config(global-fish-completion-mode))
-  (use-package emacs
-    :bind
-    ("C-c e" . eshell)
+    (emacs-startup . os-layout/qwerty)
+    (focus-in . os-layout/qwerty)
+    (focus-out . os-layout/dvp)
+    (kill-emacs . os-layout/dvp))
+#+end_src
+
+et. voilá, magically switching input methods.
+
+*** Evil
+#+begin_src emacs-lisp
+   ;; evil binds for org
+   (use-package evil-org
+     :straight(evil-org :type git :host github :repo "Somelauw/evil-org-mode")
+     :hook org-mode
+     :config
+
+     ;; stolen from https://stackoverflow.com/questions/25161792/emacs-org-mode-how-can-i-fold-everything-but-the-current-headline
+     (defun org-show-current-heading-tidily ()
+       "Show next entry, keeping other entries closed."
+       (if (save-excursion (end-of-line) (outline-invisible-p))
+	   (progn (org-show-entry) (show-children))
+	 (outline-back-to-heading)
+	 (unless (and (bolp) (org-on-heading-p))
+	   (org-up-heading-safe)
+	   (hide-subtree)
+	   (error "Boundary reached"))
+	 (org-overview)
+	 (org-reveal t)
+	 (org-show-entry)
+	 (show-children)))
+     (require 'evil-org-agenda)
+     (evil-org-agenda-set-keys))
+
+   ;; evil binds for everything else
+   (use-package evil-collection
+     :after evil
+     :custom (evil-collection-setup-minibuffer t)
+     :init (evil-collection-init))
+
+   ;; automatically show keybinds
+   (use-package which-key
+     :config(which-key-mode))
+
+   ;; better search for evil
+   (use-package evil-anzu
+     :after evil
+     :config
+     (require 'evil-anzu))
+
+   ;; doesn't need explaining
+   (use-package evil
+     :hook
+     (evil-insert-state-entry . (lambda () (let ((inhibit-message t)
+						 (message-log-max nil))
+					     (blink-cursor-mode 1))))
+     (evil-insert-state-exit . (lambda () (let ((inhibit-message t)
+						(message-log-max nil))
+					    (blink-cursor-mode -1))))
+     :init
+     (setq evil-want-integration t) ;; This is optional since it's already set to t by default.
+     (setq evil-want-keybinding nil)
+     :bind("C-\\" . evil-switch-to-windows-last-buffer)
+     :config
+     (setq evil-vsplit-window-right t
+	   evil-split-window-below t)
+     (evil-set-undo-system 'undo-redo)
+     (evil-mode 1))
+#+end_src
+
+**** TODO needs separating out
+** Secrets
+Load secrets
+#+begin_src emacs-lisp
+  (load-file (expand-file-name "secrets.el" user-emacs-directory))
+#+end_src
+
+* Package
+** Visual
+*** Mixed pitch
+Provides the best of both worlds in text buffers by having text be
+~variable-pitch~, but code etc. be ~default~.
+
+#+begin_src emacs-lisp
+(use-package mixed-pitch)
+#+end_src
+
+I want this to always be enabled for [[Org]], and I have some additional
+faces I want in monospaced font, mainly headers. Set up both here:
+#+begin_src emacs-lisp
+(use-package mixed-pitch)
+#+end_src
+Now set-up some settings
+#+begin_src emacs-lisp :tangle nil
+  (use-package mixed-pitch
     :config
-    (tool-bar-mode -1)
-    (scroll-bar-mode -1)
-    (menu-bar-mode -1)
-					  (add-to-list 'default-frame-alist '(font . "Mx437 IBM XGA-AI 7x15-16:antialias=false:hinting=true"))
-    (global-auto-revert-mode t)
-    :hook
-    (minibuffer-setup . (lambda () (set-input-method "programmer-dvorak")))
-    (char-mode . (lambda () (set-input-method "programmer-dvorak")))
-    (line-mode . (lambda () (set-input-method "programmer-dvorak")))
-    :custom
-    (vc-follow-symlinks t)
-    (enable-recursive-minibuffers t))
+    (dolist (face '(
+                    org-level-1
+                    org-level-2
+                    org-level-3
+                    org-level-4
+                    org-level-5))
+      (add-to-list 'mixed-pitch-fixed-pitch-faces face)))
 #+end_src
-
-#+RESULTS:
-: eshell
-
+*** Transparency
+Shamelessly stolen from the [[https://www.emacswiki.org/emacs/TransparentEmacs][emacswiki]], this allows the user to toggle
+between opaque and slightly transparent Emacs windows on systems that
+support it. Bound to ~C-c t t~ by default ("toggle transparency").
 #+begin_src emacs-lisp
-  (use-package hide-mode-line
-  :after doom-modeline
-  :bind("C-c m t" . hide-mode-line-mode)
-  :hook after-init
-  :config(global-hide-mode-line-mode +1))
-#+end_src
-
-#+RESULTS:
-: hide-mode-line-mode
-#+begin_src emacs-lisp
-    (use-package vterm
-      :config
-      (add-to-list 'display-buffer-alist
-		   '("\*vterm\*"
-		     (display-buffer-in-side-window)
-		     (window-height . 0.25)
-		     (side . bottom)
-		     (slot . 0))))
-
-    (use-package vterm-toggle
-      :after vterm
-      :bind
-  ("C-," . vterm-toggle))
-
-#+end_src
-
-#+RESULTS:
-: vterm-toggle
-
-#+begin_src emacs-lisp
-  (use-package zoom
-    :custom
-    (zoom-size '(0.618 . 0.618))
-    (zoom-ignored-major-modes '(dired-mode markdown-mode vterm-mode))
-    (zoom-ignored-buffer-names '("zoom.el" "init.el"))
-    (zoom-ignored-buffer-name-regexps '("^*calc"))
-    :config(zoom-mode 1))
-#+end_src
-
-#+RESULTS:
-: t
-
-#+begin_src emacs-lisp
-  (defun edit-config ()
-  "Edit the emacs config.org in user-emacs-directory"
+(defun toggle-transparency ()
   (interactive)
-  (find-file (expand-file-name "config.org" user-emacs-directory)))
-  (provide 'edit-config)
-  (bind-key "C-c d c" 'edit-config)
+  (let ((alpha (frame-parameter nil 'alpha)))
+    (set-frame-parameter
+     nil 'alpha
+     (if (eql (cond ((numberp alpha) alpha)
+                    ((numberp (cdr alpha)) (cdr alpha))
+                    ;; Also handle undocumented (<active> <inactive>) form.
+                    ((numberp (cadr alpha)) (cadr alpha)))
+              100)
+         '(90 . 90) '(100 . 100)))))
+(set-frame-parameter nil 'alpha '(100 . 100))
+(bind-key "C-c t t" 'toggle-transparency)
 #+end_src
-
-#+RESULTS:
-: edit-config
-
+*** All the icons
+Icon pack for soy iconography
 #+begin_src emacs-lisp
-  (use-package evil-org
-    :after org
-    :after evil
-    :after evil-collection
-    :hook (org-mode . (lambda () evil-org-mode))
-    :config
-    (require 'evil-org-agenda)
-    (evil-org-agenda-set-keys))
+  (use-package all-the-icons)
 #+end_src
-
-#+RESULTS:
-| org-fragtog-mode | visual-line-mode | auto-fill-mode | org-tempo-setup | turn-on-org-cdlatex | org-pretty-table-mode | (lambda nil evil-org-mode) | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-fold-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes |
-
+*** Dashboard
+Sexy splash screen
 #+begin_src emacs-lisp
-  (setq scroll-conservatively 101)
+  (use-package page-break-lines)
+  (use-package dashboard
+    :custom
+    (show-week-agenda t)
+    (dashboard-center-content t)
+    (dashboard-set-file-icons t)
+    :config
+    (require 'url)
+    (setq dashboard-startup-banner (let ((logo-png-file
+                                          (expand-file-name "var/logo.png" user-emacs-directory)))
+                                     (unless (file-exists-p logo-png-file)
+                                       (url-copy-file "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Gnu_meditate_levitate.png/128px-Gnu_meditate_levitate.png" logo-png-file))
+                              (symbol-value 'logo-png-file)))
+    (dashboard-setup-startup-hook))
 #+end_src
+** Misc
+*** exec-path-from-shell
+Automatically fills out ~exec-path~ with the system's default shell's
+~$PATH~ variable, saves a lot of pain when using packages installed in
+various directories. Does make Emacs non-pure though, so there is that.
 
-#+RESULTS:
-: eshell
-
-- setup evil and extensions
-- ace window for fast window switching
-- which key so I can remember binds
+The ~-l~ flag here avoids initalising an interactive shell and improves
+startup time.
 #+begin_src emacs-lisp
-  (use-package which-key
-    :init(which-key-mode))
-
-  (use-package evil-anzu
-    :after evil
-    :init(anzu-mode))
-
-  (use-package evil
-    :hook
-    (evil-insert-state-entry . (lambda () (set-input-method "programmer-dvorak")))
-    (evil-replace-state-entry . (lambda () (set-input-method "programmer-dvorak")))
-    (isearch-mode . (lambda () (set-input-method "programmer-dvorak")))
-    :init
-    (setq evil-want-integration t) ;; This is optional since it's already set to t by default.
-    (setq evil-want-keybinding nil)
-    :config
-    (evil-mode 1))
-
-  (use-package evil-collection
-    :after evil
-    :custom (evil-collection-setup-minibuffer t)
-    :init (evil-collection-init))
-
-  (use-package ace-window
-    :config
-    (setq aw-keys '(?a ?s ?d ?f ?q ?w ?e ?r))
-    ; (ace-window-posframe-mode)
-    :bind("C-a" . ace-window))
+(use-package exec-path-from-shell
+  :config
+  (setq exec-path-from-shell-arguments '("-l"))
+  (exec-path-from-shell-initialize))
 #+end_src
-
+*** Smartparens
+Automatically attempts to balance parens in buffers
+#+begin_src emacs-lisp
+  (use-package smartparens
+    :hook prog-mode
+    :config(require 'smartparens-config))
+#+end_src
+*** GPTel
+Allows use of ChatGPT from Emacs
+#+begin_src emacs-lisp
+  (straight-use-package 'markdown-mode)
+  (use-package gptel
+    :straight(gptel :type git :host github :repo "karthink/gptel")
+    :commands(gptel))
+#+end_src
+*** Open current directory
+Opens the current file directory in Finder.app.
+#+begin_src emacs-lisp
+   (defun open-current-directory ()
+     "Open the current file's directory in Finder"
+     (interactive)
+     (let ((process-connection-type nil))
+       (start-process ""
+		      nil
+		      "open"
+		      (url-file-directory buffer-file-name))))
+   (bind-key "C-c o" 'open-current-directory)
+#+end_src
+*** Zygospore
+Toggleable ~C-x 1~
 #+begin_src emacs-lisp
   (use-package zygospore
     :bind("C-x 1" . zygospore-toggle-delete-other-windows))
 #+end_src
-
-#+RESULTS:
-: zygospore-toggle-delete-other-windows
-
-- ivy/counsel/swiper because it's infinitely better than the default
-- company for popups in code
-- doom themes for my eyes
-
+** Programming
+*** GitHub copilot
+Allows use of GitHub's copilot software in Emacs, very useful for
+writing large sections of boilerplate code.
 #+begin_src emacs-lisp
+  (use-package copilot
+    :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
+    :hook prog-mode
+    :commands(copilot-mode)
+    :bind(:map copilot-completion-map
+	       ("<tab>" . copilot-accept-completion))
+    )
+#+end_src
+*** Projectile
+Project management software that makes managing aforementioned
+projects infinitely easier.
+#+begin_src emacs-lisp
+  (use-package projectile
+    :custom((projectile-completion-system 'ivy)
+	    (projectile-enable-caching t)
+	    (projectile-project-search-path '("~/Projects")))
+    :config(projectile-mode +1)
+    :bind(:map projectile-mode-map ("s-p" . projectile-command-map)))
+#+end_src
 
-  (use-package ivy-posframe
-    :disabled t
-    :custom(ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-window-center)))
-    :config(ivy-posframe-mode))
+*** Highlight TODOs
+Highlights and makes TODO comments italic in programming buffers
+#+begin_src emacs-lisp
+  (use-package hl-todo
+    :config(set-face-attribute 'hl-todo nil :italic t)
+    :hook ((prog-mode . hl-todo-mode)
+	   (yaml-mode . hl-todo-mode)))
+#+end_src
+*** LSP
+#+begin_src emacs-lisp
+    (use-package lsp-mode
+    :init
+    ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+    (setq lsp-keymap-prefix "s-l")
+    :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+	   (python-mode . lsp)
+	   ;; if you want which-key integration
+	   (lsp-mode . lsp-enable-which-key-integration))
+    :commands lsp)
 
-  (use-package counsel
-    :config
-    (add-to-list 'ivy-initial-inputs-alist '(counsel-M-x . ""))
-    (counsel-mode 1)
-    (ivy-mode 1)
-    :bind
-    ("M-x" . counsel-M-x)
-    ("C-h f" . counsel-describe-function)
-    ("C-h v" . counsel-describe-variable)
-    ("C-c p" . counsel-fzf)
-    ("C-s" . swiper)
-    ("C-x b" . counsel-switch-buffer))
+  ;; optionally
+  (use-package lsp-ui :commands lsp-ui-mode)
+  ;; if you are ivy user
+  (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+  (use-package treemacs)
+  (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 
-  (use-package company-org-block
-  :after company
-  :config(add-to-list 'company-backends 'company-org-block))
-
-  (use-package company
-    :bind (:map prog-mode-map
-		("C-i" . company-indent-or-complete-common)
-		("C-M-i" . counsel-company))
-    :custom
-    (company-minimum-prefix-length 2)
-    (company-idle-delay 0.0)
+  ;; optionally if you want to use debugger
+  (use-package dap-mode)
+  ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+#+end_src
+*** Magit
+#+begin_src emacs-lisp
+   (use-package magit
+     :bind("C-c m" . magit)
+     :commands(magit))
+   (setq warning-suppress-types '((comp)))
+   (provide 'init)
+#+end_src
+*** Aggressive indent
+It's like indent except it has an ASBO for disorderly conduct.
+#+begin_src emacs-lisp
+  (use-package aggressive-indent
     :hook prog-mode)
-  (use-package company-box
-    :straight t
-    :hook (company-mode . company-box-mode))
-
-  (use-package doom-themes
-    :bind
-    ("C-c t l" . 'light)
-    ("C-c t d" . 'dark)
-    :config
-    (defun light ()
-      (interactive)
-      (progn
-	(disable-theme 'doom-one)
-	(enable-theme 'doom-one-light)
-	))
-    (provide 'light)
-    (defun dark ()
-      (interactive)
-      (progn
-	(disable-theme 'doom-one-light)
-	(enable-theme 'doom-one)
-	))
-    (provide 'dark)
-    (doom-themes-org-config))
-
-  (use-package doom-modeline
-    :custom
-    (doom-modeline-time t)
-    :init(display-battery-mode)
-    :config(doom-modeline-mode))
 #+end_src
-
-
-#+RESULTS:
-: t
-
+** Dired
+*** Dired alltheicons
+Adds nice icons to dired, for better parsing of my soy eyes:
 #+begin_src emacs-lisp
-  (setq org-plantuml-jar-path (expand-file-name "~/.config/emacs/plantuml.jar"))
-  (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
-  (org-babel-do-load-languages 'org-babel-load-languages '((plantuml . t)))
+  (use-package all-the-icons-dired
+  :disabled
+    :hook dired-mode)
 #+end_src
-
-#+RESULTS:
-
+*** Dired subtree
+Allows for subtree expansion in dired
 #+begin_src emacs-lisp
-  (use-package auto-dark
-    :init(auto-dark-mode t)
-    :config(setq auto-dark-light-theme 'doom-one-light
-		 auto-dark-dark-theme 'doom-one
-		 auto-dark-allow-osascript t
-		 ))
+  (use-package dired-subtree)
 #+end_src
-
-#+RESULTS:
-: t
-
+** Restart Emacs
+Allows the user to easily restart emacs, something I have to do far
+too much.
 #+begin_src emacs-lisp
-  (use-package markdown-mode+
-    :mode ("\\.md\\'" . markdown-mode+))
+   ;; restart-emacs
+   (use-package restart-emacs
+     :commands(restart-emacs)
+     :bind("C-c e r" . restart-emacs))
 #+end_src
-
+** Pseudodaemon
 #+begin_src emacs-lisp
-  (use-package pdf-tools
-    :config
-    (setq pdf-view-use-scaling t)
-    (pdf-tools-install))
+  (use-package mac-pseudo-daemon
+  :straight(:type git :host github :repo "DarwinAwardWinner/mac-pseudo-daemon"))
 #+end_src
-
+* Modes and languages
+** Org
+*** Auto-scaling LaTeX fragments
+Hack stolen from god-knows-where that hooks into text-resizing to
+resize any LaTeX fragments.
 #+begin_src emacs-lisp
-  (use-package org-pretty-table
-    :straight(:type git :host github :repo "Fuco1/org-pretty-table")
-    :hook org-mode)
-#+end_src
-
-#+RESULTS:
-| org-pretty-table-mode | org-fragtog-mode | visual-line-mode | auto-fill-mode | org-tempo-setup | turn-on-org-cdlatex | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | (lambda nil evil-org-mode) | #<subr F616e6f6e796d6f75732d6c616d626461_anonymous_lambda_76> | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-fold-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes |
-
-#+begin_src emacs-lisp
-
   (defun my/text-scale-adjust-latex-previews ()
     "Adjust the size of latex preview fragments when changing the
-  buffer's text scale."
+   buffer's text scale."
     (pcase major-mode
       ('latex-mode
        (dolist (ov (overlays-in (point-min) (point-max)))
-	 (if (eq (overlay-get ov 'category)
-		 'preview-overlay)
-	     (my/text-scale--resize-fragment ov))))
+         (if (eq (overlay-get ov 'category)
+                 'preview-overlay)
+             (my/text-scale--resize-fragment ov))))
       ('org-mode
        (dolist (ov (overlays-in (point-min) (point-max)))
-	 (if (eq (overlay-get ov 'org-overlay-type)
-		 'org-latex-overlay)
-	     (my/text-scale--resize-fragment ov))))))
+         (if (eq (overlay-get ov 'org-overlay-type)
+                 'org-latex-overlay)
+             (my/text-scale--resize-fragment ov))))))
 
   (defun my/text-scale--resize-fragment (ov)
     (overlay-put
      ov 'display
      (cons 'image
-	   (plist-put
-	    (cdr (overlay-get ov 'display))
-	    :scale (+ 1.0 (* 0.25 text-scale-mode-amount))))))
-
+           (plist-put
+            (cdr (overlay-get ov 'display))
+            :scale (+ 1.0 (* 0.25 text-scale-mode-amount))))))
   (add-hook 'text-scale-mode-hook #'my/text-scale-adjust-latex-previews)
 #+end_src
+*** CDLatex
+Org comes with its own CDLatex environment specifically for org
+buffers, enable it.
+#+begin_src emacs-lisp
+  (use-package org
+    :disabled
+    :hook (org-mode . org-cdlatex-mode))
+#+end_src
+*** AAS and LAAS
+Automatically expanded snippets for LaTeX, allows for super fast latex
+input.
+#+begin_src emacs-lisp
+   (use-package aas)
+   (use-package laas
+     :hook org-mode)
+#+end_src
+*** Org capture
+Sets up ~org-capture~ templates and binds etc.
+#+begin_src emacs-lisp
+  (use-package org-capture
+    :straight (:type built-in)
+    :bind
+    ("C-c c" . org-capture)
+    :config
+    (add-to-list 'org-capture-templates '("n" "Note" entry (file+datetree "~/Documents/knowledge/main.org" "Fleeting notes") "* %?\n%i\n"))
+    (add-to-list 'org-capture-templates '("t" "Todo" entry (file+headline "~/Documents/knowledge/todo.org" "Tasks") "* TODO %i%?"))
+    (add-to-list 'org-capture-templates '("T" "Todo (with reference)" entry (file+headline "~/Documents/knowledge/todo.org" "Tasks") "* TODO %i%?\n%a")))
+#+end_src
+*** et al.
+Again, there's a fair amount to my org config, so here is the huge
+block that I haven't separated out yet.
+#+begin_src emacs-lisp
+  (use-package org
+    :straight(org :fork (:type git :repo "https://git.tecosaur.net/tec/org-mode.git"))
+    :bind
+    ("C-c a" . org-agenda)
+    (:map org-mode-map
+	  ("s-<return>" . org-insert-heading-after-current))
+    :custom
 
+    (org-startup-with-inline-images t)
+    (org-image-actual-width '(300))
+    (org-pretty-entities t)
+    (org-pretty-entities-include-sub-superscripts nil)
+    (org-agenda-window-setup 'current-window)
+    (org-agenda-restore-windows-after-quit t)
+    (org-treat-insert-todo-heading-as-state-change t)
+    (org-log-into-drawer t)
+    (org-preview-latex-image-directory "~/.local/cache/org-previews/")
+    (org-default-notes-file "~/Documents/knowledge/main.org")
+					  ; (org-hide-emphasis-markers t)
+
+    :config
+    (add-to-list 'org-latex-packages-alist '("" "amsmath" t nil))
+    (add-to-list 'org-latex-packages-alist '("" "amssymb" t nil))
+    (require 'org-agenda)
+    (add-to-list 'org-agenda-prefix-format '(todo . "%b"))
+    (plist-put org-format-latex-options :scale 1.5)
+    (require 'org-capture)
+    (setq org-latex-create-formula-image-program 'dvisvgm)
+    (setq org-agenda-files '("~/Documents/knowledge/main.org" "~/Documents/knowledge/todo.org"))
+    (require 'org-tempo)
+    :hook
+    (org-mode . org-latex-preview-auto-mode)
+    (org-mode . auto-fill-mode)
+    (org-mode . visual-line-mode))
+
+  (use-package smartparens
+    :hook org-mode
+    :config
+    (require 'smartparens-config)
+    ;; Don't do square-bracket space-expansion where it doesn't make sense to
+    (sp-local-pair '(emacs-lisp-mode org-mode markdown-mode gfm-mode)
+		   "[" nil :post-handlers '(:rem ("| " "SPC"))))
+#+end_src
+*** Org-rifle like
+Org rifle (https://github.com/alphapapa/org-rifle) uses helm, I do
+not.
+#+begin_src emacs-lisp
+  (use-package org-search-goto
+    :bind("C-c d" . osg))
+  (find-file-noselect "~/Documents/knowledge/main.org")
+#+end_src
+#+end_src
+** LaTeX
+*** CDLatex
+Quick latex input for various LaTeX adjacent environments
 #+begin_src emacs-lisp
   (use-package cdlatex
     :hook
-    (org-mode . turn-on-org-cdlatex))
+    latex-mode
+    (org-mode . org-cdlatex-mode)
+    )
 
-  (use-package org
-    :bind("C-c c" . org-capture)
+#+end_src
+** Python
+This automatically determines the python indent based on the file
+#+begin_src emacs-lisp
+  (use-package python
+    :straight(:type built-in)
     :custom
-    (org-preview-latex-image-directory "~/.local/cache/org-previews/")
-    (org-default-notes-file "~/Documents/knowledge/main.org")
-    (org-capture-templates '(
-			     ("n" "Note" entry (file+datetree "~/Documents/knowledge/main.org" "Fleeting notes") "* %?\n%i\n")
-			     ))
+    (python-indent-offset 2)
+    (python-indent-guess-indent-offset t))
+#+end_src
+
+Furthermore I want to include [[LSP]] support
+
+#+begin_src emacs-lisp
+  (use-package lsp-pyright)
+#+end_src
+** Rust
+#+begin_src emacs-lisp
+  (use-package rustic
+    :bind (:map rustic-mode-map
+	      ("M-j" . lsp-ui-imenu)
+	      ("M-?" . lsp-find-references)
+	      ("C-c C-c l" . flycheck-list-errors)
+	      ("C-c C-c a" . lsp-execute-code-action)
+	      ("C-c C-c r" . lsp-rename)
+	      ("C-c C-c q" . lsp-workspace-restart)
+	      ("C-c C-c Q" . lsp-workspace-shutdown)
+	      ("C-c C-c s" . lsp-rust-analyzer-status)
+	      ("C-c C-c e" . lsp-rust-analyzer-expand-macro)
+	      ("C-c C-c h" . lsp-ui-doc-glance)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package lsp-mode
+    :custom
+    ;; what to use when checking on-save. "check" is default, I prefer clippy
+    (lsp-rust-analyzer-cargo-watch-command "clippy")
+    (lsp-eldoc-render-all t)
+    (lsp-idle-delay 0.6)
+    ;; This controls the overlays that display type and other hints inline. Enable
+    ;; / disable as you prefer. Well require a `lsp-workspace-restart' to have an
+    ;; effect on open projects.
+    (lsp-rust-analyzer-server-display-inlay-hints t)
+    (lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial")
+    (lsp-rust-analyzer-display-chaining-hints t)
+    (lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names nil)
+    (lsp-rust-analyzer-display-closure-return-type-hints t)
+    (lsp-rust-analyzer-display-parameter-hints nil)
+    (lsp-rust-analyzer-display-reborrow-hints nil))
+  (use-package lsp-ui
+    :custom
+    (lsp-ui-peek-always-show t)
+    (lsp-ui-sideline-show-hover t)
+    (lsp-ui-doc-enable nil))
+#+end_src
+#+begin_src emacs-lisp
+(use-package flycheck)
+#+end_src
+#+begin_src emacs-lisp
+  (use-package yasnippet
     :config
-    (setq org-latex-create-formula-image-program 'dvisvgm)
-    (setq org-agenda-files '("~/Documents/knowledge/main.org"))
-    (require 'org-tempo)
+    (yas-reload-all)
+    (add-hook 'prog-mode-hook 'yas-minor-mode)
+    (add-hook 'text-mode-hook 'yas-minor-mode))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package company
+  :bind
+  (:map company-active-map
+              ("C-n". company-select-next)
+              ("C-p". company-select-previous)
+              ("M-<". company-select-first)
+              ("M->". company-select-last)))
+(defun company-yasnippet-or-completion ()
+  (interactive)
+  (or (do-yas-expand)
+      (company-complete-common)))
+
+(defun check-expansion ()
+  (save-excursion
+    (if (looking-at "\\_>") t
+      (backward-char 1)
+      (if (looking-at "\\.") t
+        (backward-char 1)
+        (if (looking-at "::") t nil)))))
+
+(defun do-yas-expand ()
+  (let ((yas/fallback-behavior 'return-nil))
+    (yas/expand)))
+
+(defun tab-indent-or-complete ()
+  (interactive)
+  (if (minibufferp)
+      (minibuffer-complete)
+    (if (or (not yas/minor-mode)
+            (null (do-yas-expand)))
+        (if (check-expansion)
+            (company-complete-common)
+          (indent-for-tab-command)))))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package rust-playground)
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package toml-mode)
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package dap-mode
+    :config
+    (dap-ui-mode)
+    (dap-ui-controls-mode 1)
+
+    (require 'dap-lldb)
+    (require 'dap-gdb-lldb)
+    ;; installs .extension/vscode
+    (dap-gdb-lldb-setup)
+    (dap-register-debug-template
+     "Rust::LLDB Run Configuration"
+     (list :type "lldb"
+	   :request "launch"
+	   :name "LLDB::Run"
+	   :gdbpath "rust-lldb"
+	   ;; uncomment if lldb-mi is not in PATH
+	   ;; :lldbmipath "path/to/lldb-mi"
+	   )))
+#+end_src
+
+** Haskell
+#+begin_src emacs-lisp
+  (use-package haskell-mode)
+#+end_src
+#+begin_src emacs-lisp
+  (use-package lsp-haskell
+    :requires lsp
     :hook
-    (org-mode . auto-fill-mode)
-    (org-mode . visual-line-mode))
-  (use-package org-fragtog
-    :hook org-mode)
-  (use-package centered-cursor-mode
-    :commands centered-cursor-mode)
-  (use-package olivetti
-    :commands olivetti-mode)
-  (bind-key "C-l" #'(lambda () ""
-		      (interactive)
-		      (find-file "~/Documents/knowledge/main.org")
-		      (counsel-org-goto)))
+    ((haskell-mode haskell-literate-mode) . (lambda ()
+			       (require 'lsp-haskell)
+			       (lsp))))
 #+end_src
 
-#+RESULTS:
-| lambda | nil |   | (interactive) | (find-file ~/Documents/knowledge/main.org) | (counsel-org-goto) |
+** Misc. Global modes
 
-#+begin_src emacs-lisp :tangle nil
-  (use-package org-auctex
-    :straight(:type git :host github :repo "karthink/org-auctex")
-    :config
-    (defalias #'org-latex-preview #'org-auctex-preview-dwim)
-    (defalias #'org-clear-latex-preview #'math-preview-clearout-at-point))
-#+end_src
-
+*** Revert
+Keeps buffers up to date with their filesystem content
 #+begin_src emacs-lisp
-  (use-package org-noter
-    :commands(org-noter)
-    :config(evil-collection-define-key 'normal 'pdf-view-mode-map
-	     (kbd "i") 'org-noter-insert-note))
+   (global-auto-revert-mode)
 #+end_src
 
-#+RESULTS:
-: t
-
-#+begin_src emacs-lisp :tangle no
-  (use-package math-preview
-    :disabled t
-    :config
-    (defalias #'org-latex-preview #'math-preview-at-point)
-    (defalias #'org-clear-latex-preview #'math-preview-clear-region))
-#+end_src
-
+*** Hidden modeline
+Modeline is normally too much information that I don't need, if I
+want to see it, I can with a keyboard shortcut.
 #+begin_src emacs-lisp
-  (use-package counsel-spotify
-    :requires ivy)
+  ;; disable the modeline by default
+  ;; https://bzg.fr/en/emacs-hide-mode-line/
+  (defvar-local hidden-mode-line-mode t)
+
+  (define-minor-mode hidden-mode-line-mode
+    "Minor mode to hide the mode-line in the current buffer."
+    :init-value nil
+    :global t
+    :variable hidden-mode-line-mode
+    :group 'editing-basics
+    (if hidden-mode-line-mode
+	(setq hide-mode-line mode-line-format
+	      mode-line-format nil)
+      (setq mode-line-format hide-mode-line
+	    hide-mode-line nil))
+    (force-mode-line-update)
+    ;; Apparently force-mode-line-update is not always enough to
+    ;; redisplay the mode-line
+    (redraw-display)
+    (when (and (called-interactively-p 'interactive)
+	       hidden-mode-line-mode)
+      (run-with-idle-timer
+       0 nil 'message
+       (concat "Hidden Mode Line Mode enabled.  "
+	       "Use M-x hidden-mode-line-mode to make the mode-line appear."))))
+   (bind-key (kbd "C-c t m") 'hidden-mode-line-mode)
 #+end_src
 
-#+begin_src emacs-lisp
+* Everything Else
+This config is WIP, so the content of my old ~init.el~ that hasn't been
+ transferred over is here. This is so I can actually use Emacs whilst transitioning.
+ #+begin_src emacs-lisp
 
-  (use-package magit)
-  (use-package counsel-projectile
-    :config(counsel-projectile-mode))
-  (use-package projectile
-    :bind(:map projectile-mode-map
-	       ("C-c C-p" . 'projectile-command-map))
-    :custom
-    (projectile-project-search-path (cddr (directory-files "~/Projects" t)))
-    (projectile-completion-system 'ivy)
-    :init(projectile-mode +1))
-#+end_src
+   (use-package posframe)
 
-#+begin_src emacs-lisp
-  (use-package twittering-mode
-    :bind("C-c t t" . twit))
-#+end_src
+   ;; better sorting
+   (use-package smex
+     :config(smex-initialize))
+
+   ;; better ingredients, better pizza, better M-x
+   (use-package counsel
+     :config
+     (setq ivy-use-virtual-buffers t
+	   enable-recursive-minibuffers t)
+     (add-to-list 'ivy-initial-inputs-alist '(counsel-M-x . ""))
+     :hook((after-init . ivy-mode)
+	   (after-init . counsel-mode))
+     :bind
+     ("M-x" . counsel-M-x)
+     ("C-h f" . counsel-describe-function)
+     ("C-h v" . counsel-describe-variable)
+     ("C-f" . counsel-fzf)
+     ("C-s" . swiper)
+     ("C-x b" . counsel-switch-buffer))
+
+   ;; popups
+   (use-package company
+     :bind (:map prog-mode-map
+		 ("C-i" . company-indent-or-complete-common)
+		 ("C-M-i" . counsel-company))
+     :custom
+     (company-minimum-prefix-length 2)
+     (company-idle-delay 0.0)
+     :config
+     (setq lsp-completion-provider :capf)
+     :hook prog-mode)
+
+   ;;  company front-end with icons
+   (use-package company-box
+     :hook company-mode)
+   ;; why this isn't a bind already is beyond me
+   (bind-key "C-;" 'eval-buffer 'emacs-lisp-mode-map)
+
+   (use-package hl-line
+     :straight nil
+     :hook prog-mode)
+
+   (display-battery-mode)
+
+   ;; better pdf viewer
+   (use-package pdf-tools
+     :magic("%PDF" . pdf-view-mode)
+     :custom
+     (pdf-view-use-scaling t)
+     :config
+     ;; scales pdfs for retina displays
+     (pdf-tools-install))
+
+   (use-package org-autolist
+     :hook org-mode)
+
+   (use-package org-appear
+     :hook org-mode
+     :custom
+     (org-appear-autoemphasis  t)
+     (org-appear-autolinks t)
+     (org-appear-autosubmarkers t)
+     (org-hide-emphasis-markers t))
+
+   ;; automatically hide help windows
+   (use-package popwin
+     :hook after-init)
+
+   ;; interleave notes with pdfs
+   (use-package org-noter
+     :commands(org-noter)
+     :config
+     (evil-collection-define-key 'normal 'pdf-view-mode-map
+       (kbd "i") 'org-noter-insert-note)
+     (evil-collection-define-key 'normal 'pdf-view-mode-map
+       (kbd "I") 'org-noter-insert-note-toggle-no-questions)
+     )
+
+
+ #+end_src
+
+ 
